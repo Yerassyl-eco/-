@@ -33,9 +33,9 @@ const DIRECTION_ICON: Partial<Record<Gesture, typeof ArrowUp>> = {
 
 type Tone = 'live' | 'warn' | 'idle' | 'ok';
 
-function Dot({ tone }: { tone: Tone }) {
+function Dot({ tone, blink = false }: { tone: Tone; blink?: boolean }) {
   const c = { live: 'bg-cobalt', warn: 'bg-amber-line', idle: 'bg-rule-strong', ok: 'bg-ink' }[tone];
-  return <span className={`inline-block h-1.5 w-1.5 shrink-0 rounded-full ${c} ${tone === 'live' ? 'animate-blink' : ''}`} aria-hidden />;
+  return <span className={`inline-block h-1.5 w-1.5 shrink-0 rounded-full ${c} ${blink ? 'animate-blink' : ''}`} aria-hidden />;
 }
 
 function Row({ label, children, tone = 'idle' }: { label: string; children: ReactNode; tone?: Tone }) {
@@ -220,6 +220,8 @@ export function Instrument({ flash }: { flash: Flash | null }) {
   const demo = status === 'demo';
   const signal = readSignal(engine, flash, live || demo);
   const warn = !!signal && !signal.info;
+  // Keep the band off the edge the user is correcting.
+  const bandTop = engine.issue === 'HAND_OUT_BOTTOM' || engine.issue === 'FACE_TOO_LOW';
   const handTone: Tone = engine.handCount > 1 ? 'warn' : engine.handVisible ? 'live' : 'idle';
   const faceTone: Tone = engine.face === 'ok' ? 'ok' : engine.face === 'unknown' ? 'idle' : 'warn';
 
@@ -231,7 +233,7 @@ export function Instrument({ flash }: { flash: Flash | null }) {
           {live && <span className="num ml-2 font-normal tracking-normal text-graphite">{engine.fps} fps · 640×480</span>}
         </span>
         <span className={`label flex items-center gap-1.5 ${warn ? 'text-amber' : live ? 'text-cobalt' : 'text-graphite'}`}>
-          <Dot tone={warn ? 'warn' : live ? 'live' : 'idle'} />
+          <Dot tone={warn ? 'warn' : live ? 'live' : 'idle'} blink={live && !warn} />
           {warn ? 'Adjust' : live ? 'Tracking' : demo ? 'Demo' : status === 'error' ? 'Offline' : 'Starting'}
         </span>
       </div>
@@ -256,7 +258,7 @@ export function Instrument({ flash }: { flash: Flash | null }) {
             {!live && <CameraStatus vision={vision} />}
             {signal && (
               <div
-                className={`absolute inset-x-0 bottom-0 hidden border-t-2 bg-paper/95 px-4 py-3 lg:block ${signal.info ? 'border-rule-strong' : 'border-amber-line'}`}
+                className={`absolute inset-x-0 hidden bg-paper/95 px-4 py-3 lg:block ${bandTop ? 'top-0 border-b-2' : 'bottom-0 border-t-2'} ${signal.info ? 'border-rule-strong' : 'border-amber-line'}`}
                 role="status"
                 aria-live="polite"
               >
