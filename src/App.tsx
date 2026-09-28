@@ -23,7 +23,10 @@ import { visionRuntime } from './vision/VisionRuntime';
 
 const reducer = makeReducer(TESTS);
 const TEST_PHASES: Phase[] = ['TEST_ACTIVE', 'ANSWER_SELECTED', 'ANSWER_CONFIRMED'];
-const isDemo = new URLSearchParams(window.location.search).has('demo');
+const isDemo =
+  import.meta.env.VITE_DEMO === '1' ||
+  new URLSearchParams(window.location.search).has('demo') ||
+  window.location.hash === '#demo';
 const SCREEN_SETTLE_MS = 1200;
 
 export default function App() {

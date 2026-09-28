@@ -4,3 +4,4 @@ public/mediapipe/wasm
 *.log
 .DS_Store
 *.tsbuildinfo
+dist-artifact
