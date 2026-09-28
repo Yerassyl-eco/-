@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { AnswerOptions } from '../components/TestCard/AnswerOptions';
 import type { MachineState } from '../state/testMachine';
 import type { AnyTest } from '../tests';
-import { GESTURE_META } from '../vision/gestureEngine/messages';
+import { Check, Hand } from 'lucide-react';
+import { GestureIcon } from '../components/GestureIcon/GestureIcon';
 
 interface Props {
   test: AnyTest;
@@ -52,34 +53,46 @@ export function TestPage({ test, state, onSelect }: Props) {
         </span>
       </div>
 
-      <div className="flex min-h-[clamp(240px,36vh,440px)] flex-col [&>*]:flex-1">
-        <Stimulus
-          trial={trial}
-          trialIndex={state.trialIndex}
-          trialCount={trials.length}
-          selected={state.selected}
-          confirmed={confirmed}
-          ready={ready}
-          observeProgress={progress}
-        />
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-center">
+        <div className="flex min-h-[clamp(220px,34vh,440px)] flex-col [&>*]:flex-1">
+          <Stimulus
+            trial={trial}
+            trialIndex={state.trialIndex}
+            trialCount={trials.length}
+            selected={state.selected}
+            confirmed={confirmed}
+            ready={ready}
+            observeProgress={progress}
+          />
+        </div>
+        <div className="lg:order-last">
+          <AnswerOptions
+            options={options}
+            layout={test.layout}
+            selected={state.selected}
+            confirmed={confirmed}
+            disabled={!ready || confirmed}
+            onSelect={onSelect}
+          />
+        </div>
       </div>
 
       {/* selection / confirmation status */}
       <div className="min-h-[64px]" aria-live="polite" role="status">
         {confirmed ? (
           <div key="confirmed" className="animate-pop-in flex items-center gap-3 rounded-2xl bg-success-500 px-4 py-3 text-white shadow-lg">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/25 text-lg font-black" aria-hidden>✓</span>
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/25" aria-hidden><Check size={20} strokeWidth={3} /></span>
             <p className="text-lg font-extrabold">Ответ принят</p>
           </div>
         ) : selectedOpt ? (
           <div key={`sel-${selectedOpt.value}`} className="animate-pop-in flex flex-wrap items-center gap-3 rounded-2xl bg-accent-500 px-4 py-3 text-white shadow-[var(--shadow-float)]">
-            <span className="emoji text-3xl" aria-hidden>{GESTURE_META[selectedOpt.gesture].emoji}</span>
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15 ring-1 ring-white/25"><GestureIcon gesture={selectedOpt.gesture} size={24} /></span>
             <div className="min-w-0 flex-1">
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/80">Распознан ответ</p>
               <p className="text-lg font-extrabold leading-tight">{selectedOpt.label}</p>
             </div>
             <p className="flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-sm font-extrabold text-accent-700">
-              <span className="emoji text-lg" aria-hidden>✊</span> Покажите кулак, чтобы подтвердить
+              <GestureIcon gesture="FIST" size={18} /> Покажите кулак, чтобы подтвердить
             </p>
           </div>
         ) : !ready ? (
@@ -91,20 +104,12 @@ export function TestPage({ test, state, onSelect }: Props) {
           </div>
         ) : (
           <div className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 ring-1 ring-line">
-            <span className="emoji text-2xl" aria-hidden>🖐</span>
+            <Hand size={22} className="shrink-0 text-accent-500" aria-hidden />
             <p className="text-sm font-semibold text-slate-700">Покажите ответ жестом, затем подтвердите ✊. ✋ — отменить выбор.</p>
           </div>
         )}
       </div>
 
-      <AnswerOptions
-        options={options}
-        layout={test.layout}
-        selected={state.selected}
-        confirmed={confirmed}
-        disabled={!ready || confirmed}
-        onSelect={onSelect}
-      />
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { Check, Hand, TriangleAlert } from 'lucide-react';
 import { ISSUE_MESSAGES } from '../../vision/gestureEngine/messages';
 import type { IssueCode } from '../../vision/types';
 
@@ -12,17 +13,16 @@ export interface Flash {
  * confirms with a green check once the gesture is recognised.
  */
 export function ErrorMessage({ issue, flash, compact = false }: { issue: IssueCode | null; flash: Flash | null; compact?: boolean }) {
-  let content: { tone: 'ok' | 'warn' | 'info'; icon: string; title: string; hint?: string; key: string } | null = null;
+  let content: { tone: 'ok' | 'warn' | 'info'; title: string; hint?: string; key: string } | null = null;
 
   if (flash?.kind === 'ok') {
-    content = { tone: 'ok', icon: '✓', title: flash.text, key: `f${flash.id}` };
+    content = { tone: 'ok', title: flash.text, key: `f${flash.id}` };
   } else if (flash?.kind === 'hint') {
-    content = { tone: 'warn', icon: '⚠️', title: 'Этот жест сейчас не подходит', hint: flash.text, key: `f${flash.id}` };
+    content = { tone: 'warn', title: 'Этот жест сейчас не подходит', hint: flash.text, key: `f${flash.id}` };
   } else if (issue) {
     const m = ISSUE_MESSAGES[issue];
     content = {
       tone: issue === 'NO_HAND' ? 'info' : 'warn',
-      icon: issue === 'NO_HAND' ? m.icon : '⚠️',
       title: m.title,
       hint: m.hint,
       key: issue,
@@ -43,10 +43,10 @@ export function ErrorMessage({ issue, flash, compact = false }: { issue: IssueCo
           className={`flex items-start gap-3 rounded-2xl border px-4 py-3 ${styles[content.tone]} ${content.tone === 'warn' ? 'animate-shake' : 'animate-rise'}`}
         >
           <span
-            className={`emoji mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-base font-black ${content.tone === 'ok' ? 'bg-success-500 text-white' : 'bg-white/80'}`}
+            className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${content.tone === 'ok' ? 'bg-success-500 text-white' : content.tone === 'warn' ? 'bg-white text-warning-700' : 'bg-white text-accent-500'}`}
             aria-hidden
           >
-            {content.icon}
+            {content.tone === 'ok' ? <Check size={18} strokeWidth={3} /> : content.tone === 'warn' ? <TriangleAlert size={18} /> : <Hand size={18} />}
           </span>
           <div className="min-w-0">
             <p className="text-[15px] font-bold leading-snug text-slate-900">{content.title}</p>

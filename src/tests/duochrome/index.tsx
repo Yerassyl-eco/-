@@ -6,9 +6,9 @@ export interface DuochromeTrial {
 }
 
 const OPTIONS: AnswerOption[] = [
-  { value: 'red', gesture: 'POINT_LEFT', label: 'Красная сторона', glyph: '🟥' },
+  { value: 'red', gesture: 'POINT_LEFT', label: 'Красная сторона', swatch: '#d6202a' },
   { value: 'equal', gesture: 'POINT_UP', label: 'Одинаково', glyph: '=' },
-  { value: 'green', gesture: 'POINT_RIGHT', label: 'Зелёная сторона', glyph: '🟩' },
+  { value: 'green', gesture: 'POINT_RIGHT', label: 'Зелёная сторона', swatch: '#0f9d58' },
 ];
 
 const RED = '#d6202a';
@@ -84,7 +84,7 @@ export const duochromeTest: TestDefinition<DuochromeTrial> = {
     return {
       testId: 'duochrome',
       headline: 'Ответы сохранены',
-      headlineCaption: `🟥 ${red} · = ${equal} · 🟩 ${green}`,
+      headlineCaption: `красная ${red} · одинаково ${equal} · зелёная ${green}`,
       result:
         equal === n
           ? 'Во всех раундах символы на обеих сторонах казались вам одинаково чёткими.'

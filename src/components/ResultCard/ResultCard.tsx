@@ -4,7 +4,7 @@ import type { TestSummary } from '../../tests/types';
 export function ResultSection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="rounded-2xl bg-slate-50/80 p-4 ring-1 ring-line">
-      <h3 className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-slate-500">{title}</h3>
+      <h3 className="text-xs font-extrabold uppercase tracking-[0.16em] text-slate-500">{title}</h3>
       <p className="mt-1.5 text-[15px] font-medium leading-relaxed text-slate-800">{children}</p>
     </div>
   );
@@ -14,7 +14,7 @@ export function ResultSection({ title, children }: { title: string; children: Re
 export function ResultCard({ title, number, checks, summary }: { title: string; number: number; checks: string; summary: TestSummary }) {
   return (
     <article className="animate-rise overflow-hidden rounded-[28px] bg-white shadow-[var(--shadow-card)] ring-1 ring-line">
-      <header className="relative overflow-hidden bg-gradient-to-br from-accent-600 via-accent-500 to-cyan-500 px-6 py-7 text-white sm:px-8">
+      <header className="relative overflow-hidden bg-accent-700 px-6 py-7 text-white sm:px-8">
         <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10" aria-hidden />
         <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-white/85">
           <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-success-500" aria-hidden>
@@ -34,7 +34,7 @@ export function ResultCard({ title, number, checks, summary }: { title: string; 
         <ResultSection title="Что проверял тест">{checks}</ResultSection>
         <ResultSection title="Ваш результат">{summary.result}</ResultSection>
         <div className={`rounded-2xl p-4 ring-1 ${summary.attention ? 'bg-warning-50 ring-warning-500/30' : 'bg-success-50 ring-success-500/25'}`}>
-          <h3 className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.16em] text-slate-600">
+          <h3 className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.16em] text-slate-600">
             <span aria-hidden>{summary.attention ? '◆' : '●'}</span>
             Что это означает {summary.attention ? '· стоит обратить внимание' : ''}
           </h3>
@@ -43,7 +43,7 @@ export function ResultCard({ title, number, checks, summary }: { title: string; 
         <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {summary.stats.map((s) => (
             <div key={s.label} className="rounded-xl bg-white p-3 ring-1 ring-line">
-              <dt className="text-[11px] font-semibold leading-tight text-slate-500">{s.label}</dt>
+              <dt className="text-xs font-semibold leading-tight text-slate-500">{s.label}</dt>
               <dd className="mt-1 text-lg font-extrabold text-slate-900">{s.value}</dd>
             </div>
           ))}

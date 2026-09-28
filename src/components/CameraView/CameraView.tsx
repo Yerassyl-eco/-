@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { Camera, CameraOff, FlaskConical } from 'lucide-react';
 import { CAMERA_ERROR_TEXT } from '../../vision/camera/camera';
 import { useVision } from '../../vision/useVision';
 import { visionRuntime } from '../../vision/VisionRuntime';
@@ -30,7 +31,7 @@ export function CameraView({ className = '' }: Props) {
   return (
     <section
       aria-label="Камера и распознавание жестов"
-      className={`relative overflow-hidden rounded-[28px] bg-slate-900 shadow-[var(--shadow-card)] ring-1 ring-slate-900/10 ${className}`}
+      className={`relative overflow-hidden rounded-[28px] bg-slate-950 shadow-[var(--shadow-card)] ring-1 ring-slate-900/10 ${className}`}
     >
       <div className="relative aspect-[4/3] w-full">
         <video
@@ -47,14 +48,14 @@ export function CameraView({ className = '' }: Props) {
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/45" />
 
         {/* status pill */}
-        <div className="absolute left-3 top-3 flex items-center gap-2 rounded-full bg-black/45 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-white backdrop-blur">
+        <div className="absolute left-3 top-3 flex items-center gap-2 rounded-full bg-black/70 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.12em] text-white backdrop-blur">
           <span
             className={`h-2 w-2 rounded-full ${live ? 'bg-emerald-400 shadow-[0_0_10px_2px_rgba(52,211,153,0.7)]' : status === 'error' ? 'bg-red-400' : status === 'demo' ? 'bg-fuchsia-400' : 'animate-pulse bg-amber-300'}`}
           />
           {live ? 'Камера активна' : status === 'demo' ? 'Dev demo mode' : status === 'error' ? 'Камера недоступна' : status === 'loading' ? 'Загрузка модели' : 'Подключение камеры'}
         </div>
         {live && (
-          <div className="absolute right-3 top-3 rounded-full bg-black/45 px-2.5 py-1.5 text-[10px] font-bold tracking-wider text-white/80 backdrop-blur" title="Кадров в секунду">
+          <div className="absolute right-3 top-3 rounded-full bg-black/70 px-2.5 py-1.5 text-xs font-bold tracking-wider text-white backdrop-blur" title="Кадров в секунду">
             {engine.fps} FPS
           </div>
         )}
@@ -64,7 +65,7 @@ export function CameraView({ className = '' }: Props) {
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center text-white">
             {status === 'error' ? (
               <>
-                <span className="emoji text-4xl" aria-hidden>📷</span>
+                <CameraOff size={40} strokeWidth={1.6} aria-hidden />
                 <p className="text-base font-bold">{err?.title ?? 'Камера недоступна'}</p>
                 <p className="max-w-xs text-sm text-white/75">{vision.modelError ?? err?.hint}</p>
                 <button
@@ -77,12 +78,12 @@ export function CameraView({ className = '' }: Props) {
               </>
             ) : status === 'demo' ? (
               <>
-                <span className="emoji text-4xl" aria-hidden>🧪</span>
+                <FlaskConical size={40} strokeWidth={1.6} aria-hidden />
                 <p className="hidden text-sm font-semibold text-white/85 sm:block">Камера отключена. Жесты имитируются панелью разработчика.</p>
               </>
             ) : status === 'idle' ? (
               <>
-                <span className="emoji text-4xl" aria-hidden>📷</span>
+                <Camera size={40} strokeWidth={1.6} aria-hidden />
                 <p className="max-w-xs text-sm text-white/80">Для прохождения тестов необходим доступ к камере.</p>
                 <button
                   type="button"

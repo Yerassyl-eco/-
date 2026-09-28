@@ -1,3 +1,4 @@
+import { GestureCue } from '../components/GestureIcon/GestureIcon';
 import type { RuntimeState } from '../vision/VisionRuntime';
 
 function Check({ ok, pending, label, hint }: { ok: boolean; pending?: boolean; label: string; hint: string }) {
@@ -35,7 +36,7 @@ export function CameraSetupPage({ vision }: { vision: RuntimeState }) {
         <Check ok={face} pending={live && !face} label={face ? 'Лицо хорошо видно' : 'Проверяю положение лица'} hint="Сядьте так, чтобы лицо было по центру кадра." />
       </ul>
       <div className="mt-6 flex items-center gap-4 rounded-3xl bg-white p-5 shadow-[var(--shadow-card)] ring-1 ring-line">
-        <span className="emoji animate-float text-4xl" aria-hidden>👍</span>
+        <GestureCue gesture="THUMBS_UP" />
         <p className="text-lg font-bold text-slate-900">
           Всё в порядке? Покажите 👍, чтобы продолжить
         </p>

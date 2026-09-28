@@ -1,3 +1,4 @@
+import { GestureCue } from '../components/GestureIcon/GestureIcon';
 import type { AnyTest } from '../tests';
 
 export function TestIntroPage({ test, replayKey }: { test: AnyTest; replayKey: number }) {
@@ -19,7 +20,7 @@ export function TestIntroPage({ test, replayKey }: { test: AnyTest; replayKey: n
         ))}
       </ol>
       <div className="mt-5 flex items-center gap-4 rounded-3xl bg-white p-5 shadow-[var(--shadow-card)] ring-1 ring-line">
-        <span className="emoji animate-float text-4xl" aria-hidden>👍</span>
+        <GestureCue gesture="THUMBS_UP" />
         <p className="text-lg font-bold text-slate-900">Покажите 👍, чтобы начать тест</p>
       </div>
     </div>

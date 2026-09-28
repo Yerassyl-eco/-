@@ -6,8 +6,8 @@ export type OverlayTone = 'idle' | 'tracking' | 'holding' | 'stable' | 'warning'
 
 const TONES: Record<OverlayTone, { line: string; joint: string; glow: string }> = {
   idle: { line: 'rgba(255,255,255,0.75)', joint: '#ffffff', glow: 'rgba(255,255,255,0.35)' },
-  tracking: { line: 'rgba(125,211,252,0.95)', joint: '#e0f2fe', glow: 'rgba(56,189,248,0.55)' },
-  holding: { line: 'rgba(96,165,250,1)', joint: '#ffffff', glow: 'rgba(59,130,246,0.7)' },
+  tracking: { line: 'rgba(103,232,249,0.95)', joint: '#ecfeff', glow: 'rgba(34,211,238,0.55)' },
+  holding: { line: 'rgba(34,211,238,1)', joint: '#ffffff', glow: 'rgba(8,145,178,0.75)' },
   stable: { line: 'rgba(74,222,128,1)', joint: '#ffffff', glow: 'rgba(34,197,94,0.75)' },
   warning: { line: 'rgba(251,191,36,1)', joint: '#fff7ed', glow: 'rgba(245,158,11,0.6)' },
 };

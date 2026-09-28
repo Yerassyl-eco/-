@@ -1,87 +1,105 @@
-/** Person in front of a laptop camera, with a tracked hand skeleton. Pure SVG. */
-export function HeroIllustration() {
-  // Hand skeleton (thumbs-up-ish pose) in local coordinates.
-  const pts: [number, number][] = [
-    [0, 60], [-14, 44], [-24, 26], [-30, 8], [-32, -12],
-    [-6, 20], [-4, 34], [0, 40], [4, 34],
-    [6, 22], [8, 38], [12, 44], [14, 36],
-    [16, 26], [18, 40], [22, 46], [22, 38],
-    [24, 32], [26, 44], [28, 48], [28, 42],
-  ];
-  const links = [
-    [0, 1], [1, 2], [2, 3], [3, 4], [0, 5], [5, 6], [6, 7], [7, 8], [5, 9], [9, 10], [10, 11], [11, 12],
-    [9, 13], [13, 14], [14, 15], [15, 16], [13, 17], [17, 18], [18, 19], [19, 20], [0, 17],
-  ];
+/**
+ * Hero graphic: a Tumbling E chart (rows shrink like the real test) with a
+ * tracked hand skeleton answering the highlighted symbol. Drawn from the
+ * product's own material instead of generic clip art.
+ */
+type Dir = 'up' | 'down' | 'left' | 'right';
+const ROT: Record<Dir, number> = { right: 0, down: 90, left: 180, up: 270 };
+
+const ROWS: Dir[][] = [
+  ['right'],
+  ['up', 'left'],
+  ['down', 'right', 'up'],
+  ['left', 'down', 'right', 'left'],
+  ['up', 'right', 'down', 'left', 'up'],
+];
+const SIZES = [64, 46, 34, 25, 18];
+
+function E({ x, y, size, dir, color }: { x: number; y: number; size: number; dir: Dir; color: string }) {
   return (
-    <svg viewBox="0 0 420 320" className="h-auto w-full" role="img" aria-label="Иллюстрация: человек перед ноутбуком показывает жест, камера отслеживает руку">
-      <defs>
-        <linearGradient id="hi-screen" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0" stopColor="#3b6cf6" />
-          <stop offset="1" stopColor="#22d3ee" />
-        </linearGradient>
-        <linearGradient id="hi-body" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0" stopColor="#c7d7fe" />
-          <stop offset="1" stopColor="#e0e9ff" />
-        </linearGradient>
-        <filter id="hi-glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="3" result="b" />
-          <feMerge>
-            <feMergeNode in="b" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
+    <path
+      d="M0 0H5V1H1V2H5V3H1V4H5V5H0Z"
+      fill={color}
+      transform={`translate(${x} ${y}) rotate(${ROT[dir]} ${size / 2} ${size / 2}) scale(${size / 5})`}
+    />
+  );
+}
 
-      {/* backdrop */}
-      <circle cx="220" cy="150" r="130" fill="#eef4ff" />
-      <circle cx="220" cy="150" r="96" fill="#e3ecff" />
+// 21 hand landmarks of a hand pointing right (index finger extended).
+const HAND: [number, number][] = [
+  [0, 40], [14, 30], [26, 22], [36, 20], [44, 22],
+  [30, 4], [52, 2], [66, 2], [80, 3],
+  [30, 14], [44, 18], [44, 26], [36, 26],
+  [28, 24], [40, 30], [40, 36], [32, 36],
+  [24, 32], [34, 40], [34, 44], [28, 44],
+];
+const LINKS = [
+  [0, 1], [1, 2], [2, 3], [3, 4], [0, 5], [5, 6], [6, 7], [7, 8], [5, 9], [9, 10], [10, 11], [11, 12],
+  [9, 13], [13, 14], [14, 15], [15, 16], [13, 17], [17, 18], [18, 19], [19, 20], [0, 17],
+];
 
-      {/* person */}
-      <g>
-        <path d="M150 300c0-58 32-92 74-92s74 34 74 92z" fill="url(#hi-body)" />
-        <circle cx="224" cy="150" r="40" fill="#f6d2b8" />
-        <path d="M184 146c0-28 18-44 40-44s42 14 42 42c-10-10-26-16-40-16-18 0-30 8-42 18z" fill="#1f2a44" />
-        <circle cx="210" cy="154" r="3.4" fill="#1f2a44" />
-        <circle cx="238" cy="154" r="3.4" fill="#1f2a44" />
-        <path d="M214 172q10 7 20 0" stroke="#b45f45" strokeWidth="3" fill="none" strokeLinecap="round" />
-        {/* arm */}
-        <path d="M282 250c16-18 26-44 30-74" stroke="#c7d7fe" strokeWidth="26" strokeLinecap="round" fill="none" />
-      </g>
-
-      {/* tracked hand */}
-      <g transform="translate(318 118)">
-        <g className="animate-float">
-        <path d="M-6 58c-16-6-22-26-18-42 2-12 16-10 18 0l2-14c2-8 14-8 14 2 4-6 14-4 14 4 4-4 12-2 12 6l-2 26c-2 16-14 22-40 18z" fill="#f6d2b8" />
-        <rect x="-44" y="-30" width="92" height="104" rx="14" fill="none" stroke="#22d3ee" strokeWidth="2.5" strokeDasharray="14 10" />
-        <g filter="url(#hi-glow)">
-          {links.map(([a, b]) => (
-            <line key={`${a}-${b}`} x1={pts[a][0]} y1={pts[a][1]} x2={pts[b][0]} y2={pts[b][1]} stroke="#3b6cf6" strokeWidth="2.4" strokeLinecap="round" />
+export function HeroIllustration() {
+  const chartW = 300;
+  let y = 34;
+  const rows = ROWS.map((row, r) => {
+    const size = SIZES[r];
+    const gap = size * 0.9;
+    const total = row.length * size + (row.length - 1) * gap;
+    const out = { r, y, size, gap, row, x0: 14 + (chartW - total) / 2 };
+    y += size + 24;
+    return out;
+  });
+  const target = rows[0];
+  const font = 'Manrope Variable, Noto Sans Variable, sans-serif';
+  return (
+    <svg
+      viewBox="0 0 440 360"
+      className="h-auto w-full"
+      role="img"
+      aria-label="Таблица с буквой E разного размера; рука указывает направление разрыва, система распознаёт ответ «вправо»"
+    >
+      <rect x="6" y="6" width="330" height="348" rx="28" fill="#ffffff" stroke="#d5e9ee" />
+      {rows.map(({ r, y: ry, size, gap, row, x0 }) => (
+        <g key={r}>
+          {row.map((d, i) => (
+            <E key={i} x={x0 + i * (size + gap)} y={ry} size={size} dir={d} color="#000000" />
           ))}
-          {pts.map(([x, y], i) => (
-            <circle key={i} cx={x} cy={y} r={i % 4 === 0 ? 3.6 : 2.6} fill="#fff" stroke="#3b6cf6" strokeWidth="1.8" />
-          ))}
-        </g>
-        <g transform="translate(-6 -50)">
-          <rect x="-34" y="-14" width="80" height="26" rx="13" fill="#16a34a" />
-          <text x="6" y="4" textAnchor="middle" fontSize="12" fontWeight="800" fill="#fff" fontFamily="Manrope Variable, sans-serif">
-            ✓ 👍 OK
+          <text x="324" y={ry + size / 2 + 4} textAnchor="end" fontSize="12" fontWeight="700" fill="#8aa3ad" fontFamily={font}>
+            {r + 1}
           </text>
         </g>
+      ))}
+      <rect
+        x={target.x0 - 12}
+        y={target.y - 12}
+        width={target.size + 24}
+        height={target.size + 24}
+        rx="16"
+        fill="none"
+        stroke="#0891b2"
+        strokeWidth="2.5"
+        strokeDasharray="8 6"
+      />
+      <path d={`M${target.x0 + target.size + 16} ${target.y + target.size / 2} H 300`} stroke="#22d3ee" strokeWidth="2" strokeDasharray="3 5" />
+
+      <g transform="translate(318 44)">
+        <g className="animate-float">
+          <g stroke="#0e7490" strokeWidth="2.6" strokeLinecap="round">
+            {LINKS.map(([a, b]) => (
+              <line key={`${a}-${b}`} x1={HAND[a][0]} y1={HAND[a][1]} x2={HAND[b][0]} y2={HAND[b][1]} />
+            ))}
+          </g>
+          {HAND.map(([x, hy], i) => (
+            <circle key={i} cx={x} cy={hy} r={i === 8 ? 4.5 : 3} fill={i === 8 ? '#22d3ee' : '#ffffff'} stroke="#0e7490" strokeWidth="1.8" />
+          ))}
+          <g transform="translate(-10 60)">
+            <rect width="110" height="32" rx="16" fill="#047857" />
+            <text x="55" y="21" textAnchor="middle" fontSize="13" fontWeight="800" fill="#ffffff" fontFamily={font}>
+              ✓ ВПРАВО
+            </text>
+          </g>
         </g>
       </g>
-
-      {/* laptop */}
-      <g>
-        <rect x="40" y="170" width="150" height="100" rx="12" fill="#0f172a" />
-        <rect x="48" y="178" width="134" height="84" rx="7" fill="url(#hi-screen)" />
-        <circle cx="115" cy="174" r="2.5" fill="#22d3ee" />
-        <path d="M78 220s16-20 37-20 37 20 37 20-16 20-37 20-37-20-37-20z" fill="none" stroke="#fff" strokeWidth="4" strokeLinejoin="round" />
-        <circle cx="115" cy="220" r="8" fill="#fff" />
-        <path d="M24 270h182l-10 14H34z" fill="#1e293b" />
-      </g>
-
-      {/* camera beam */}
-      <path d="M115 174 L300 90 L300 200 Z" fill="#22d3ee" opacity="0.08" />
     </svg>
   );
 }

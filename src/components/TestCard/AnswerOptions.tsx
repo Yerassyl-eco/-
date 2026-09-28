@@ -1,4 +1,5 @@
 import { GESTURE_META } from '../../vision/gestureEngine/messages';
+import { GestureIcon } from '../GestureIcon/GestureIcon';
 import type { Gesture } from '../../vision/types';
 import type { AnswerOption } from '../../tests/types';
 
@@ -30,15 +31,18 @@ function OptionCard({ o, selected, confirmed, disabled, onSelect, compact }: { o
           : 'border-line shadow-sm hover:border-accent-200'
       }`}
     >
-      <span className={`emoji flex shrink-0 items-center justify-center rounded-xl bg-slate-50 ${compact ? 'h-9 w-9 text-xl' : 'h-11 w-11 text-2xl'}`} aria-hidden>
-        {meta.emoji}
+      <span
+        className={`flex shrink-0 items-center justify-center rounded-xl shadow-[var(--shadow-inset)] transition-colors ${compact ? 'h-9 w-9' : 'h-11 w-11'} ${selected ? (confirmed ? 'bg-success-500 text-white' : 'bg-accent-500 text-white') : 'bg-slate-50 text-accent-500'}`}
+      >
+        <GestureIcon gesture={o.gesture} size={compact ? 20 : 24} />
       </span>
       <span className="min-w-0">
+        {o.swatch && <span className="mr-2 inline-block h-3.5 w-3.5 rounded-sm align-[-1px] ring-1 ring-black/10" style={{ background: o.swatch }} aria-hidden />}
         {o.glyph && !compact && <span className="mr-1 text-lg font-black text-slate-900">{o.glyph}</span>}
         {compact && o.glyph ? (
           <span className="block text-xl font-black leading-none text-slate-900">{o.glyph}</span>
         ) : null}
-        <span className={`font-bold text-slate-800 ${compact ? 'block text-[11px] leading-tight text-slate-600' : 'text-[15px]'}`}>{o.label}</span>
+        <span className={`font-bold text-slate-800 ${compact ? 'block text-xs leading-tight text-slate-600' : 'text-[15px]'}`}>{o.label}</span>
       </span>
       {selected && (
         <span
@@ -77,8 +81,8 @@ export function AnswerOptions({ options, layout, selected, confirmed, disabled, 
         {card(by('POINT_UP'), true)}
         <span />
         {card(by('POINT_LEFT'), true)}
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 px-1 text-center text-[11px] font-semibold leading-tight text-slate-500">
-          <span className="emoji text-xl" aria-hidden>✊</span>
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 px-1 text-center text-xs font-semibold leading-tight text-slate-500">
+          <GestureIcon gesture="FIST" size={20} className="text-slate-400" />
           подтвердить
         </div>
         {card(by('POINT_RIGHT'), true)}
@@ -90,7 +94,7 @@ export function AnswerOptions({ options, layout, selected, confirmed, disabled, 
   }
 
   return (
-    <div className={`grid gap-3 ${layout === 'triple' ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`} role="group" aria-label="Варианты ответа">
+    <div className={`grid gap-3 ${layout === 'triple' ? 'sm:grid-cols-3' : 'sm:grid-cols-2'} lg:grid-cols-1`} role="group" aria-label="Варианты ответа">
       {layout === 'triple' ? (
         <>
           {card(by('POINT_LEFT'))}

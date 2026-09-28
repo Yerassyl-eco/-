@@ -1,3 +1,4 @@
+import { GestureIcon } from '../components/GestureIcon/GestureIcon';
 import type { AnyTest } from '../tests';
 import type { TestSummary } from '../tests/types';
 import { formatDuration } from '../utils/format';
@@ -15,7 +16,7 @@ export function FinalResultPage({ tests, results, durationMs, onRestart, onHome 
   const attention = results.some((r) => r?.attention);
   return (
     <div className="flex flex-col gap-5">
-      <header className="animate-rise relative overflow-hidden rounded-[28px] bg-gradient-to-br from-accent-600 via-accent-500 to-cyan-500 p-6 text-white shadow-[var(--shadow-float)] sm:p-8">
+      <header className="animate-rise relative overflow-hidden rounded-[28px] bg-accent-700 p-6 text-white shadow-[var(--shadow-float)] sm:p-8">
         <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10" aria-hidden />
         <div className="absolute -bottom-20 right-24 h-40 w-40 rounded-full bg-white/10" aria-hidden />
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/85">Итог</p>
@@ -30,7 +31,7 @@ export function FinalResultPage({ tests, results, durationMs, onRestart, onHome 
       </header>
 
       <ol className="relative grid gap-3" aria-label="Результаты по тестам">
-        <span className="absolute bottom-6 left-[27px] top-6 w-0.5 bg-gradient-to-b from-accent-200 to-cyan-glow/40" aria-hidden />
+        <span className="absolute bottom-6 left-[27px] top-6 w-0.5 bg-accent-200" aria-hidden />
         {tests.map((t, i) => {
           const r = results[i];
           return (
@@ -76,7 +77,7 @@ export function FinalResultPage({ tests, results, durationMs, onRestart, onHome 
 
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex flex-1 items-center gap-3 rounded-2xl bg-white p-4 ring-1 ring-line">
-          <span className="emoji text-3xl" aria-hidden>✋</span>
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-500"><GestureIcon gesture="OPEN_PALM" size={24} /></span>
           <p className="font-bold text-slate-800">Покажите открытую ладонь, чтобы пройти скрининг ещё раз</p>
         </div>
         <button type="button" onClick={onRestart} className="rounded-full bg-accent-500 px-5 py-3 font-bold text-white shadow-[var(--shadow-float)] transition hover:bg-accent-600">

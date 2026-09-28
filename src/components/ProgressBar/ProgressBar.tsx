@@ -11,7 +11,7 @@ export function ProgressBar({ current, done }: { current: number; done: number }
           return (
             <li key={label} className="flex min-w-0 flex-1 items-center gap-1.5 sm:gap-2" aria-current={isCurrent ? 'step' : undefined}>
               <span
-                className={`flex h-7 shrink-0 items-center justify-center rounded-full px-2 text-[11px] font-extrabold tracking-wide transition-all duration-500 sm:h-8 sm:px-3 sm:text-xs ${
+                className={`flex h-7 shrink-0 items-center justify-center rounded-full px-2 text-xs font-extrabold tracking-wide transition-all duration-500 sm:h-8 sm:px-3 sm:text-xs ${
                   isCurrent
                     ? 'bg-accent-500 text-white shadow-[var(--shadow-float)]'
                     : isDone

@@ -9,6 +9,8 @@ export interface AnswerOption {
   label: string;
   /** Optional small visual shown inside the option chip. */
   glyph?: string;
+  /** Optional colour swatch (in addition to the text label). */
+  swatch?: string;
 }
 
 export interface AnswerRecord {

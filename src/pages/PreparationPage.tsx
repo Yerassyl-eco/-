@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ComponentType } from 'react';
+import { ClipboardList, Eye, Hand, Ruler, Sun, type LucideProps } from 'lucide-react';
+import { GestureCue } from '../components/GestureIcon/GestureIcon';
 import type { FaceStatus } from '../vision/types';
 
-const STEPS = [
-  { icon: '📏', text: 'Сядьте или встаньте на комфортном расстоянии от экрана — примерно на вытянутую руку (50–70 см).' },
-  { icon: '💡', text: 'Убедитесь, что лицо хорошо освещено и видно в камере.' },
-  { icon: '👀', text: 'Смотрите прямо на экран. Если носите очки для дали — оставайтесь в них.' },
-  { icon: '📋', text: 'Следуйте инструкциям каждого теста.' },
-  { icon: '🖐', text: 'Отвечайте жестами: 👈 👉 ☝️ 👇 — выбрать, ✊ — подтвердить, ✋ — отменить.' },
+const STEPS: { icon: ComponentType<LucideProps>; text: string }[] = [
+  { icon: Ruler, text: 'Сядьте или встаньте на комфортном расстоянии от экрана — примерно на вытянутую руку (50–70 см).' },
+  { icon: Sun, text: 'Убедитесь, что лицо хорошо освещено и видно в камере.' },
+  { icon: Eye, text: 'Смотрите прямо на экран. Если носите очки для дали — оставайтесь в них.' },
+  { icon: ClipboardList, text: 'Следуйте инструкциям каждого теста.' },
+  { icon: Hand, text: 'Отвечайте жестами: указательным пальцем выберите ответ, кулаком подтвердите, открытой ладонью отмените.' },
 ];
 
 const FACE_TEXT: Record<FaceStatus, string> = {
@@ -43,9 +45,11 @@ export function PreparationPage({ replayKey, face }: { replayKey: number; face: 
             key={`${replayKey}-${i}`}
             className={`flex items-start gap-4 rounded-2xl bg-white p-4 ring-1 transition-all duration-500 ${i < active ? 'opacity-100 ring-line' : 'translate-y-1 opacity-40 ring-transparent'}`}
           >
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-sm font-extrabold text-accent-600">{i + 1}</span>
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-500 shadow-[var(--shadow-inset)]">
+              <s.icon size={18} aria-hidden />
+            </span>
             <p className="pt-1.5 text-[15px] font-semibold leading-snug text-slate-800">
-              <span className="emoji mr-1.5" aria-hidden>{s.icon}</span>
+              <span className="sr-only">Шаг {i + 1}. </span>
               {s.text}
             </p>
           </li>
@@ -54,11 +58,11 @@ export function PreparationPage({ replayKey, face }: { replayKey: number; face: 
       <p className={`mt-4 flex items-center gap-2 text-sm font-semibold ${face === 'ok' ? 'text-success-700' : 'text-warning-700'}`} role="status">
         <span aria-hidden>{face === 'ok' ? '✓' : '⚠'}</span> {FACE_TEXT[face]}
       </p>
-      <div className="mt-5 flex items-center gap-4 rounded-3xl bg-gradient-to-r from-accent-500 to-cyan-500 p-5 text-white shadow-[var(--shadow-float)]">
-        <span className="emoji animate-float text-4xl" aria-hidden>👍</span>
+      <div className="mt-5 flex items-center gap-4 rounded-3xl bg-accent-500 p-5 text-white shadow-[var(--shadow-float)]">
+        <GestureCue gesture="THUMBS_UP" tone="solid" />
         <div>
           <p className="text-xl font-extrabold">Готовы начать?</p>
-          <p className="text-sm font-medium text-white/85">Покажите 👍 — начнётся первый тест. ✋ — повторить инструкцию.</p>
+          <p className="text-sm font-medium text-white/85">Покажите «палец вверх», чтобы начать первый тест. Открытая ладонь повторит инструкцию.</p>
         </div>
       </div>
     </div>

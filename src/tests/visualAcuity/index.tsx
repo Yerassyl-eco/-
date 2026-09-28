@@ -39,15 +39,19 @@ function randomDirections(n: number): Direction[] {
 }
 
 /** Tumbling E: a 5×5 grid "E" whose open side faces `direction`. */
-export function TumblingE({ size, direction, color = 'currentColor' }: { size: number; direction: Direction; color?: string }) {
+export function TumblingE({ size, direction, color = '#000000' }: { size: number; direction: Direction; color?: string }) {
   return (
     <svg
-      width={size}
-      height={size}
       viewBox="0 0 5 5"
       role="img"
       aria-label={`Символ E, разрыв ${DIRECTION_TEXT[direction]}`}
-      style={{ transform: `rotate(${ROTATION[direction]}deg)`, shapeRendering: 'crispEdges' }}
+      style={{
+        // Scales down proportionally on narrow screens so level ratios stay intact.
+        width: `min(${size}px, ${(size * 0.17).toFixed(2)}vw)`,
+        height: `min(${size}px, ${(size * 0.17).toFixed(2)}vw)`,
+        transform: `rotate(${ROTATION[direction]}deg)`,
+        shapeRendering: 'crispEdges',
+      }}
     >
       <path d="M0 0H5V1H1V2H5V3H1V4H5V5H0Z" fill={color} />
     </svg>
@@ -67,7 +71,7 @@ function Stimulus({ trial }: StimulusProps<AcuityTrial>) {
       <div className="absolute left-4 top-4 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
         Уровень {trial.level} / {ACUITY_SIZES.length}
       </div>
-      <div key={`${trial.level}`} className="animate-pop-in text-slate-950" style={{ maxWidth: '72%', maxHeight: '72%' }}>
+      <div key={`${trial.level}`} className="animate-pop-in" style={{ maxWidth: '72%', maxHeight: '72%' }}>
         <TumblingE size={trial.size} direction={trial.direction} />
       </div>
     </div>
