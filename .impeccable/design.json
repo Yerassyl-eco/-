@@ -1,0 +1,486 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-28T13:10:15+00:00",
+  "title": "Design System: Vision Motion",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Lab Paper",
+        "canonical": "#f5f4f0",
+        "oklch": "oklch(96.7% 0.005 95)",
+        "cssVar": "--color-paper",
+        "tonalRamp": [
+          "oklch(15% 0.005 95)",
+          "oklch(25% 0.005 95)",
+          "oklch(38% 0.005 95)",
+          "oklch(50% 0.005 95)",
+          "oklch(62% 0.005 95)",
+          "oklch(74% 0.005 95)",
+          "oklch(86% 0.005 95)",
+          "oklch(95% 0.005 95)"
+        ]
+      },
+      "field": {
+        "role": "neutral",
+        "displayName": "Stimulus White",
+        "canonical": "#ffffff",
+        "oklch": "oklch(100.0% 0.000 90)",
+        "cssVar": "--color-field",
+        "tonalRamp": [
+          "oklch(15% 0.000 90)",
+          "oklch(25% 0.000 90)",
+          "oklch(38% 0.000 90)",
+          "oklch(50% 0.000 90)",
+          "oklch(62% 0.000 90)",
+          "oklch(74% 0.000 90)",
+          "oklch(86% 0.000 90)",
+          "oklch(95% 0.000 90)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#111111",
+        "oklch": "oklch(17.8% 0.000 90)",
+        "cssVar": "--color-ink",
+        "tonalRamp": [
+          "oklch(15% 0.000 90)",
+          "oklch(25% 0.000 90)",
+          "oklch(38% 0.000 90)",
+          "oklch(50% 0.000 90)",
+          "oklch(62% 0.000 90)",
+          "oklch(74% 0.000 90)",
+          "oklch(86% 0.000 90)",
+          "oklch(95% 0.000 90)"
+        ]
+      },
+      "graphite": {
+        "role": "neutral",
+        "displayName": "Graphite",
+        "canonical": "#6f6f6a",
+        "oklch": "oklch(54.0% 0.008 107)",
+        "cssVar": "--color-graphite",
+        "tonalRamp": [
+          "oklch(15% 0.008 107)",
+          "oklch(25% 0.008 107)",
+          "oklch(38% 0.008 107)",
+          "oklch(50% 0.008 107)",
+          "oklch(62% 0.008 107)",
+          "oklch(74% 0.008 107)",
+          "oklch(86% 0.008 107)",
+          "oklch(95% 0.008 107)"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#d9d8d2",
+        "oklch": "oklch(88.1% 0.008 99)",
+        "cssVar": "--color-rule",
+        "tonalRamp": [
+          "oklch(15% 0.008 99)",
+          "oklch(25% 0.008 99)",
+          "oklch(38% 0.008 99)",
+          "oklch(50% 0.008 99)",
+          "oklch(62% 0.008 99)",
+          "oklch(74% 0.008 99)",
+          "oklch(86% 0.008 99)",
+          "oklch(95% 0.008 99)"
+        ]
+      },
+      "rule-strong": {
+        "role": "neutral",
+        "displayName": "Strong Hairline",
+        "canonical": "#b9b8b1",
+        "oklch": "oklch(78.1% 0.010 100)",
+        "cssVar": "--color-rule-strong",
+        "tonalRamp": [
+          "oklch(15% 0.010 100)",
+          "oklch(25% 0.010 100)",
+          "oklch(38% 0.010 100)",
+          "oklch(50% 0.010 100)",
+          "oklch(62% 0.010 100)",
+          "oklch(74% 0.010 100)",
+          "oklch(86% 0.010 100)",
+          "oklch(95% 0.010 100)"
+        ]
+      },
+      "cobalt": {
+        "role": "primary",
+        "displayName": "Signal Cobalt",
+        "canonical": "#2457ff",
+        "oklch": "oklch(54.2% 0.253 265)",
+        "cssVar": "--color-cobalt",
+        "tonalRamp": [
+          "oklch(15% 0.200 265)",
+          "oklch(25% 0.200 265)",
+          "oklch(38% 0.200 265)",
+          "oklch(50% 0.200 265)",
+          "oklch(62% 0.200 265)",
+          "oklch(74% 0.200 265)",
+          "oklch(86% 0.200 265)",
+          "oklch(95% 0.200 265)"
+        ]
+      },
+      "cobalt-wash": {
+        "role": "primary",
+        "displayName": "Cobalt Wash",
+        "canonical": "#e7ecfb",
+        "oklch": "oklch(94.4% 0.021 271)",
+        "cssVar": "--color-cobalt-wash",
+        "tonalRamp": [
+          "oklch(15% 0.021 271)",
+          "oklch(25% 0.021 271)",
+          "oklch(38% 0.021 271)",
+          "oklch(50% 0.021 271)",
+          "oklch(62% 0.021 271)",
+          "oklch(74% 0.021 271)",
+          "oklch(86% 0.021 271)",
+          "oklch(95% 0.021 271)"
+        ]
+      },
+      "amber": {
+        "role": "secondary",
+        "displayName": "Adjust Amber",
+        "canonical": "#8a5300",
+        "oklch": "oklch(49.4% 0.109 67)",
+        "cssVar": "--color-amber",
+        "tonalRamp": [
+          "oklch(15% 0.109 67)",
+          "oklch(25% 0.109 67)",
+          "oklch(38% 0.109 67)",
+          "oklch(50% 0.109 67)",
+          "oklch(62% 0.109 67)",
+          "oklch(74% 0.109 67)",
+          "oklch(86% 0.109 67)",
+          "oklch(95% 0.109 67)"
+        ]
+      },
+      "amber-line": {
+        "role": "secondary",
+        "displayName": "Amber Line",
+        "canonical": "#e08a00",
+        "oklch": "oklch(70.7% 0.156 67)",
+        "cssVar": "--color-amber-line",
+        "tonalRamp": [
+          "oklch(15% 0.156 67)",
+          "oklch(25% 0.156 67)",
+          "oklch(38% 0.156 67)",
+          "oklch(50% 0.156 67)",
+          "oklch(62% 0.156 67)",
+          "oklch(74% 0.156 67)",
+          "oklch(86% 0.156 67)",
+          "oklch(95% 0.156 67)"
+        ]
+      },
+      "scope": {
+        "role": "neutral",
+        "displayName": "Scope Black",
+        "canonical": "#121212",
+        "oklch": "oklch(18.2% 0.000 90)",
+        "cssVar": "--color-scope",
+        "tonalRamp": [
+          "oklch(15% 0.000 90)",
+          "oklch(25% 0.000 90)",
+          "oklch(38% 0.000 90)",
+          "oklch(50% 0.000 90)",
+          "oklch(62% 0.000 90)",
+          "oklch(74% 0.000 90)",
+          "oklch(86% 0.000 90)",
+          "oklch(95% 0.000 90)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "First heading on welcome, calibration and preparation; 34px below 640px."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Protocol titles inside the Protocol Header; 30px below 640px."
+      },
+      "statement": {
+        "displayName": "Statement",
+        "purpose": "One-sentence per-test result, max 30ch; 26px below 640px."
+      },
+      "readout": {
+        "displayName": "Readout",
+        "purpose": "Live gesture name in the instrument; 20px below 1024px."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Primary gesture-cue action; report test names."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Instruction and report prose, 46-62ch."
+      },
+      "body-sm": {
+        "displayName": "Body small",
+        "purpose": "Most-used size: secondary cues, answer cells, subtitles, hints."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Log rows (14px), vocabulary actions and footnotes (13px)."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Tracked uppercase sans: instrument rows, table headers, section headings, state words. Utility class .label."
+      },
+      "wordmark": {
+        "displayName": "Wordmark",
+        "purpose": "VISION MOTION in the session bar only."
+      },
+      "numeral": {
+        "displayName": "Numeral",
+        "purpose": "Geist Mono tabular for counters, timecodes, confidence, latency, codes. Utility class .num."
+      }
+    },
+    "shadows": [],
+    "borders": [
+      {
+        "name": "hairline",
+        "value": "1px solid var(--color-rule)",
+        "purpose": "Every divider, row rule, frame and resting cell border."
+      },
+      {
+        "name": "section-open",
+        "value": "1px solid var(--color-ink)",
+        "purpose": "Opens a major block (cue list, summary, Important, Next); top rule of the mobile response bar."
+      },
+      {
+        "name": "signal-edge",
+        "value": "2px solid var(--color-amber-line)",
+        "purpose": "Leading edge of the Error Mode band; strong hairline for info-level signals."
+      },
+      {
+        "name": "focus-ring",
+        "value": "outline: 2px solid var(--color-cobalt); outline-offset: 2px",
+        "purpose": "Global :focus-visible."
+      },
+      {
+        "name": "crop-mark",
+        "value": "12px L-bracket, 1px currentColor, offset -1px",
+        "purpose": "Corners of the stimulus field and camera scope only."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Easing for enter and draw-x."
+      },
+      {
+        "name": "enter",
+        "value": "220ms ease-out-expo, opacity 0 + translateY(6px) to rest",
+        "purpose": "New pages, log rows, gesture readout and signal changes."
+      },
+      {
+        "name": "fade",
+        "value": "200ms ease-out, opacity",
+        "purpose": "Plain fades."
+      },
+      {
+        "name": "draw-x",
+        "value": "260ms ease-out-expo, scaleX 0 to 1 from left",
+        "purpose": "Current-step underline in the session bar."
+      },
+      {
+        "name": "hold-fill",
+        "value": "transform 90ms linear",
+        "purpose": "Cobalt hold baselines tracking gesture hold progress."
+      },
+      {
+        "name": "state-color",
+        "value": "150ms (200ms session steps, 300ms connectors)",
+        "purpose": "Border, fill and colour state changes."
+      },
+      {
+        "name": "scan",
+        "value": "1.4s linear infinite, translateX -100% to 300%",
+        "purpose": "Camera/model loading bar on the scope."
+      },
+      {
+        "name": "blink",
+        "value": "1.6s steps(2, jump-none) infinite, opacity 1 to 0.25",
+        "purpose": "Only the header TRACKING dot and the awaiting-response dot in the session log."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "all animation and transition durations 0.01ms, one iteration",
+        "purpose": "prefers-reduced-motion: reduce."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      },
+      {
+        "name": "container",
+        "value": "1440px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Gesture Cue (primary)",
+      "kind": "button",
+      "refersTo": "gesture-cue-primary",
+      "description": "Signature action row triggered by holding a gesture; cobalt baseline fills with hold progress.",
+      "html": "<div class=\"ds-cue-wrap\"><button class=\"ds-cue ds-cue--primary\" type=\"button\"><span class=\"ds-cue-glyph\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M7 10v12\"/><path d=\"M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z\"/></svg></span><span class=\"ds-cue-text\"><span class=\"ds-cue-action\">Начать скрининг</span><span class=\"ds-cue-label\">THUMBS UP</span></span><span class=\"ds-cue-hold\">62%</span><span class=\"ds-cue-fill\" style=\"transform:scaleX(.62)\"></span></button></div>",
+      "css": ".ds-cue-wrap{border-top:1px solid var(--color-ink);font-family:'Geist Variable',Geist,system-ui,sans-serif} .ds-cue{position:relative;display:flex;width:100%;align-items:center;gap:16px;padding:14px 0;background:none;border:0;text-align:left;color:var(--color-ink);font:inherit;cursor:pointer;box-shadow:inset 0 -1px 0 var(--color-rule)} .ds-cue-glyph{display:flex;width:40px;height:40px;flex-shrink:0;align-items:center;justify-content:center;border:1px solid var(--color-ink);border-radius:2px;transition:background-color 150ms,color 150ms,border-color 150ms} .ds-cue:hover .ds-cue-glyph{background:var(--color-ink);color:var(--color-paper)} .ds-cue:focus-visible{outline:2px solid var(--color-cobalt);outline-offset:2px} .ds-cue-text{flex:1;min-width:0} .ds-cue-action{display:block;font-size:17px;font-weight:500;line-height:1.25} .ds-cue-label,.ds-cue-hold{display:block;margin-top:2px;font-size:12px;line-height:16px;font-weight:560;letter-spacing:.1em;text-transform:uppercase;color:var(--color-graphite)} .ds-cue-hold{font-family:'Geist Mono Variable','Geist Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;letter-spacing:0} .ds-cue-fill{position:absolute;left:0;bottom:0;width:100%;height:2px;background:var(--color-cobalt);transform-origin:left;transition:transform 90ms linear}"
+    },
+    {
+      "name": "Gesture Cue (active)",
+      "kind": "button",
+      "refersTo": "gesture-cue-glyph-active",
+      "description": "Secondary cue while its gesture is in view: glyph box fills cobalt.",
+      "html": "<button class=\"ds-cue2\" type=\"button\"><span class=\"ds-cue2-glyph\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2\"/><path d=\"M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v2\"/><path d=\"M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8\"/><path d=\"M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15\"/></svg></span><span class=\"ds-cue2-text\"><span class=\"ds-cue2-action\">Отменить выбор</span><span class=\"ds-cue2-label\">OPEN PALM</span></span><span class=\"ds-cue2-hold\">40%</span><span class=\"ds-cue2-fill\"></span></button>",
+      "css": ".ds-cue2{position:relative;display:flex;width:100%;align-items:center;gap:16px;padding:14px 0;background:none;border:0;text-align:left;color:var(--color-ink);font-family:'Geist Variable',Geist,system-ui,sans-serif;cursor:pointer;box-shadow:inset 0 -1px 0 var(--color-rule)} .ds-cue2-glyph{display:flex;width:40px;height:40px;align-items:center;justify-content:center;border:1px solid var(--color-cobalt);background:var(--color-cobalt);color:#fff;border-radius:2px} .ds-cue2:focus-visible{outline:2px solid var(--color-cobalt);outline-offset:2px} .ds-cue2-text{flex:1} .ds-cue2-action{display:block;font-size:15px;line-height:1.25} .ds-cue2-label,.ds-cue2-hold{display:block;margin-top:2px;font-size:12px;line-height:16px;font-weight:560;letter-spacing:.1em;text-transform:uppercase;color:var(--color-graphite)} .ds-cue2-hold{font-family:'Geist Mono Variable',ui-monospace,monospace;letter-spacing:0} .ds-cue2-fill{position:absolute;left:0;bottom:0;width:100%;height:2px;background:var(--color-cobalt);transform:scaleX(.4);transform-origin:left}"
+    },
+    {
+      "name": "Response Cell",
+      "kind": "button",
+      "refersTo": "response-cell",
+      "description": "Answer option with the gesture that selects it; idle, selected, confirmed.",
+      "html": "<div class=\"ds-resp\"><button class=\"ds-cell\" type=\"button\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"transform:rotate(-90deg)\"><path d=\"M22 14a8 8 0 0 1-8 8\"/><path d=\"M18 11v-1a2 2 0 0 0-2-2a2 2 0 0 0-2 2\"/><path d=\"M14 10V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1\"/><path d=\"M10 9.5V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v10\"/><path d=\"M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15\"/></svg><span class=\"ds-cell-l\">Влево</span></button><button class=\"ds-cell ds-cell--sel\" type=\"button\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"transform:rotate(0deg)\"><path d=\"M22 14a8 8 0 0 1-8 8\"/><path d=\"M18 11v-1a2 2 0 0 0-2-2a2 2 0 0 0-2 2\"/><path d=\"M14 10V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1\"/><path d=\"M10 9.5V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v10\"/><path d=\"M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15\"/></svg><span class=\"ds-cell-l\">Вверх</span><span class=\"ds-cell-tag\">ВЫБРАНО</span></button><button class=\"ds-cell ds-cell--ok\" type=\"button\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"transform:rotate(90deg)\"><path d=\"M22 14a8 8 0 0 1-8 8\"/><path d=\"M18 11v-1a2 2 0 0 0-2-2a2 2 0 0 0-2 2\"/><path d=\"M14 10V9a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1\"/><path d=\"M10 9.5V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v10\"/><path d=\"M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15\"/></svg><span class=\"ds-cell-l\">Вправо</span><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20 6 9 17l-5-5\"/></svg></button></div>",
+      "css": ".ds-resp{display:grid;gap:6px;font-family:'Geist Variable',Geist,system-ui,sans-serif} .ds-cell{position:relative;display:flex;align-items:center;gap:12px;min-height:56px;padding:12px 14px;border:1px solid var(--color-rule);border-radius:2px;background:transparent;color:var(--color-ink);font:inherit;font-size:15px;text-align:left;cursor:pointer;transition:border-color 150ms,background-color 150ms,color 150ms} .ds-cell:hover{border-color:var(--color-ink)} .ds-cell:focus-visible{outline:2px solid var(--color-cobalt);outline-offset:2px} .ds-cell--sel{border-color:var(--color-cobalt);background:var(--color-cobalt-wash);color:var(--color-cobalt)} .ds-cell--ok{border-color:var(--color-cobalt);background:var(--color-cobalt);color:#fff} .ds-cell-tag{font-size:12px;font-weight:560;letter-spacing:.1em} .ds-cell-l{flex:1}"
+    },
+    {
+      "name": "Confirm / Cancel Pair",
+      "kind": "button",
+      "refersTo": "confirm-button",
+      "description": "Mobile response bar confirm (ink fill) and cancel (hairline) buttons.",
+      "html": "<div class=\"ds-pair\"><button class=\"ds-confirm\" type=\"button\">Подтвердить<span class=\"ds-confirm-fill\"></span></button><button class=\"ds-cancel\" type=\"button\">Отмена</button></div>",
+      "css": ".ds-pair{display:grid;grid-template-columns:2fr 1fr;gap:6px;font-family:'Geist Variable',Geist,system-ui,sans-serif} .ds-confirm,.ds-cancel{position:relative;min-height:44px;border-radius:2px;font:inherit;font-size:14px;cursor:pointer} .ds-confirm{background:var(--color-ink);color:var(--color-paper);border:1px solid var(--color-ink)} .ds-cancel{background:transparent;color:var(--color-ink);border:1px solid var(--color-rule)} .ds-cancel:hover{border-color:var(--color-ink)} .ds-confirm:focus-visible,.ds-cancel:focus-visible{outline:2px solid var(--color-cobalt);outline-offset:2px} .ds-confirm-fill{position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--color-cobalt);transform:scaleX(.5);transform-origin:left}"
+    },
+    {
+      "name": "Session Bar Progression",
+      "kind": "nav",
+      "refersTo": "session-bar",
+      "description": "01-05 step progression: done connectors fill ink, current step cobalt with underline.",
+      "html": "<nav class=\"ds-steps\"><span class=\"ds-steps-phase\">TEST</span><span class=\"ds-step ds-step--done\">01</span><span class=\"ds-conn ds-conn--done\"></span><span class=\"ds-step ds-step--cur\">02</span><span class=\"ds-conn\"></span><span class=\"ds-step\">03</span><span class=\"ds-conn\"></span><span class=\"ds-step\">04</span><span class=\"ds-conn\"></span><span class=\"ds-step\">05</span></nav>",
+      "css": ".ds-steps{display:flex;align-items:center;gap:8px;padding:14px 0;border-bottom:1px solid var(--color-rule);background:var(--color-paper)} .ds-steps-phase{margin-right:8px;font-family:'Geist Variable',Geist,sans-serif;font-size:12px;font-weight:560;letter-spacing:.1em;color:var(--color-graphite)} .ds-step{position:relative;font-family:'Geist Mono Variable',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:12px;color:var(--color-graphite)} .ds-step--done{color:var(--color-ink)} .ds-step--cur{color:var(--color-cobalt);font-weight:600} .ds-step--cur::after{content:'';position:absolute;left:0;right:0;bottom:-6px;height:2px;background:var(--color-cobalt)} .ds-conn{flex:1;height:1px;background:var(--color-rule)} .ds-conn--done{background:var(--color-ink)}"
+    },
+    {
+      "name": "Telemetry Row",
+      "kind": "custom",
+      "refersTo": "instrument",
+      "description": "Instrument readout row: label, solid status dot, mono value, hairline below.",
+      "html": "<dl class=\"ds-tel\"><div class=\"ds-tel-row\"><dt>HAND</dt><dd><i class=\"ds-dot ds-dot--live\"></i>DETECTED</dd></div><div class=\"ds-tel-row\"><dt>FACE</dt><dd class=\"ds-warn\"><i class=\"ds-dot ds-dot--warn\"></i>TOO LOW</dd></div></dl>",
+      "css": ".ds-tel{margin:0} .ds-tel-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:8px 0;border-bottom:1px solid var(--color-rule)} .ds-tel-row dt{font-family:'Geist Variable',sans-serif;font-size:12px;line-height:16px;font-weight:560;letter-spacing:.1em;color:var(--color-graphite)} .ds-tel-row dd{margin:0;display:flex;align-items:center;gap:8px;font-family:'Geist Mono Variable',ui-monospace,monospace;font-size:13px;color:var(--color-ink)} .ds-warn{color:var(--color-amber)!important} .ds-dot{display:inline-block;width:6px;height:6px;border-radius:9999px;background:var(--color-rule-strong)} .ds-dot--live{background:var(--color-cobalt)} .ds-dot--warn{background:var(--color-amber-line)}"
+    },
+    {
+      "name": "Error Mode Band",
+      "kind": "custom",
+      "refersTo": "error-band",
+      "description": "SIGNAL readout over the scope: amber edge, category, title, concrete fix.",
+      "html": "<div class=\"ds-scope\"><div class=\"ds-band\"><div class=\"ds-band-head\"><span class=\"ds-band-cat\"><svg width=\"13\" height=\"13\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/><path d=\"M12 9v4\"/><path d=\"M12 17h.01\"/></svg>HAND</span><span class=\"ds-band-cat\"><i class=\"ds-band-dot\"></i>LIVE</span></div><p class=\"ds-band-title\">Рука у нижнего края кадра</p><p class=\"ds-band-hint\">Поднимите руку чуть выше, к центру кадра.</p></div></div>",
+      "css": ".ds-scope{position:relative;aspect-ratio:4/3;max-width:360px;background:var(--color-scope);font-family:'Geist Variable',Geist,sans-serif} .ds-band{position:absolute;left:0;right:0;bottom:0;padding:12px 16px;background:color-mix(in srgb,var(--color-paper) 95%,transparent);border-top:2px solid var(--color-amber-line)} .ds-band-head{display:flex;justify-content:space-between;font-size:12px;line-height:16px;font-weight:560;letter-spacing:.1em;color:var(--color-amber)} .ds-band-title{margin:6px 0 0;font-size:15px;font-weight:500;line-height:1.375;color:var(--color-ink)} .ds-band-hint{margin:2px 0 0;font-size:14px;line-height:1.375;color:var(--color-graphite)} .ds-band-cat{display:inline-flex;align-items:center;gap:6px} .ds-band-dot{display:inline-block;width:6px;height:6px;border-radius:9999px;background:var(--color-amber-line)}"
+    },
+    {
+      "name": "Stimulus Field",
+      "kind": "card",
+      "refersTo": "stimulus-field",
+      "description": "White measurement ground with hairline frame, crop marks, mono corner tags, cobalt observation rule.",
+      "html": "<figure class=\"ds-field\"><i class=\"ds-cm ds-tl\"></i><i class=\"ds-cm ds-tr\"></i><i class=\"ds-cm ds-bl\"></i><i class=\"ds-cm ds-br\"></i><span class=\"ds-prog\"></span><figcaption><span>LEVEL 01 / 10</span><span>200 PX</span></figcaption><div class=\"ds-opt\">E</div></figure>",
+      "css": ".ds-field{position:relative;margin:0;min-height:240px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-rule);background:var(--color-field);color:var(--color-ink)} .ds-cm{position:absolute;width:12px;height:12px;border-color:currentColor} .ds-tl{top:-1px;left:-1px;border-top:1px solid;border-left:1px solid} .ds-tr{top:-1px;right:-1px;border-top:1px solid;border-right:1px solid} .ds-bl{bottom:-1px;left:-1px;border-bottom:1px solid;border-left:1px solid} .ds-br{bottom:-1px;right:-1px;border-bottom:1px solid;border-right:1px solid} .ds-prog{position:absolute;top:0;left:0;height:2px;width:40%;background:var(--color-cobalt)} .ds-field figcaption{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;padding:12px} .ds-field figcaption span{padding:2px 6px;border-radius:2px;background:rgba(255,255,255,.85);font-family:'Geist Mono Variable',ui-monospace,monospace;font-size:12px;color:var(--color-graphite)} .ds-opt{font:700 96px/1 sans-serif;color:#000}"
+    },
+    {
+      "name": "Status Token",
+      "kind": "chip",
+      "refersTo": "status-token",
+      "description": "Screening status: text plus shape-distinct mark, never colour alone.",
+      "html": "<span class=\"ds-tok ds-tok--rev\"><i></i>REVIEW</span> <span class=\"ds-tok\"><i></i>WITHIN SCREENING RANGE</span>",
+      "css": ".ds-tok{display:inline-flex;align-items:center;gap:6px;font-family:'Geist Variable',sans-serif;font-size:12px;line-height:16px;font-weight:560;letter-spacing:.1em;color:var(--color-ink)} .ds-tok i{width:6px;height:6px;border:1px solid var(--color-ink);border-radius:9999px;box-sizing:border-box} .ds-tok--rev{color:var(--color-amber)} .ds-tok--rev i{border:0;border-radius:0;background:var(--color-amber-line)}"
+    },
+    {
+      "name": "Text Link",
+      "kind": "button",
+      "refersTo": "text-link",
+      "description": "Secondary navigation: graphite, strong-hairline underline, ink on hover.",
+      "html": "<button class=\"ds-link\" type=\"button\">Вернуться к началу</button>",
+      "css": ".ds-link{min-height:44px;background:none;border:0;padding:0;font-family:'Geist Variable',sans-serif;font-size:15px;color:var(--color-graphite);text-decoration:underline;text-decoration-color:var(--color-rule-strong);text-underline-offset:4px;cursor:pointer;transition:color 150ms} .ds-link:hover{color:var(--color-ink)} .ds-link:focus-visible{outline:2px solid var(--color-cobalt);outline-offset:2px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Lab Session",
+    "overview": "The screen is a psychophysics experiment runner, not a health app. Each surface is one bench station: a protocol, a stimulus field, a camera that works as a measuring instrument, and a time-coded response log. The page is warm off-white paper ruled with 1px hairlines. There are no cards, no hero and no dashboard tiles. Structure comes from the 12-column grid, ink rules that open each section, and the tracked uppercase labels you would find on a lab datasheet.\n\nDensity is calm but technical. Big, plain Geist headings carry the human instruction in Russian. Short English technical labels (CAM 01, TRACKING, SESSION LOG) and Geist Mono numerals carry the instrument voice. Colour is nearly absent. Cobalt shows up only when the system is sensing something or the user is acting, and amber only when the user needs to adjust. So one glance at a screen recording tells you what the machine is doing right now.\n\nThe only ornament is the lab's own equipment: crop marks on frame corners, the graticule and centre reticle on the camera scope, and fixation crosses. Every gesture-driven control shares one signature. A 2px cobalt baseline fills from the left while the user holds the gesture.",
+    "keyCharacteristics": [
+      "Paper ground, ink text, graphite secondary text, 1px hairline rules. Flat throughout.",
+      "Cobalt is reserved for live signal, hold progress, the current step, selection and focus.",
+      "Amber means adjust (Error Mode, review status). It never means alarm.",
+      "The dark scope and the white stimulus field are the only two surfaces that differ from paper.",
+      "Tracked uppercase sans labels, mono tabular numerals, medium-weight headings.",
+      "Corners are 0 or 2px. Only 6px status dots are round."
+    ],
+    "rules": [
+      {
+        "name": "The Live Signal Rule",
+        "body": "Cobalt means the system is sensing or the user is acting right now. Never use it for decoration, section headings or static emphasis. If nothing is live, the screen shows no cobalt apart from the current step number.",
+        "section": "colors"
+      },
+      {
+        "name": "The Amber Means Adjust Rule",
+        "body": "Amber marks something the user can correct or should review. Always pair it with words and a mark (triangle glyph, square dot). Never pair it with alarm wording.",
+        "section": "colors"
+      },
+      {
+        "name": "The Clinical Ground Rule",
+        "body": "Stimulus colours (duochrome red and green, colour-plate palettes, pure black optotypes) are test material, not palette. They live only inside the stimulus field. Never reuse them in UI chrome, and never let UI tokens tint a stimulus.",
+        "section": "colors"
+      },
+      {
+        "name": "The Mono Is For Measurement Rule",
+        "body": "Geist Mono shows numbers and codes: counters, timecodes, confidence, latency, levels, session IDs. Words, labels included, are always set in Geist sans.",
+        "section": "typography"
+      },
+      {
+        "name": "The Medium Ceiling Rule",
+        "body": "Headings stop at weight 500. Labels use 560. Only the wordmark and the current step number go to 600. Nothing is bold for emphasis. Emphasis comes from ink versus graphite.",
+        "section": "typography"
+      },
+      {
+        "name": "The Ruled Sheet Rule",
+        "body": "Group content with a rule above it and a label beside or above it. Never wrap it in a filled box. The ink rule opens a block and hairline rules divide it.",
+        "section": "layout"
+      },
+      {
+        "name": "The Flat Bench Rule",
+        "body": "Every surface is flat. When something needs to sit above something else, give it an opaque paper fill and a rule on its leading edge.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** give every gesture-driven control the 2px cobalt hold baseline, filling from the left at 90ms linear.",
+      "**Do** show the gesture that triggers every action, as a pictogram plus its English name label.",
+      "**Do** open each major block with a 1px ink rule and divide its rows with 1px `rule` hairlines.",
+      "**Do** set counters, timecodes, levels and confidence in Geist Mono with tabular numerals, and everything else in Geist.",
+      "**Do** pair every status colour with a word and a shape-distinct mark (square for Review, ring for within range, triangle for Error Mode).",
+      "**Do** keep interactive corners at 2px and large frames square.",
+      "**Do** use `enter` (220ms, expo-out, 6px rise) for new content and readouts, and `draw-x` for rules that appear. Collapse all motion under prefers-reduced-motion.",
+      "**Do** keep stimulus colours and pure black optotypes inside the stimulus field, on its white ground."
+    ],
+    "donts": [
+      "**Don't** use shadows, gradients, glass or blur-as-material. The session bar's 2px backdrop blur under 95% paper is the ceiling.",
+      "**Don't** wrap content in filled cards or tiles. Use ruled sheets.",
+      "**Don't** use cobalt for anything that isn't live, in progress, current, selected or focused.",
+      "**Don't** mark success with a colour. Success is ink with a check or ring.",
+      "**Don't** put a label above a heading. The protocol index sits in its own mono column on the title's baseline.",
+      "**Don't** add ornament beyond the bench's own equipment: crop marks, graticule, reticle, fixation cross.",
+      "**Don't** blink anything except the TRACKING dot in the instrument header and the awaiting-response dot in the session log. Telemetry dots stay solid.",
+      "**Don't** set words in Geist Mono. Mono is for measured values only."
+    ]
+  }
+}
