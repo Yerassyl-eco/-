@@ -27,6 +27,8 @@ const isDemo =
   new URLSearchParams(window.location.search).has('demo') ||
   window.location.hash === '#demo';
 const SCREEN_SETTLE_MS = 1200;
+/** `?demo=clean` keeps keyboard simulation but hides the dev panel (for captures). */
+const demoClean = new URLSearchParams(window.location.search).get('demo') === 'clean';
 const SESSION_CODE = `S-${String(Math.floor(1000 + Math.random() * 9000))}`;
 
 export default function App() {
@@ -50,6 +52,12 @@ export default function App() {
     flashId.current += 1;
     setFlash({ id: flashId.current, kind, text });
   }, []);
+
+  // A screen change is its own confirmation: drop the previous "accepted" readout.
+  const screenKey = `${TEST_PHASES.includes(state.phase) ? 'TEST' : state.phase}-${state.testIndex}`;
+  useEffect(() => {
+    setFlash((f) => (f?.kind === 'ok' ? null : f));
+  }, [screenKey]);
 
   useEffect(() => {
     if (!flash) return;
@@ -183,6 +191,7 @@ export default function App() {
           summary={state.results[state.testIndex]!}
           records={state.answers[state.testIndex]}
           trials={state.trials[state.testIndex]}
+          startedAt={state.testStartedAt}
           onNext={() => handleGesture('THUMBS_UP')}
         />
       );
@@ -217,7 +226,7 @@ export default function App() {
         id="main"
         data-phase={state.phase}
         data-test={test.id}
-        className="mx-auto grid max-w-[1440px] grid-cols-12 gap-x-6 gap-y-8 px-5 pb-24 pt-8 sm:px-10 lg:pt-12"
+        className={`mx-auto grid max-w-[1440px] grid-cols-12 gap-x-6 gap-y-8 px-5 pt-8 sm:px-10 lg:pb-24 lg:pt-12 ${TEST_PHASES.includes(state.phase) ? 'pb-48' : 'pb-24'}`}
       >
         <section key={pageKey} className={`col-span-12 min-w-0 ${calibration ? 'lg:col-span-5' : 'lg:col-span-9'}`}>
           {page}
@@ -230,7 +239,7 @@ export default function App() {
           </div>
         </div>
       </main>
-      {isDemo && <DemoPanel />}
+      {isDemo && <DemoPanel hidden={demoClean} />}
     </div>
   );
 }

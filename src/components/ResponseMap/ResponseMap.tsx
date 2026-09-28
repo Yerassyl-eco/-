@@ -18,7 +18,7 @@ function Cell({ o, state, hold, disabled, onSelect, compact }: { o: AnswerOption
   const meta = GESTURE_META[o.gesture];
   const tone =
     state === 'confirmed'
-      ? 'border-green text-green bg-green-wash'
+      ? 'border-cobalt bg-cobalt text-white'
       : state === 'selected'
         ? 'border-cobalt text-cobalt bg-cobalt-wash'
         : 'border-rule text-ink hover:border-ink';
@@ -29,7 +29,7 @@ function Cell({ o, state, hold, disabled, onSelect, compact }: { o: AnswerOption
       disabled={disabled}
       aria-pressed={state !== 'idle'}
       aria-label={`${meta.name}: ${o.label}`}
-      className={`relative flex w-full items-center border bg-field text-left transition-colors duration-150 disabled:cursor-default disabled:opacity-40 ${tone} ${
+      className={`relative flex w-full items-center border text-left transition-colors duration-150 disabled:cursor-default ${state === 'idle' ? 'disabled:opacity-40' : ''} ${tone} ${
         compact ? 'min-h-[64px] flex-col justify-center gap-1 px-2 py-2 text-center' : 'min-h-[56px] gap-3 px-3.5 py-3'
       }`}
       style={{ borderRadius: 'var(--radius-hair)' }}

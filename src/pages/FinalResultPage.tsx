@@ -1,3 +1,4 @@
+import { TriangleAlert } from 'lucide-react';
 import { GestureCue } from '../components/Cue/GestureCue';
 import { ProtocolHeader } from '../components/Protocol/ProtocolHeader';
 import { StatusToken } from '../components/Report/ReportRow';
@@ -70,7 +71,7 @@ export function FinalResultPage({ tests, results, durationMs, sessionCode, finis
 
       {attention && (
         <div className="mt-6 grid gap-x-6 gap-y-1.5 border-t border-amber-line pt-3 sm:grid-cols-[11rem_minmax(0,1fr)]">
-          <span className="label pt-0.5 text-amber">! Review</span>
+          <span className="label flex items-center gap-1.5 pt-0.5 text-amber"><TriangleAlert size={13} strokeWidth={2} aria-hidden /> Review</span>
           <p className="max-w-[62ch] text-[16px] leading-relaxed text-ink">
             Некоторые ответы отличаются от ожидаемых результатов скрининга. Если вы замечаете проблемы со зрением или эти результаты повторяются, обратитесь к
             офтальмологу.

@@ -26,12 +26,12 @@ export function WelcomePage({ last, onStart }: { last: StoredScreening | null; o
       <dl className="mt-8 grid grid-cols-3 border-t border-rule">
         {[
           ['Tests', '05'],
-          ['Duration', '≈ 5 min'],
-          ['Input', 'Hand'],
+          ['Duration', '≈ 5 мин'],
+          ['Input', 'Жесты руки'],
         ].map(([k, v]) => (
           <div key={k} className="border-r border-rule py-3 pr-3 last:border-r-0 [&:not(:first-child)]:pl-4">
             <dt className="label text-graphite">{k}</dt>
-            <dd className="num mt-1 text-[20px] text-ink">{v}</dd>
+            <dd className="mt-1 text-[20px] tabular-nums text-ink">{v}</dd>
           </div>
         ))}
       </dl>

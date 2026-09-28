@@ -120,6 +120,7 @@ export const colorVisionTest: TestDefinition<ColorTrial> = {
   options: (t) => t.options,
   observeMs: () => 1200,
   isCorrect: (t, v) => t.digit === v,
+  expectedLabel: (t) => `Цифра ${t.digit}`,
   summarize(records, trials, durationMs) {
     const correct = records.filter((r) => r.correct).length;
     const test = records.filter((r) => !trials[r.trialIndex].control);

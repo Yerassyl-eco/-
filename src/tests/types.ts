@@ -70,6 +70,8 @@ export interface TestDefinition<T = unknown> {
   /** Observation time before answers are accepted (ms). */
   observeMs?(trial: T): number;
   isCorrect(trial: T, value: string): boolean | null;
+  /** Human label of the expected answer (tests with a right answer). */
+  expectedLabel?(trial: T): string;
   /** Stop early (adaptive tests). */
   shouldStop?(records: AnswerRecord[], trials: T[]): boolean;
   summarize(records: AnswerRecord[], trials: T[], durationMs: number): TestSummary;

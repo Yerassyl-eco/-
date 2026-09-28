@@ -102,6 +102,7 @@ export const visualAcuityTest: TestDefinition<AcuityTrial> = {
   prompt: () => 'Куда открыта буква E?',
   options: () => OPTIONS,
   isCorrect: (trial, value) => trial.direction === value,
+  expectedLabel: (trial) => OPTIONS.find((o) => o.value === trial.direction)!.label,
   shouldStop(records) {
     // Stop after two consecutive misses — the symbol is below the visible limit.
     const n = records.length;

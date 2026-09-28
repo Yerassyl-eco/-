@@ -17,8 +17,8 @@ export function StatusToken({ attention }: { attention: boolean }) {
       <span className="inline-block h-1.5 w-1.5 bg-amber-line" aria-hidden /> Review
     </span>
   ) : (
-    <span className="label inline-flex items-center gap-1.5 text-green">
-      <span className="inline-block h-1.5 w-1.5 rounded-full bg-green" aria-hidden /> Within screening range
+    <span className="label inline-flex items-center gap-1.5 text-ink">
+      <span className="inline-block h-1.5 w-1.5 rounded-full border border-ink" aria-hidden /> Within screening range
     </span>
   );
 }

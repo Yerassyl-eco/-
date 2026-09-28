@@ -12,10 +12,11 @@ interface Props {
   summary: TestSummary;
   records: AnswerRecord[];
   trials: unknown[];
+  startedAt: number;
   onNext: () => void;
 }
 
-export function TestResultPage({ test, next, summary, records, trials, onNext }: Props) {
+export function TestResultPage({ test, next, summary, records, trials, startedAt, onNext }: Props) {
   const idx = String(test.number).padStart(2, '0');
   return (
     <div className="animate-enter">
@@ -24,7 +25,7 @@ export function TestResultPage({ test, next, summary, records, trials, onNext }:
         title={test.title}
         subtitle={test.titleEn}
         status={
-          <span className="label inline-flex items-center gap-1.5 text-green">
+          <span className="label inline-flex items-center gap-1.5 text-ink">
             <Check size={14} strokeWidth={2.5} aria-hidden /> {idx} complete
           </span>
         }
@@ -49,7 +50,14 @@ export function TestResultPage({ test, next, summary, records, trials, onNext }:
           </dl>
         </ReportRow>
         <div className="border-t border-rule py-4">
-          <SessionLog total={records.length} current={-1} records={records} optionsFor={(i) => test.options(trials[i])} showCorrect />
+          <SessionLog
+            total={records.length}
+            current={-1}
+            records={records}
+            optionsFor={(i) => test.options(trials[i])}
+            startedAt={startedAt}
+            expectedFor={test.expectedLabel ? (i) => test.expectedLabel!(trials[i]) : undefined}
+          />
         </div>
         <div className="grid gap-x-6 border-t border-ink pt-4 sm:grid-cols-[11rem_minmax(0,1fr)]">
           <h3 className="label pt-4 text-graphite">Далее</h3>

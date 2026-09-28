@@ -2,6 +2,7 @@ import { Check } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { GestureCue } from '../components/Cue/GestureCue';
 import { ProtocolHeader } from '../components/Protocol/ProtocolHeader';
+import { MobileResponseBar } from '../components/ResponseMap/MobileResponseBar';
 import { ResponseMap } from '../components/ResponseMap/ResponseMap';
 import { SessionLog } from '../components/SessionLog/SessionLog';
 import type { MachineState } from '../state/testMachine';
@@ -72,7 +73,7 @@ export function TestPage({ test, state, onGesture, onSelect }: Props) {
           <p className="max-w-[60ch] text-[20px] leading-snug text-ink">{test.prompt(trial)}</p>
         </div>
 
-        <aside aria-label="Ответ" className="flex flex-col">
+        <aside aria-label="Ответ" className="hidden flex-col lg:flex">
           <h2 className="label border-b border-rule pb-2 text-graphite">Response</h2>
           <div className="pt-3">
             <ResponseMap
@@ -87,8 +88,8 @@ export function TestPage({ test, state, onGesture, onSelect }: Props) {
 
           <div className="mt-5 min-h-[152px]" aria-live="polite">
             {confirmed ? (
-              <div key="c" className="animate-enter border-t border-green pt-3">
-                <p className="label flex items-center gap-1.5 text-green">
+              <div key="c" className="animate-enter border-t border-cobalt pt-3">
+                <p className="label flex items-center gap-1.5 text-cobalt">
                   <Check size={14} strokeWidth={2.5} aria-hidden /> Confirmed
                 </p>
                 <p className="mt-2 text-[15px] text-ink">
@@ -123,6 +124,15 @@ export function TestPage({ test, state, onGesture, onSelect }: Props) {
         current={state.trialIndex}
         records={state.answers[state.testIndex]}
         optionsFor={(i) => test.options(trials[i])}
+        startedAt={state.testStartedAt}
+      />
+      <MobileResponseBar
+        options={options}
+        selected={state.selected}
+        confirmed={confirmed}
+        ready={ready}
+        onSelect={onSelect}
+        onGesture={onGesture}
       />
     </div>
   );

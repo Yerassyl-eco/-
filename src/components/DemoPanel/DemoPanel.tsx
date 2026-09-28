@@ -20,7 +20,7 @@ const KEYS: Record<string, Gesture> = {
  * DEV DEMO MODE (open the app with ?demo). Lets developers walk through the
  * flow without a camera. Not part of the production user experience.
  */
-export function DemoPanel() {
+export function DemoPanel({ hidden = false }: { hidden?: boolean }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const g = KEYS[e.key];
@@ -34,7 +34,7 @@ export function DemoPanel() {
   }, []);
 
   return (
-    <aside className="fixed bottom-3 left-3 z-50 max-w-[calc(100vw-24px)] border border-ink bg-ink p-2 text-paper sm:p-3" aria-label="Панель разработчика">
+    <aside hidden={hidden} className="fixed right-3 top-16 z-50 lg:bottom-3 lg:left-3 lg:right-auto lg:top-auto max-w-[calc(100vw-24px)] border border-ink bg-ink p-2 text-paper sm:p-3" aria-label="Панель разработчика">
       <p className="label mb-2 hidden text-paper/60 sm:block">Dev demo · no camera</p>
       <div className="flex flex-wrap gap-1.5">
         {ALL_GESTURES.map((g) => (

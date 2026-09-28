@@ -4,7 +4,7 @@
  * VISION MOTION — lab-session design system.
  * Team palette (pinned): paper #F5F4F0, ink #111111, graphite #6F6F6A,
  * rule #D9D8D2, one cobalt accent #2457FF. Amber = SIGNAL (Error Mode),
- * green = confirmed/within range. No gradients, no shadows, 0–2px radii.
+ * cobalt also marks confirmation. No green, no gradients, no shadows, 0–2px radii.
  */
 @theme {
   --font-sans: 'Geist Variable', 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -23,8 +23,6 @@
   --color-amber: #8a5300;
   --color-amber-line: #e08a00;
   --color-amber-wash: #f6ecdc;
-  --color-green: #17703f;
-  --color-green-wash: #e3eee6;
   --color-scope: #121212;
 
   --radius-hair: 2px;

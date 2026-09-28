@@ -4,53 +4,82 @@ import { GestureIcon } from '../GestureIcon/GestureIcon';
 
 interface Props {
   total: number;
+  /** Index of the trial on screen; -1 when the test is finished. */
   current: number;
   records: AnswerRecord[];
   optionsFor: (trialIndex: number) => AnswerOption[];
-  /** Hide correctness while the test runs. */
-  showCorrect?: boolean;
+  /** performance.now() when the test started — rows are time-coded from it. */
+  startedAt: number;
+  /** Results view: show expected answer and correctness. */
+  expectedFor?: (trialIndex: number) => string | null;
 }
 
-/** Session log strip: one cell per trial, filled as answers are recorded. */
-export function SessionLog({ total, current, records, optionsFor, showCorrect = false }: Props) {
+function timecode(ms: number) {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+}
+
+/** Time-coded session log, one row per recorded trial (the lab runner's data file). */
+export function SessionLog({ total, current, records, optionsFor, startedAt, expectedFor }: Props) {
+  const showExpected = !!expectedFor;
+  const rows = [...records].sort((a, b) => a.trialIndex - b.trialIndex);
+  const cols = showExpected ? 'grid-cols-[3rem_4rem_minmax(0,1fr)_minmax(0,1fr)_5rem]' : 'grid-cols-[3rem_4rem_minmax(0,1fr)_5rem]';
   return (
     <div>
-      <div className="flex items-baseline justify-between border-b border-rule pb-2">
-        <span className="label text-graphite">Session log</span>
+      <div className="flex items-baseline justify-between border-b border-ink pb-2">
+        <span className="label text-ink">Session log</span>
         <span className="num text-xs text-graphite">
           {String(records.length).padStart(2, '0')} / {String(total).padStart(2, '0')} recorded
         </span>
       </div>
-      <ol className="grid grid-cols-[repeat(auto-fill,minmax(88px,1fr))] border-l border-rule" aria-label="Журнал ответов">
-        {Array.from({ length: total }, (_, i) => {
-          const r = records.find((x) => x.trialIndex === i);
-          const opt = r ? optionsFor(i).find((o) => o.value === r.value) : undefined;
-          const isCur = i === current && !r;
+      <div className={`label grid ${cols} gap-x-3 border-b border-rule py-2 text-graphite`} aria-hidden>
+        <span>Trial</span>
+        <span>Time</span>
+        <span>Answer</span>
+        {showExpected && <span>Expected</span>}
+        <span className="text-right">Latency</span>
+      </div>
+      <ol aria-label="Журнал ответов">
+        {rows.map((r) => {
+          const opt = optionsFor(r.trialIndex).find((o) => o.value === r.value);
+          const expected = expectedFor?.(r.trialIndex) ?? null;
           return (
-            <li
-              key={i}
-              className={`relative border-b border-r border-rule px-2.5 py-2 ${r ? 'bg-field' : ''}`}
-              aria-current={isCur ? 'step' : undefined}
-            >
-              {isCur && <span className="absolute inset-x-0 top-0 h-[2px] bg-cobalt" />}
-              <span className={`num block text-xs ${isCur ? 'text-cobalt' : 'text-graphite'}`}>T{String(i + 1).padStart(2, '0')}</span>
-              {r && opt ? (
-                <span key={r.at} className="animate-enter mt-1 flex items-center gap-1.5 text-[13px] text-ink">
-                  <GestureIcon gesture={opt.gesture} size={14} />
-                  <span className="truncate">{opt.glyph ?? opt.label}</span>
-                  {showCorrect && r.correct !== null && (
-                    <span className={`ml-auto ${r.correct ? 'text-green' : 'text-amber'}`} aria-label={r.correct ? 'верно' : 'неверно'}>
-                      {r.correct ? <Check size={13} strokeWidth={2.25} /> : <X size={13} strokeWidth={2.25} />}
-                    </span>
+            <li key={r.trialIndex} className={`animate-enter grid ${cols} items-center gap-x-3 border-b border-rule py-2 text-[14px]`}>
+              <span className="num text-graphite">T{String(r.trialIndex + 1).padStart(2, '0')}</span>
+              <span className="num text-graphite">{timecode(r.at - startedAt)}</span>
+              <span className="flex min-w-0 items-center gap-2 text-ink">
+                {opt && <GestureIcon gesture={opt.gesture} size={15} className="shrink-0" />}
+                <span className="min-w-0">{opt?.label ?? r.value}</span>
+              </span>
+              {showExpected && (
+                <span className="flex min-w-0 items-center gap-2 text-graphite">
+                  {r.correct === null ? (
+                    '—'
+                  ) : (
+                    <>
+                      <span className={r.correct ? 'text-ink' : 'text-amber'} aria-label={r.correct ? 'совпадает' : 'не совпадает'}>
+                        {r.correct ? <Check size={14} strokeWidth={2.25} /> : <X size={14} strokeWidth={2.25} />}
+                      </span>
+                      <span className="min-w-0">{expected}</span>
+                    </>
                   )}
                 </span>
-              ) : (
-                <span className="mt-1 block text-[13px] text-graphite">{isCur ? 'ожидание' : '—'}</span>
               )}
-              {r && <span className="num block text-xs text-graphite">{(r.reactionMs / 1000).toFixed(1)} s</span>}
+              <span className="num text-right text-graphite">{(r.reactionMs / 1000).toFixed(1)} s</span>
             </li>
           );
         })}
+        {current >= 0 && current < total && !records.some((r) => r.trialIndex === current) && (
+          <li className={`grid ${cols} items-center gap-x-3 border-b border-rule py-2 text-[14px]`} aria-current="step">
+            <span className="num text-cobalt">T{String(current + 1).padStart(2, '0')}</span>
+            <span className="num text-graphite">—</span>
+            <span className="text-graphite">ожидание ответа</span>
+            {showExpected && <span />}
+            <span className="flex justify-end">
+              <span className="animate-blink h-1.5 w-1.5 rounded-full bg-cobalt" aria-hidden />
+            </span>
+          </li>
+        )}
       </ol>
     </div>
   );

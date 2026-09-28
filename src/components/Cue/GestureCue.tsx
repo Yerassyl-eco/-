@@ -28,9 +28,7 @@ export function GestureCue({ gesture, action, onTrigger, primary = false, disabl
       onClick={onTrigger}
       disabled={disabled}
       aria-label={`${action}: жест «${meta.name}»`}
-      className={`group relative flex w-full items-center gap-4 py-3.5 text-left transition-colors duration-150 disabled:cursor-default disabled:opacity-40 ${
-        primary ? 'text-ink' : 'text-ink'
-      }`}
+      className="group relative flex w-full items-center gap-4 py-3.5 text-left text-ink transition-colors duration-150 disabled:cursor-default disabled:opacity-40"
     >
       <span
         className={`flex h-10 w-10 shrink-0 items-center justify-center border transition-colors duration-150 ${
@@ -44,8 +42,8 @@ export function GestureCue({ gesture, action, onTrigger, primary = false, disabl
         <span className={`block leading-tight ${primary ? 'text-[17px] font-medium' : 'text-[15px]'}`}>{action}</span>
         <span className="label mt-0.5 block text-graphite">{meta.label}</span>
       </span>
-      <span className="num shrink-0 text-xs text-graphite" aria-hidden>
-        {active ? `${Math.round(fill * 100).toString().padStart(3, '0')}%` : 'HOLD'}
+      <span className="label num shrink-0 text-graphite" aria-hidden>
+        {active && fill > 0 ? `${Math.round(fill * 100)}%` : 'Hold'}
       </span>
       <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-rule" aria-hidden />
       <span
