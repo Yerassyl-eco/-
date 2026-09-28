@@ -1,3 +1,4 @@
+import { StimulusField } from '../../components/StimulusField/StimulusField';
 import type { AnswerOption, StimulusProps, TestDefinition } from '../types';
 
 export interface DuochromeTrial {
@@ -16,37 +17,30 @@ const GREEN = '#0f9d58';
 
 function Half({ bg, rows, side, highlighted }: { bg: string; rows: DuochromeTrial['rows']; side: string; highlighted: boolean }) {
   return (
-    <div
-      className={`relative flex flex-1 flex-col items-center justify-center gap-3 py-8 transition-all duration-300 ${highlighted ? 'z-10 scale-[1.02] shadow-2xl ring-4 ring-white' : ''}`}
-      style={{ background: bg }}
-      aria-label={`${side} сторона`}
-    >
+    <div className="relative flex flex-1 flex-col items-center justify-center gap-4 py-10" style={{ background: bg }} aria-label={`${side} сторона`}>
       {rows.map((r) => (
         <div
           key={r.text}
-          className="font-black leading-none tracking-[0.25em] text-black"
-          style={{ fontSize: `min(${r.size}px, ${(r.size * 0.16).toFixed(1)}vw)`, fontFamily: 'ui-sans-serif, Arial, sans-serif' }}
+          className="font-semibold leading-none tracking-[0.3em] text-black"
+          style={{ fontSize: `min(${r.size}px, ${(r.size * 0.16).toFixed(1)}vw)`, fontFamily: 'Arial, Helvetica, sans-serif' }}
         >
           {r.text}
         </div>
       ))}
-      <span className="absolute bottom-3 rounded-full bg-black/35 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
-        {side}
-      </span>
+      {highlighted && <span className="animate-fade pointer-events-none absolute inset-3 border-2 border-white" aria-hidden />}
+      <span className="label absolute bottom-3 text-white/90">{side}</span>
     </div>
   );
 }
 
-function Stimulus({ trial, selected, trialIndex, trialCount }: StimulusProps<DuochromeTrial>) {
+function Stimulus({ trial, selected, trialIndex, trialCount, observeProgress }: StimulusProps<DuochromeTrial>) {
   return (
-    <div className="relative flex h-full min-h-[240px] w-full overflow-hidden rounded-3xl ring-1 ring-slate-200">
-      <div className="absolute left-1/2 top-3 z-20 -translate-x-1/2 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-slate-700">
-        Раунд {trialIndex + 1} / {trialCount}
+    <StimulusField bare label="Дуохромный тест: красная и зелёная половины" tagLeft={`ROUND ${trialIndex + 1} / ${trialCount}`} tagRight="RED · GREEN" progress={observeProgress}>
+      <div className="flex h-full w-full">
+        <Half bg={RED} rows={trial.rows} side="Красная" highlighted={selected === 'red' || selected === 'equal'} />
+        <Half bg={GREEN} rows={trial.rows} side="Зелёная" highlighted={selected === 'green' || selected === 'equal'} />
       </div>
-      <Half bg={RED} rows={trial.rows} side="Красная" highlighted={selected === 'red'} />
-      <Half bg={GREEN} rows={trial.rows} side="Зелёная" highlighted={selected === 'green'} />
-      {selected === 'equal' && <div className="pointer-events-none absolute inset-0 rounded-3xl ring-8 ring-inset ring-white/80" />}
-    </div>
+    </StimulusField>
   );
 }
 
@@ -54,14 +48,15 @@ export const duochromeTest: TestDefinition<DuochromeTrial> = {
   id: 'duochrome',
   number: 3,
   title: 'Красный и зелёный фон',
+  titleEn: 'Duochrome',
   shortTitle: 'Duochrome',
   checks:
     'Дуохромный тест сравнивает чёткость одинаковых символов на красном и зелёном фоне. Он помогает специалисту понять, как глаз фокусирует изображение.',
   intro: [
     'Если вы носите очки для дали — оставайтесь в них.',
     'Сравните чёрные символы на красной и зелёной половине.',
-    '👈 — чётче на красной, 👉 — чётче на зелёной, ☝️ — одинаково.',
-    'Подтвердите выбор кулаком ✊.',
+    'Влево — чётче на красной, вправо — на зелёной, вверх — одинаково.',
+    'Подтвердите выбор кулаком.',
   ],
   layout: 'triple',
   createTrials: () => [

@@ -181,6 +181,8 @@ export type RouteResult =
   | { kind: 'reject'; hint: string }
   | { kind: 'ignore' };
 
+const DIR_NAME: Partial<Record<Gesture, string>> = { POINT_LEFT: 'влево', POINT_RIGHT: 'вправо', POINT_UP: 'вверх', POINT_DOWN: 'вниз' };
+
 const ANSWER_GESTURES: Gesture[] = ['POINT_LEFT', 'POINT_RIGHT', 'POINT_UP', 'POINT_DOWN'];
 
 /**
@@ -192,26 +194,26 @@ export function routeGesture(tests: AnyTest[], s: MachineState, g: Gesture, now:
   const trial = s.trials[s.testIndex]?.[s.trialIndex];
   const options = trial !== undefined ? test.options(trial) : [];
   const optionFor = (gesture: Gesture) => options.find((o) => o.gesture === gesture);
-  const optionHint = () => options.map((o) => `${gestureEmoji(o.gesture)} ${o.label}`).join(', ');
+  const optionHint = () => options.map((o) => `${DIR_NAME[o.gesture] ?? ''} — ${o.label}`).join(', ');
 
   switch (s.phase) {
     case 'LANDING':
       if (g === 'THUMBS_UP') return { kind: 'action', action: { type: 'START' } };
-      return { kind: 'reject', hint: 'Чтобы начать, покажите 👍 — большой палец вверх.' };
+      return { kind: 'reject', hint: 'Чтобы начать, покажите «палец вверх» и задержите на секунду.' };
 
     case 'CAMERA_SETUP':
       if (g === 'THUMBS_UP') return { kind: 'action', action: { type: 'CAMERA_OK' } };
-      return { kind: 'reject', hint: 'Отлично, я вижу руку! Покажите 👍, чтобы продолжить.' };
+      return { kind: 'reject', hint: 'Рука видна. Чтобы продолжить, покажите «палец вверх».' };
 
     case 'PREPARATION':
       if (g === 'THUMBS_UP') return { kind: 'action', action: { type: 'BEGIN_TESTS', now, trials: makeTrials() } };
       if (g === 'OPEN_PALM') return { kind: 'action', action: { type: 'REPLAY' }, feedback: 'Повторяю инструкцию' };
-      return { kind: 'reject', hint: 'Когда будете готовы, покажите 👍.' };
+      return { kind: 'reject', hint: 'Когда будете готовы, покажите «палец вверх».' };
 
     case 'TEST_INTRO':
       if (g === 'THUMBS_UP') return { kind: 'action', action: { type: 'START_TEST', now } };
       if (g === 'OPEN_PALM') return { kind: 'action', action: { type: 'REPLAY' }, feedback: 'Повторяю инструкцию' };
-      return { kind: 'reject', hint: 'Прочитайте инструкцию и покажите 👍, чтобы начать тест.' };
+      return { kind: 'reject', hint: 'Прочитайте инструкцию и покажите «палец вверх», чтобы начать тест.' };
 
     case 'TEST_ACTIVE':
     case 'ANSWER_SELECTED': {
@@ -223,7 +225,7 @@ export function routeGesture(tests: AnyTest[], s: MachineState, g: Gesture, now:
       }
       if (g === 'FIST') {
         if (s.phase === 'ANSWER_SELECTED') return { kind: 'action', action: { type: 'CONFIRM', now }, feedback: 'Ответ принят' };
-        return { kind: 'reject', hint: `Сначала выберите ответ: ${optionHint()}. Затем подтвердите ✊.` };
+        return { kind: 'reject', hint: `Сначала выберите ответ указательным пальцем (${optionHint()}), затем подтвердите кулаком.` };
       }
       if (g === 'OPEN_PALM') {
         if (s.phase === 'ANSWER_SELECTED') return { kind: 'action', action: { type: 'CANCEL' }, feedback: 'Выбор отменён' };
@@ -231,7 +233,7 @@ export function routeGesture(tests: AnyTest[], s: MachineState, g: Gesture, now:
       }
       return {
         kind: 'reject',
-        hint: s.phase === 'ANSWER_SELECTED' ? 'Чтобы подтвердить ответ, покажите ✊ кулак.' : `Выберите ответ: ${optionHint()}.`,
+        hint: s.phase === 'ANSWER_SELECTED' ? 'Чтобы подтвердить ответ, покажите кулак.' : `Выберите ответ: ${optionHint()}.`,
       };
     }
 
@@ -240,7 +242,7 @@ export function routeGesture(tests: AnyTest[], s: MachineState, g: Gesture, now:
 
     case 'TEST_RESULT':
       if (g === 'THUMBS_UP') return { kind: 'action', action: { type: 'NEXT_TEST' } };
-      return { kind: 'reject', hint: 'Покажите 👍, чтобы продолжить.' };
+      return { kind: 'reject', hint: 'Чтобы продолжить, покажите «палец вверх».' };
 
     case 'FINAL_RESULT':
       if (g === 'OPEN_PALM') return { kind: 'action', action: { type: 'NEW_SCREENING' } };

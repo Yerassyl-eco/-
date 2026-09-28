@@ -1,3 +1,4 @@
+import { StimulusField } from '../../components/StimulusField/StimulusField';
 import type { AnswerOption, StimulusProps, TestDefinition } from '../types';
 
 export interface AmslerTrial {
@@ -23,8 +24,8 @@ export function AmslerGrid({ cells = 20, size = 340 }: { cells?: number; size?: 
   return (
     <svg viewBox="-2 -2 404 404" width={size} height={size} role="img" aria-label="Сетка Амслера с точкой в центре" className="max-h-full max-w-full">
       <rect x="0" y="0" width="400" height="400" fill="#fff" />
-      <g stroke="#111827" strokeWidth="1.3">{lines}</g>
-      <circle cx="200" cy="200" r="6" fill="#111827" />
+      <g stroke="#111111" strokeWidth="1.3">{lines}</g>
+      <circle cx="200" cy="200" r="6" fill="#111111" />
     </svg>
   );
 }
@@ -32,35 +33,16 @@ export function AmslerGrid({ cells = 20, size = 340 }: { cells?: number; size?: 
 function Stimulus({ trial, ready, observeProgress, trialIndex, trialCount }: StimulusProps<AmslerTrial>) {
   const secondsLeft = Math.ceil(((1 - observeProgress) * OBSERVE_MS) / 1000);
   return (
-    <div className="relative flex h-full min-h-[300px] w-full flex-col items-center justify-center gap-3 overflow-hidden rounded-3xl bg-white p-4 ring-1 ring-slate-200">
-      <div className="absolute left-4 top-4 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-        {trialIndex + 1} / {trialCount} · {trial.eye === 'right' ? 'правый глаз' : 'левый глаз'}
+    <StimulusField
+      label="Сетка Амслера"
+      tagLeft={`${trialIndex + 1} / ${trialCount} · ${trial.eye === 'right' ? 'RIGHT EYE · OD' : 'LEFT EYE · OS'}`}
+      tagRight={ready ? 'RESPOND' : `OBSERVE 00:0${secondsLeft}`}
+      progress={observeProgress}
+    >
+      <div className="flex h-full w-full items-center justify-center p-8">
+        <AmslerGrid size={320} />
       </div>
-      <p className="mt-6 text-center text-sm font-semibold text-slate-700">
-        {trial.cover}
-      </p>
-      <div className="relative">
-        <AmslerGrid size={300} />
-        {!ready && (
-          <div className="pointer-events-none absolute -right-2 -top-2 flex h-14 w-14 items-center justify-center" aria-live="polite">
-            <svg viewBox="0 0 36 36" className="absolute inset-0 -rotate-90">
-              <circle cx="18" cy="18" r="15" fill="white" stroke="#e2e8f0" strokeWidth="3" />
-              <circle
-                cx="18"
-                cy="18"
-                r="15"
-                fill="none"
-                stroke="var(--color-accent-500)"
-                strokeWidth="3"
-                strokeDasharray={`${observeProgress * 94.2} 94.2`}
-                strokeLinecap="round"
-              />
-            </svg>
-            <span className="relative text-lg font-bold text-slate-900">{secondsLeft}</span>
-          </div>
-        )}
-      </div>
-    </div>
+    </StimulusField>
   );
 }
 
@@ -68,6 +50,7 @@ export const amslerTest: TestDefinition<AmslerTrial> = {
   id: 'amsler',
   number: 4,
   title: 'Сетка Амслера',
+  titleEn: 'Amsler grid',
   shortTitle: 'Амслер',
   checks:
     'Выглядят ли линии сетки ровными в центральной части поля зрения. Каждый глаз проверяется отдельно.',
@@ -82,7 +65,7 @@ export const amslerTest: TestDefinition<AmslerTrial> = {
     { eye: 'right', cover: 'Прикройте ЛЕВЫЙ глаз и смотрите на точку правым' },
     { eye: 'left', cover: 'Прикройте ПРАВЫЙ глаз и смотрите на точку левым' },
   ],
-  prompt: () => 'Видите ли вы искривления, пропуски или участки, где сетка выглядит необычно?',
+  prompt: (t) => `${t.cover}. Видите ли вы искривления, пропуски или необычные участки сетки?`,
   options: () => OPTIONS,
   observeMs: () => OBSERVE_MS,
   isCorrect: () => null,

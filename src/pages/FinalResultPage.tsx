@@ -1,92 +1,109 @@
-import { GestureIcon } from '../components/GestureIcon/GestureIcon';
+import { GestureCue } from '../components/Cue/GestureCue';
+import { ProtocolHeader } from '../components/Protocol/ProtocolHeader';
+import { StatusToken } from '../components/Report/ReportRow';
 import type { AnyTest } from '../tests';
 import type { TestSummary } from '../tests/types';
-import { formatDuration } from '../utils/format';
+import { formatDate, formatDuration } from '../utils/format';
 
 interface Props {
   tests: AnyTest[];
   results: (TestSummary | null)[];
   durationMs: number | null;
+  sessionCode: string;
+  finishedAt: number;
   onRestart: () => void;
   onHome: () => void;
 }
 
-export function FinalResultPage({ tests, results, durationMs, onRestart, onHome }: Props) {
+export function FinalResultPage({ tests, results, durationMs, sessionCode, finishedAt, onRestart, onHome }: Props) {
   const done = results.filter(Boolean).length;
   const attention = results.some((r) => r?.attention);
   return (
-    <div className="flex flex-col gap-5">
-      <header className="animate-rise relative overflow-hidden rounded-[28px] bg-accent-700 p-6 text-white shadow-[var(--shadow-float)] sm:p-8">
-        <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10" aria-hidden />
-        <div className="absolute -bottom-20 right-24 h-40 w-40 rounded-full bg-white/10" aria-hidden />
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/85">Итог</p>
-        <h1 className="mt-2 text-3xl font-extrabold sm:text-5xl">Скрининг завершён</h1>
-        <div className="mt-5 flex flex-wrap items-end gap-x-6 gap-y-2">
-          <p>
-            <span className="text-5xl font-black sm:text-6xl">{done} / {tests.length}</span>
-            <span className="ml-2 font-semibold text-white/85">тестов пройдено</span>
-          </p>
-          <p className="pb-1 text-sm font-semibold text-white/85">Время: {formatDuration(durationMs)}</p>
-        </div>
-      </header>
+    <article className="animate-enter" aria-labelledby="report-title">
+      <ProtocolHeader index="05" title="Скрининг завершён" subtitle="Vision screening report" />
+      <dl className="mt-6 grid grid-cols-2 border-t border-rule sm:grid-cols-4">
+        {[
+          ['Completed', `${String(done).padStart(2, '0')} / 05`],
+          ['Duration', formatDuration(durationMs)],
+          ['Session', sessionCode],
+          ['Date', formatDate(finishedAt)],
+        ].map(([k, v]) => (
+          <div key={k} className="border-b border-rule py-3 pr-3 sm:border-r sm:[&:not(:first-child)]:pl-4 sm:last:border-r-0">
+            <dt className="label text-graphite">{k}</dt>
+            <dd className="num mt-1 text-[15px] text-ink">{v}</dd>
+          </div>
+        ))}
+      </dl>
 
-      <ol className="relative grid gap-3" aria-label="Результаты по тестам">
-        <span className="absolute bottom-6 left-[27px] top-6 w-0.5 bg-accent-200" aria-hidden />
-        {tests.map((t, i) => {
-          const r = results[i];
-          return (
-            <li key={t.id} className="animate-rise relative flex items-start gap-4" style={{ animationDelay: `${100 + i * 90}ms` }}>
-              <span
-                className={`relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-lg font-black shadow-sm ${r?.attention ? 'bg-warning-50 text-warning-700 ring-2 ring-warning-500/40' : 'bg-white text-accent-600 ring-1 ring-line'}`}
-              >
-                {String(i + 1).padStart(2, '0')}
-              </span>
-              <div className="flex min-w-0 flex-1 flex-wrap items-center justify-between gap-2 rounded-2xl bg-white p-4 shadow-[var(--shadow-card)] ring-1 ring-line">
-                <div className="min-w-0">
-                  <p className="font-extrabold text-slate-900">{t.title}</p>
-                  <p className="text-sm text-slate-600">{r?.result ?? 'Тест не пройден'}</p>
-                </div>
-                <span
-                  className={`shrink-0 rounded-full px-3 py-1 text-sm font-bold ${r?.attention ? 'bg-warning-50 text-warning-700' : 'bg-success-50 text-success-700'}`}
-                >
-                  {r?.attention ? '◆ ' : '✓ '}
-                  {r?.short ?? '—'}
-                </span>
-              </div>
-            </li>
-          );
-        })}
-      </ol>
+      <section className="mt-10" aria-labelledby="summary">
+        <h2 id="summary" className="label border-b border-ink pb-2 text-ink">
+          Screening summary
+        </h2>
+        <table className="w-full border-collapse text-left">
+          <caption className="sr-only">Результаты по тестам</caption>
+          <thead className="sr-only">
+            <tr>
+              <th>№</th>
+              <th>Тест</th>
+              <th>Результат</th>
+              <th>Статус</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tests.map((t, i) => {
+              const r = results[i];
+              return (
+                <tr key={t.id} className="border-b border-rule align-baseline">
+                  <td className="num w-12 py-4 text-[13px] text-graphite">{String(i + 1).padStart(2, '0')}</td>
+                  <td className="py-4 pr-4">
+                    <span className="block text-[17px] text-ink">{t.title}</span>
+                    <span className="mt-0.5 block text-[14px] text-graphite sm:hidden">{r?.short ?? 'Не пройден'}</span>
+                  </td>
+                  <td className="hidden py-4 pr-4 text-[15px] text-graphite sm:table-cell">{r?.short ?? 'Не пройден'}</td>
+                  <td className="py-4 text-right">{r ? <StatusToken attention={r.attention} /> : null}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </section>
 
       {attention && (
-        <div className="animate-rise rounded-2xl border border-warning-500/35 bg-warning-50 p-4 text-[15px] font-medium leading-relaxed text-slate-800" role="note">
-          <strong className="text-warning-700">◆ Обратите внимание.</strong> Некоторые ответы отличаются от ожидаемых результатов скрининга. Если вы
-          замечаете проблемы со зрением или эти результаты повторяются, обратитесь к офтальмологу.
+        <div className="mt-6 grid gap-x-6 gap-y-1.5 border-t border-amber-line pt-3 sm:grid-cols-[11rem_minmax(0,1fr)]">
+          <span className="label pt-0.5 text-amber">! Review</span>
+          <p className="max-w-[62ch] text-[16px] leading-relaxed text-ink">
+            Некоторые ответы отличаются от ожидаемых результатов скрининга. Если вы замечаете проблемы со зрением или эти результаты повторяются, обратитесь к
+            офтальмологу.
+          </p>
         </div>
       )}
 
-      <section className="rounded-2xl bg-white p-5 ring-1 ring-line" aria-labelledby="important">
-        <h2 id="important" className="text-lg font-extrabold text-slate-900">
+      <section className="mt-10 grid gap-x-6 border-t border-ink pt-4 sm:grid-cols-[11rem_minmax(0,1fr)]" aria-labelledby="important">
+        <h2 id="important" className="label pt-0.5 text-ink">
           Важно
         </h2>
-        <p className="mt-1 text-[15px] leading-relaxed text-slate-700">
-          Этот веб-тест предназначен только для предварительного скрининга и не заменяет полноценное офтальмологическое обследование или
-          медицинский диагноз. Результат не является медицинским диагнозом. При проблемах со зрением обратитесь к офтальмологу.
-        </p>
+        <div className="max-w-[62ch] space-y-3 text-[16px] leading-relaxed text-ink">
+          <p>
+            Этот веб-тест предназначен только для предварительного скрининга и не заменяет полноценное офтальмологическое обследование. Результат не является
+            медицинским диагнозом.
+          </p>
+          <p className="text-graphite">
+            Если вы замечаете изменения зрения, боль, вспышки, «плавающие» точки или другие тревожные симптомы, обратитесь за профессиональной медицинской
+            помощью.
+          </p>
+        </div>
       </section>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex flex-1 items-center gap-3 rounded-2xl bg-white p-4 ring-1 ring-line">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-500"><GestureIcon gesture="OPEN_PALM" size={24} /></span>
-          <p className="font-bold text-slate-800">Покажите открытую ладонь, чтобы пройти скрининг ещё раз</p>
+      <div className="mt-10 grid gap-x-6 border-t border-ink sm:grid-cols-[11rem_minmax(0,1fr)]">
+        <h2 className="label pt-5 text-graphite">Дальше</h2>
+        <div>
+          <GestureCue gesture="OPEN_PALM" action="Пройти скрининг ещё раз" primary onTrigger={onRestart} />
+          <button type="button" onClick={onHome} className="mt-2 min-h-11 text-[15px] text-graphite underline decoration-rule-strong underline-offset-4 hover:text-ink">
+            Вернуться к началу
+          </button>
+          <p className="mt-4 text-[13px] text-graphite">Результаты сохранены только в этом браузере.</p>
         </div>
-        <button type="button" onClick={onRestart} className="rounded-full bg-accent-500 px-5 py-3 font-bold text-white shadow-[var(--shadow-float)] transition hover:bg-accent-600">
-          Пройти ещё раз
-        </button>
-        <button type="button" onClick={onHome} className="rounded-full bg-white px-5 py-3 font-bold text-slate-700 ring-1 ring-line transition hover:ring-accent-200">
-          Начать новый скрининг
-        </button>
       </div>
-    </div>
+    </article>
   );
 }

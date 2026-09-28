@@ -56,6 +56,8 @@ export interface TestDefinition<T = unknown> {
   id: TestId;
   number: number;
   title: string;
+  /** Short English technical name shown as a subline. */
+  titleEn: string;
   shortTitle: string;
   /** "Что проверял тест". */
   checks: string;

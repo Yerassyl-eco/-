@@ -1,69 +1,39 @@
-import { useEffect, useState, type ComponentType } from 'react';
-import { ClipboardList, Eye, Hand, Ruler, Sun, type LucideProps } from 'lucide-react';
-import { GestureCue } from '../components/GestureIcon/GestureIcon';
-import type { FaceStatus } from '../vision/types';
+import { useEffect, useState } from 'react';
+import { GestureCue } from '../components/Cue/GestureCue';
 
-const STEPS: { icon: ComponentType<LucideProps>; text: string }[] = [
-  { icon: Ruler, text: 'Сядьте или встаньте на комфортном расстоянии от экрана — примерно на вытянутую руку (50–70 см).' },
-  { icon: Sun, text: 'Убедитесь, что лицо хорошо освещено и видно в камере.' },
-  { icon: Eye, text: 'Смотрите прямо на экран. Если носите очки для дали — оставайтесь в них.' },
-  { icon: ClipboardList, text: 'Следуйте инструкциям каждого теста.' },
-  { icon: Hand, text: 'Отвечайте жестами: указательным пальцем выберите ответ, кулаком подтвердите, открытой ладонью отмените.' },
+const STEPS = [
+  'Сядьте на комфортном расстоянии от экрана — примерно на вытянутую руку, 50–70 см.',
+  'Убедитесь, что лицо хорошо освещено и целиком видно в камере.',
+  'Смотрите прямо на экран. Если носите очки для дали — оставайтесь в них.',
+  'Читайте инструкцию перед каждым тестом.',
+  'Отвечайте жестами: указательный палец выбирает, кулак подтверждает, ладонь отменяет.',
 ];
 
-const FACE_TEXT: Record<FaceStatus, string> = {
-  unknown: 'Проверяю положение лица…',
-  ok: 'Положение лица — отлично',
-  missing: 'Камера не видит лицо — сядьте так, чтобы лицо было в кадре',
-  'too-low': 'Поднимите голову немного выше',
-  'too-high': 'Опуститесь немного ниже',
-  'too-close': 'Отодвиньтесь немного назад',
-  'too-far': 'Подойдите немного ближе',
-  'off-center': 'Сядьте по центру экрана',
-};
-
-export function PreparationPage({ replayKey, face }: { replayKey: number; face: FaceStatus }) {
-  const [active, setActive] = useState(0);
+export function PreparationPage({ replayKey, onBegin, onReplay }: { replayKey: number; onBegin: () => void; onReplay: () => void }) {
+  // Replaying the instruction walks a cobalt marker down the list.
+  const [focus, setFocus] = useState(-1);
   useEffect(() => {
-    setActive(0);
-    const id = setInterval(() => setActive((a) => (a < STEPS.length ? a + 1 : a)), 900);
+    if (replayKey === 0) return;
+    setFocus(0);
+    const id = setInterval(() => setFocus((f) => (f < STEPS.length - 1 ? f + 1 : -1)), 1100);
     return () => clearInterval(id);
   }, [replayKey]);
 
   return (
-    <div className="animate-rise">
-      <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent-600">Подготовка</p>
-      <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">Подготовимся</h1>
-      <div className="mt-3 flex items-center gap-2" aria-label="Подготовка: шаг 1 из 6">
-        {[0, 1, 2, 3, 4].map((i) => (
-          <span key={i} className={`h-2.5 rounded-full transition-all duration-500 ${i === 0 ? 'w-8 bg-accent-500' : 'w-2.5 bg-slate-300'}`} />
-        ))}
-      </div>
-      <ol className="mt-6 grid gap-2.5">
+    <div className="animate-enter">
+      <h1 className="text-[34px] font-medium leading-[1.08] text-ink sm:text-[44px]">Подготовка</h1>
+      <p className="mt-4 max-w-[46ch] text-[17px] leading-relaxed text-graphite">Пять условий, от которых зависит точность скрининга.</p>
+      <ol className="mt-8 border-t border-rule">
         {STEPS.map((s, i) => (
-          <li
-            key={`${replayKey}-${i}`}
-            className={`flex items-start gap-4 rounded-2xl bg-white p-4 ring-1 transition-all duration-500 ${i < active ? 'opacity-100 ring-line' : 'translate-y-1 opacity-40 ring-transparent'}`}
-          >
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-500 shadow-[var(--shadow-inset)]">
-              <s.icon size={18} aria-hidden />
-            </span>
-            <p className="pt-1.5 text-[15px] font-semibold leading-snug text-slate-800">
-              <span className="sr-only">Шаг {i + 1}. </span>
-              {s.text}
-            </p>
+          <li key={i} className="grid grid-cols-[3rem_minmax(0,1fr)] border-b border-rule py-3.5">
+            <span className={`num pl-3 text-[13px] ${focus === i ? 'text-cobalt' : 'text-graphite'}`}>{String(i + 1).padStart(2, '0')}</span>
+            <span className={`max-w-[52ch] text-[15px] leading-snug transition-colors duration-200 ${focus === i ? 'text-cobalt' : 'text-ink'}`}>{s}</span>
           </li>
         ))}
       </ol>
-      <p className={`mt-4 flex items-center gap-2 text-sm font-semibold ${face === 'ok' ? 'text-success-700' : 'text-warning-700'}`} role="status">
-        <span aria-hidden>{face === 'ok' ? '✓' : '⚠'}</span> {FACE_TEXT[face]}
-      </p>
-      <div className="mt-5 flex items-center gap-4 rounded-3xl bg-accent-500 p-5 text-white shadow-[var(--shadow-float)]">
-        <GestureCue gesture="THUMBS_UP" tone="solid" />
-        <div>
-          <p className="text-xl font-extrabold">Готовы начать?</p>
-          <p className="text-sm font-medium text-white/85">Покажите «палец вверх», чтобы начать первый тест. Открытая ладонь повторит инструкцию.</p>
-        </div>
+      <div className="mt-6 border-t border-ink">
+        <GestureCue gesture="THUMBS_UP" action="Готов — начать тестирование" primary onTrigger={onBegin} />
+        <GestureCue gesture="OPEN_PALM" action="Повторить инструкцию" onTrigger={onReplay} />
       </div>
     </div>
   );

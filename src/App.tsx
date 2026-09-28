@@ -1,18 +1,15 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from 'react';
-import { CameraView } from './components/CameraView/CameraView';
 import { DemoPanel } from './components/DemoPanel/DemoPanel';
-import { ErrorMessage, type Flash } from './components/ErrorMessage/ErrorMessage';
-import { GesturePrompt, type PromptChip } from './components/GesturePrompt/GesturePrompt';
-import { Header } from './components/Header/Header';
-import { PHASE_PROMPTS } from './data/testConfig';
-import { CameraSetupPage } from './pages/CameraSetupPage';
+import { Instrument, type Flash } from './components/Instrument/Instrument';
+import { SessionBar } from './components/SessionBar/SessionBar';
+import { CalibrationPage } from './pages/CalibrationPage';
 import { FinalResultPage } from './pages/FinalResultPage';
-import { LandingPage } from './pages/LandingPage';
 import { PreparationPage } from './pages/PreparationPage';
 import { TestIntroPage } from './pages/TestIntroPage';
 import { TestPage } from './pages/TestPage';
 import { TestResultPage } from './pages/TestResultPage';
-import { createTrials, gestureEmoji, initialState, makeReducer, routeGesture, type Phase } from './state/testMachine';
+import { WelcomePage } from './pages/WelcomePage';
+import { createTrials, initialState, makeReducer, routeGesture, type Phase } from './state/testMachine';
 import { TESTS } from './tests';
 import { playSound } from './utils/sound';
 import { lastCompleted, saveProgress } from './utils/storage';
@@ -23,11 +20,14 @@ import { visionRuntime } from './vision/VisionRuntime';
 
 const reducer = makeReducer(TESTS);
 const TEST_PHASES: Phase[] = ['TEST_ACTIVE', 'ANSWER_SELECTED', 'ANSWER_CONFIRMED'];
+/** Calibration screens give the instrument the wide column; tests give it to the stimulus. */
+const CALIBRATION_PHASES: Phase[] = ['LANDING', 'CAMERA_SETUP', 'PREPARATION'];
 const isDemo =
   import.meta.env.VITE_DEMO === '1' ||
   new URLSearchParams(window.location.search).has('demo') ||
   window.location.hash === '#demo';
 const SCREEN_SETTLE_MS = 1200;
+const SESSION_CODE = `S-${String(Math.floor(1000 + Math.random() * 9000))}`;
 
 export default function App() {
   const [state, dispatch] = useReducer(reducer, TESTS, initialState);
@@ -37,6 +37,7 @@ export default function App() {
   const [flash, setFlash] = useState<Flash | null>(null);
   const flashId = useRef(0);
   const wallStart = useRef(Date.now());
+  const sessionStart = useRef(Date.now());
   const last = useMemo(() => lastCompleted(), []);
   const phaseEnteredAt = useRef(0);
   const phaseSeen = useRef(state.phase);
@@ -52,11 +53,11 @@ export default function App() {
 
   useEffect(() => {
     if (!flash) return;
-    const t = setTimeout(() => setFlash(null), flash.kind === 'ok' ? 1600 : 3200);
+    const t = setTimeout(() => setFlash(null), flash.kind === 'ok' ? 1600 : 3400);
     return () => clearTimeout(t);
   }, [flash]);
 
-  /** Single entry for every input: camera gestures, demo panel and fallback buttons. */
+  /** Single entry for every input: camera gestures, demo panel and on-screen fallbacks. */
   const handleGesture = useCallback(
     (g: Gesture) => {
       // Let each new screen register before accepting "next" gestures, so a
@@ -71,9 +72,8 @@ export default function App() {
         const a = r.action;
         dispatch(a);
         stateRef.current = reducer(stateRef.current, a);
-        if (a.type === 'CONFIRM') playSound('confirm');
-        else playSound('detect');
-        showFlash('ok', r.feedback ?? `Отлично! Жест распознан: ${gestureEmoji(g)} ${GESTURE_META[g].name}`);
+        playSound(a.type === 'CONFIRM' ? 'confirm' : 'detect');
+        showFlash('ok', r.feedback ?? GESTURE_META[g].name);
       } else if (r.kind === 'reject') {
         playSound('error');
         showFlash('hint', r.hint);
@@ -82,7 +82,6 @@ export default function App() {
     [showFlash],
   );
 
-  // Start camera (or demo mode) and subscribe to committed gestures.
   useEffect(() => {
     if (isDemo) visionRuntime.enableDemo();
     else void visionRuntime.start();
@@ -96,8 +95,7 @@ export default function App() {
     visionRuntime.setOptions({
       expectHand: !['FINAL_RESULT', 'ANSWER_CONFIRMED'].includes(state.phase) && !observing,
       faceCheck:
-        ['CAMERA_SETUP', 'PREPARATION', 'TEST_INTRO'].includes(state.phase) ||
-        (TEST_PHASES.includes(state.phase) && test.id === 'acuity'),
+        ['CAMERA_SETUP', 'PREPARATION', 'TEST_INTRO'].includes(state.phase) || (TEST_PHASES.includes(state.phase) && test.id === 'acuity'),
     });
     if (observing) {
       const t = setTimeout(() => visionRuntime.setOptions({ expectHand: true }), state.trialReadyAt - performance.now());
@@ -105,14 +103,14 @@ export default function App() {
     }
   }, [state.phase, state.testIndex, state.trialReadyAt]);
 
-  // Auto-advance after "Ответ принят".
+  // Auto-advance after the answer is confirmed and logged.
   useEffect(() => {
     if (state.phase !== 'ANSWER_CONFIRMED') return;
     const t = setTimeout(() => dispatch({ type: 'ADVANCE', now: performance.now() }), 900);
     return () => clearTimeout(t);
   }, [state.phase]);
 
-  // Persist results & celebrate finished tests.
+  // Persist results after each finished test.
   useEffect(() => {
     if (state.phase === 'TEST_INTRO' && state.testIndex === 0) wallStart.current = Date.now();
     if (state.phase === 'TEST_RESULT') {
@@ -121,75 +119,73 @@ export default function App() {
     }
   }, [state.phase, state.testIndex, state.results]);
 
-  // Scroll to top between screens (important on phones).
   useEffect(() => {
     if (state.phase === 'ANSWER_SELECTED' || state.phase === 'ANSWER_CONFIRMED') return;
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [state.phase, state.testIndex]);
+  }, [state.phase, state.testIndex, state.trialIndex]);
 
   const test = TESTS[state.testIndex];
-  const inTest = TEST_PHASES.includes(state.phase);
+  const calibration = CALIBRATION_PHASES.includes(state.phase);
 
-  // Progress header.
-  const progress = (() => {
+  const bar = (() => {
     switch (state.phase) {
       case 'LANDING':
+        return { current: -1, done: 0, label: 'Standby' };
       case 'CAMERA_SETUP':
-        return { current: -1, done: 0, label: null };
       case 'PREPARATION':
-        return { current: 0, done: 0, label: 'Подготовка' };
+        return { current: -1, done: 0, label: 'Calibration' };
       case 'FINAL_RESULT':
-        return { current: -1, done: 6, label: 'Готово' };
+        return { current: -1, done: 5, label: 'Report' };
       case 'TEST_RESULT':
-        return { current: state.testIndex + 1, done: state.testIndex + 2, label: `Тест ${test.number} из 5` };
+        return { current: state.testIndex, done: state.testIndex + 1, label: 'Result' };
       default:
-        return { current: state.testIndex + 1, done: state.testIndex + 1, label: `Тест ${test.number} из 5` };
+        return { current: state.testIndex, done: state.testIndex, label: 'Test' };
     }
   })();
 
-  // Gesture hint chips (also mouse / keyboard fallback).
-  const chips: PromptChip[] = (() => {
-    if (inTest) {
-      const trial = state.trials[state.testIndex][state.trialIndex];
-      const opts = test.options(trial).map((o) => ({
-        gesture: o.gesture,
-        label: o.label,
-        onClick: () => handleGesture(o.gesture),
-        highlighted: state.selected === o.value,
-      }));
-      return [
-        ...opts,
-        { gesture: 'FIST', label: 'Подтвердить', onClick: () => handleGesture('FIST'), highlighted: state.phase === 'ANSWER_SELECTED' },
-        { gesture: 'OPEN_PALM', label: 'Отменить', onClick: () => handleGesture('OPEN_PALM') },
-      ];
-    }
-    return (PHASE_PROMPTS[state.phase] ?? []).map((p) => ({ ...p, onClick: () => handleGesture(p.gesture), highlighted: p.gesture === 'THUMBS_UP' }));
-  })();
+  const selectByValue = (v: string) => {
+    const opt = test.options(state.trials[state.testIndex][state.trialIndex]).find((o) => o.value === v);
+    if (opt) handleGesture(opt.gesture);
+  };
 
   let page: ReactNode = null;
   switch (state.phase) {
     case 'LANDING':
-      page = <LandingPage last={last} />;
+      page = <WelcomePage last={last} onStart={() => handleGesture('THUMBS_UP')} />;
       break;
     case 'CAMERA_SETUP':
-      page = <CameraSetupPage vision={vision} />;
+      page = <CalibrationPage vision={vision} onContinue={() => handleGesture('THUMBS_UP')} />;
       break;
     case 'PREPARATION':
-      page = <PreparationPage replayKey={state.replayKey} face={vision.engine.face} />;
+      page = <PreparationPage replayKey={state.replayKey} onBegin={() => handleGesture('THUMBS_UP')} onReplay={() => handleGesture('OPEN_PALM')} />;
       break;
     case 'TEST_INTRO':
-      page = <TestIntroPage test={test} replayKey={state.replayKey} />;
+      page = (
+        <TestIntroPage
+          test={test}
+          firstTrial={state.trials[state.testIndex][0]}
+          replayKey={state.replayKey}
+          onStart={() => handleGesture('THUMBS_UP')}
+          onReplay={() => handleGesture('OPEN_PALM')}
+        />
+      );
       break;
     case 'TEST_ACTIVE':
     case 'ANSWER_SELECTED':
     case 'ANSWER_CONFIRMED':
-      page = <TestPage test={test} state={state} onSelect={(v) => {
-        const opt = test.options(state.trials[state.testIndex][state.trialIndex]).find((o) => o.value === v);
-        if (opt) handleGesture(opt.gesture);
-      }} />;
+      page = <TestPage test={test} state={state} onGesture={handleGesture} onSelect={selectByValue} />;
       break;
     case 'TEST_RESULT':
-      page = <TestResultPage test={test} summary={state.results[state.testIndex]!} isLast={state.testIndex === TESTS.length - 1} />;
+      page = (
+        <TestResultPage
+          test={test}
+          next={TESTS[state.testIndex + 1] ?? null}
+          summary={state.results[state.testIndex]!}
+          records={state.answers[state.testIndex]}
+          trials={state.trials[state.testIndex]}
+          onNext={() => handleGesture('THUMBS_UP')}
+        />
+      );
       break;
     case 'FINAL_RESULT':
       page = (
@@ -197,6 +193,8 @@ export default function App() {
           tests={TESTS}
           results={state.results}
           durationMs={state.screeningFinishedAt && state.screeningStartedAt ? state.screeningFinishedAt - state.screeningStartedAt : null}
+          sessionCode={SESSION_CODE}
+          finishedAt={Date.now()}
           onRestart={() => handleGesture('OPEN_PALM')}
           onHome={() => dispatch({ type: 'GO_HOME' })}
         />
@@ -204,37 +202,36 @@ export default function App() {
       break;
   }
 
+  const pageKey = `${TEST_PHASES.includes(state.phase) ? 'TEST' : state.phase}-${state.testIndex}`;
+
   return (
     <div className="min-h-dvh">
-      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:rounded-full focus:bg-white focus:px-4 focus:py-2">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:bg-paper focus:px-4 focus:py-2"
+      >
         К содержимому
       </a>
-      <Header current={progress.current} done={progress.done} stepLabel={progress.label} />
-      <main id="main" data-phase={state.phase} data-test={test.id} className="mx-auto grid max-w-7xl gap-5 px-4 pb-28 pt-5 sm:px-6 lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-8 lg:pt-8">
-        {/* camera column: first on phones, right on desktop */}
-        <aside className="order-first flex flex-col gap-3 lg:order-last lg:sticky lg:top-28 lg:self-start">
-          <div className={`mx-auto w-full transition-all duration-500 lg:max-w-none ${inTest ? 'max-w-[230px] sm:max-w-[340px]' : 'max-w-[300px] sm:max-w-[440px]'}`}>
-            <CameraView />
-          </div>
-          <ErrorMessage issue={vision.status === 'ready' ? vision.engine.issue : null} flash={flash} />
-          <div className="hidden lg:block">
-            <GesturePrompt items={chips} />
-          </div>
-        </aside>
-        <section className="min-w-0" aria-live="polite">
-          <div key={`${state.phase === 'ANSWER_SELECTED' || state.phase === 'ANSWER_CONFIRMED' ? 'TEST_ACTIVE' : state.phase}-${state.testIndex}`} className="animate-fade-in">
-            {page}
-          </div>
-          <div className="mt-6 lg:hidden">
-            <GesturePrompt items={chips} />
-          </div>
+      <SessionBar current={bar.current} done={bar.done} phaseLabel={bar.label} sessionCode={SESSION_CODE} startedAt={sessionStart.current} />
+      <main
+        id="main"
+        data-phase={state.phase}
+        data-test={test.id}
+        className="mx-auto grid max-w-[1440px] grid-cols-12 gap-x-6 gap-y-8 px-5 pb-24 pt-8 sm:px-10 lg:pt-12"
+      >
+        <section key={pageKey} className={`col-span-12 min-w-0 ${calibration ? 'lg:col-span-5' : 'lg:col-span-9'}`}>
+          {page}
         </section>
+        <div
+          className={`order-first col-span-12 lg:order-none ${calibration ? 'lg:col-span-6 lg:col-start-7' : 'lg:col-span-3'}`}
+        >
+          <div className={`lg:sticky lg:top-24 ${calibration ? '' : 'mx-auto max-w-[420px] lg:max-w-none'}`}>
+            <Instrument flash={flash} />
+          </div>
+        </div>
       </main>
-      <footer className="mx-auto max-w-7xl px-4 pb-8 text-xs leading-relaxed text-slate-500 sm:px-6">
-        Vision Motion — предварительный скрининг зрения, не является медицинским диагнозом. Видео с камеры обрабатывается локально в браузере и не
-        отправляется на сервер.
-      </footer>
       {isDemo && <DemoPanel />}
     </div>
   );
 }
+

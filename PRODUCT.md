@@ -31,8 +31,11 @@ The camera replaces keyboard and mouse. Real-time hand tracking runs locally in 
 - Open: logo and brand colours exist but have not been provided yet (see Brand Commitments).
 
 ## Brand Commitments
-- Name: **Vision Motion**.
-- The team has its own logo and colours, which are binding. **Not yet provided**; future visual work must use them once they are supplied and must not invent a replacement logo.
+- Name: **VISION MOTION** (typographic wordmark; no pictorial logo). Subtitle: "Digital vision screening".
+- Binding palette from the team: background `#F5F4F0` (warm off-white), text `#111111`, secondary `#6F6F6A`, borders `#D9D8D2`, one restrained accent: cobalt `#2457FF`, used sparingly for active state, recognition, progress, key controls. Amber for Error Mode, green only for success. No gradients.
+- Binding typography: a neo-grotesk (Geist chosen from the team's list Inter / Geist / IBM Plex; it covers Cyrillic).
+- Language: Russian copy with short English technical labels (VISION MOTION, 01 / 05, TRACKING).
+- Refused by the team: landing-page hero, SaaS cards everywhere, glassmorphism, purple/blue AI gradients, giant gradient buttons, heavy shadows, cartoon medical illustration, stock photos, gamification, colourful UI, "AI health app" look, traditional navbar.
 - Voice: friendly, calm, technological, not frightening; addresses the user directly.
 
 ## Evidence on Hand

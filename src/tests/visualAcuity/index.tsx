@@ -1,3 +1,4 @@
+import { StimulusField } from '../../components/StimulusField/StimulusField';
 import type { AnswerOption, AnswerRecord, StimulusProps, TestDefinition } from '../types';
 
 export type Direction = 'up' | 'down' | 'left' | 'right';
@@ -22,10 +23,10 @@ const DIRECTION_TEXT: Record<Direction, string> = {
 };
 
 const OPTIONS: AnswerOption[] = [
-  { value: 'up', gesture: 'POINT_UP', label: 'Вверх', glyph: '↑' },
-  { value: 'left', gesture: 'POINT_LEFT', label: 'Влево', glyph: '←' },
-  { value: 'right', gesture: 'POINT_RIGHT', label: 'Вправо', glyph: '→' },
-  { value: 'down', gesture: 'POINT_DOWN', label: 'Вниз', glyph: '↓' },
+  { value: 'up', gesture: 'POINT_UP', label: 'Вверх' },
+  { value: 'left', gesture: 'POINT_LEFT', label: 'Влево' },
+  { value: 'right', gesture: 'POINT_RIGHT', label: 'Вправо' },
+  { value: 'down', gesture: 'POINT_DOWN', label: 'Вниз' },
 ];
 
 function randomDirections(n: number): Direction[] {
@@ -67,14 +68,15 @@ function bestLevel(records: AnswerRecord[], trials: AcuityTrial[]) {
 
 function Stimulus({ trial }: StimulusProps<AcuityTrial>) {
   return (
-    <div className="relative flex h-full min-h-[240px] w-full items-center justify-center overflow-hidden rounded-3xl bg-white ring-1 ring-slate-200">
-      <div className="absolute left-4 top-4 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-        Уровень {trial.level} / {ACUITY_SIZES.length}
-      </div>
-      <div key={`${trial.level}`} className="animate-pop-in" style={{ maxWidth: '72%', maxHeight: '72%' }}>
+    <StimulusField
+      label={`Уровень ${trial.level} из ${ACUITY_SIZES.length}`}
+      tagLeft={`LEVEL ${String(trial.level).padStart(2, '0')} / ${ACUITY_SIZES.length}`}
+      tagRight={`${trial.size} PX`}
+    >
+      <div key={trial.level} className="animate-fade">
         <TumblingE size={trial.size} direction={trial.direction} />
       </div>
-    </div>
+    </StimulusField>
   );
 }
 
@@ -82,14 +84,15 @@ export const visualAcuityTest: TestDefinition<AcuityTrial> = {
   id: 'acuity',
   number: 1,
   title: 'Острота зрения',
+  titleEn: 'Visual acuity · Tumbling E',
   shortTitle: 'Острота',
   checks:
     'Насколько хорошо вы различаете мелкие символы. Использован принцип таблицы «Tumbling E»: нужно определить, в какую сторону открыта буква E.',
   intro: [
     'Сядьте на расстоянии вытянутой руки от экрана (≈ 50–70 см).',
     'Если вы носите очки для дали — оставайтесь в них.',
-    'Покажите указательным пальцем, куда открыта буква E: ☝️ 👇 👈 👉.',
-    'Подтвердите ответ кулаком ✊. Символ будет постепенно уменьшаться.',
+    'Укажите пальцем, куда открыта буква E: вверх, вниз, влево или вправо.',
+    'Подтвердите ответ кулаком. Символ будет постепенно уменьшаться.',
   ],
   layout: 'cross',
   createTrials() {

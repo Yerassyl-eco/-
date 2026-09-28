@@ -34,8 +34,8 @@ export function DemoPanel() {
   }, []);
 
   return (
-    <aside className="fixed bottom-3 left-3 z-50 max-w-[calc(100vw-24px)] rounded-2xl bg-slate-900/95 p-2 sm:p-3 text-white shadow-2xl" aria-label="Панель разработчика">
-      <p className="mb-2 hidden text-xs sm:block font-bold uppercase tracking-[0.18em] text-fuchsia-300">Dev demo mode · без камеры</p>
+    <aside className="fixed bottom-3 left-3 z-50 max-w-[calc(100vw-24px)] border border-ink bg-ink p-2 text-paper sm:p-3" aria-label="Панель разработчика">
+      <p className="label mb-2 hidden text-paper/60 sm:block">Dev demo · no camera</p>
       <div className="flex flex-wrap gap-1.5">
         {ALL_GESTURES.map((g) => (
           <button
@@ -43,14 +43,14 @@ export function DemoPanel() {
             type="button"
             data-gesture={g}
             onClick={() => visionRuntime.simulate(g)}
-            className="rounded-lg bg-white/10 px-2 py-1 text-xs font-semibold hover:bg-white/20"
+            className="flex items-center border border-paper/25 px-2 py-1 text-xs hover:border-paper"
           >
             <GestureIcon gesture={g} size={16} className="inline sm:mr-1" aria-label={GESTURE_META[g].name} />
             <span className="hidden sm:inline">{GESTURE_META[g].label}</span>
           </button>
         ))}
       </div>
-      <p className="mt-2 hidden text-xs text-white/60 sm:block">Клавиши: ← → ↑ ↓ · Enter/F = ✊ · T/Space = 👍 · P = ✋</p>
+      <p className="num mt-2 hidden text-xs text-paper/60 sm:block">Keys: arrows · Enter/F fist · T/Space thumbs up · P palm</p>
     </aside>
   );
 }

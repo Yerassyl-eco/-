@@ -1,3 +1,4 @@
+import { StimulusField } from '../../components/StimulusField/StimulusField';
 import { useEffect, useRef } from 'react';
 import type { Gesture } from '../../vision/types';
 import type { AnswerOption, StimulusProps, TestDefinition } from '../types';
@@ -66,23 +67,25 @@ function Plate({ trial }: { trial: ColorTrial }) {
   return (
     <canvas
       ref={ref}
-      className="aspect-square h-auto w-full max-w-[300px] rounded-full shadow-[0_20px_60px_-20px_rgba(15,23,42,0.35)]"
+      className="aspect-square h-auto w-full max-w-[300px] rounded-full"
       role="img"
       aria-label={`Цветовая карточка ${trial.plate}: круг из цветных точек со скрытой цифрой`}
     />
   );
 }
 
-function Stimulus({ trial, trialIndex, trialCount }: StimulusProps<ColorTrial>) {
+function Stimulus({ trial, trialIndex, trialCount, observeProgress }: StimulusProps<ColorTrial>) {
   return (
-    <div className="relative flex h-full min-h-[300px] w-full items-center justify-center overflow-hidden rounded-3xl bg-white p-5 ring-1 ring-slate-200">
-      <div className="absolute left-4 top-4 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-        Карточка {trialIndex + 1} / {trialCount}
-      </div>
-      <div key={trial.plate} className="animate-pop-in flex w-full items-center justify-center pt-4">
+    <StimulusField
+      label={`Цветовая карточка ${trial.plate}`}
+      tagLeft={`PLATE ${String(trialIndex + 1).padStart(2, '0')} / ${String(trialCount).padStart(2, '0')}`}
+      tagRight={trial.control ? 'CONTROL' : 'TEST'}
+      progress={observeProgress}
+    >
+      <div key={trial.plate} className="animate-fade flex w-full items-center justify-center p-8">
         <Plate trial={trial} />
       </div>
-    </div>
+    </StimulusField>
   );
 }
 
@@ -90,14 +93,15 @@ export const colorVisionTest: TestDefinition<ColorTrial> = {
   id: 'color',
   number: 5,
   title: 'Цветовое зрение',
+  titleEn: 'Colour vision · generated plates',
   shortTitle: 'Цвет',
   checks:
     'Различаете ли вы цифры, составленные из точек близких оттенков. Карточки созданы по принципу псевдоизохроматических таблиц (собственная генерация).',
   intro: [
     'Проверьте, что яркость экрана достаточная и не включён ночной режим / фильтр синего света.',
     'На каждой карточке спрятана цифра из цветных точек.',
-    'Выберите цифру жестом 👈 ☝️ 👉, либо 👇 — «не вижу цифру».',
-    'Подтвердите выбор кулаком ✊.',
+    'Выберите цифру, указав влево, вверх или вправо; вниз — «не вижу цифру».',
+    'Подтвердите выбор кулаком.',
   ],
   layout: 'cross',
   createTrials() {

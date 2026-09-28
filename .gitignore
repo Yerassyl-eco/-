@@ -5,3 +5,6 @@ public/mediapipe/wasm
 .DS_Store
 *.tsbuildinfo
 dist-artifact
+
+# Impeccable review captures (regenerated)
+.impeccable/review/

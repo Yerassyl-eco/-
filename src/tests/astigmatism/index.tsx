@@ -1,3 +1,4 @@
+import { StimulusField } from '../../components/StimulusField/StimulusField';
 import type { ReactElement } from 'react';
 import type { AnswerOption, StimulusProps, TestDefinition } from '../types';
 
@@ -35,7 +36,7 @@ export function RadialDial({ stroke, width, spokes, size = 320 }: { stroke: stri
     const n = i === 0 ? 12 : i;
     const ang = (i * 30 - 90) * (Math.PI / 180);
     return (
-      <text key={n} x={160 + Math.cos(ang) * 152} y={160 + Math.sin(ang) * 152 + 4} textAnchor="middle" fontSize="11" fontWeight="600" fill="#64748b">
+      <text key={n} x={160 + Math.cos(ang) * 152} y={160 + Math.sin(ang) * 152 + 4} textAnchor="middle" fontSize="11" fontWeight="600" fill="#6f6f6a">
         {n}
       </text>
     );
@@ -44,21 +45,23 @@ export function RadialDial({ stroke, width, spokes, size = 320 }: { stroke: stri
     <svg viewBox="0 0 320 320" width={size} height={size} role="img" aria-label="Радиальная фигура из линий, расходящихся от центра" className="max-h-full max-w-full">
       {lines}
       {labels}
-      <circle cx="160" cy="160" r="5" fill="#0f172a" />
+      <circle cx="160" cy="160" r="5" fill="#111111" />
     </svg>
   );
 }
 
-function Stimulus({ trial, trialIndex, trialCount }: StimulusProps<DialTrial>) {
+function Stimulus({ trial, trialIndex, trialCount, observeProgress }: StimulusProps<DialTrial>) {
   return (
-    <div className="relative flex h-full min-h-[240px] w-full items-center justify-center overflow-hidden rounded-3xl bg-white p-4 ring-1 ring-slate-200">
-      <div className="absolute left-4 top-4 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-        Вариант {trialIndex + 1} / {trialCount} · {trial.name}
-      </div>
-      <div key={trial.variant} className="animate-fade-in flex h-full w-full items-center justify-center pt-6">
+    <StimulusField
+      label="Радиальная фигура"
+      tagLeft={`VARIANT ${trialIndex + 1} / ${trialCount}`}
+      tagRight={trial.name.toUpperCase()}
+      progress={observeProgress}
+    >
+      <div key={trial.variant} className="animate-fade flex h-full max-h-[420px] w-full items-center justify-center p-8">
         <RadialDial stroke={trial.stroke} width={trial.width} spokes={trial.spokes} />
       </div>
-    </div>
+    </StimulusField>
   );
 }
 
@@ -66,6 +69,7 @@ export const astigmatismTest: TestDefinition<DialTrial> = {
   id: 'astigmatism',
   number: 2,
   title: 'Радиальная фигура',
+  titleEn: 'Astigmatism dial',
   shortTitle: 'Радиальная',
   checks:
     'Одинаково ли чётко вы видите линии разных направлений. Используется классическая радиальная фигура («лучистая фигура»).',
@@ -73,7 +77,7 @@ export const astigmatismTest: TestDefinition<DialTrial> = {
     'Если вы носите очки — оставайтесь в них.',
     'Смотрите в центр фигуры.',
     'Оцените: все ли линии кажутся одинаково чёрными и чёткими?',
-    '👈 — одинаково, 👉 — некоторые линии отличаются. Подтвердите ✊.',
+    'Влево — линии одинаковые, вправо — некоторые линии отличаются. Подтвердите кулаком.',
   ],
   layout: 'pair',
   createTrials: () => [

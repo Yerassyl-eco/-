@@ -4,17 +4,19 @@ import type { FaceObservation } from '../types';
 
 export type OverlayTone = 'idle' | 'tracking' | 'holding' | 'stable' | 'warning';
 
-const TONES: Record<OverlayTone, { line: string; joint: string; glow: string }> = {
-  idle: { line: 'rgba(255,255,255,0.75)', joint: '#ffffff', glow: 'rgba(255,255,255,0.35)' },
-  tracking: { line: 'rgba(103,232,249,0.95)', joint: '#ecfeff', glow: 'rgba(34,211,238,0.55)' },
-  holding: { line: 'rgba(34,211,238,1)', joint: '#ffffff', glow: 'rgba(8,145,178,0.75)' },
-  stable: { line: 'rgba(74,222,128,1)', joint: '#ffffff', glow: 'rgba(34,197,94,0.75)' },
-  warning: { line: 'rgba(251,191,36,1)', joint: '#fff7ed', glow: 'rgba(245,158,11,0.6)' },
+/** Instrument palette for the live video layer (drawn over dark footage). */
+const TONES: Record<OverlayTone, { line: string; joint: string; bracket: string }> = {
+  idle: { line: 'rgba(255,255,255,0.55)', joint: 'rgba(255,255,255,0.9)', bracket: 'rgba(255,255,255,0.5)' },
+  tracking: { line: 'rgba(255,255,255,0.8)', joint: '#ffffff', bracket: 'rgba(255,255,255,0.7)' },
+  holding: { line: '#7f9bff', joint: '#ffffff', bracket: '#7f9bff' },
+  stable: { line: '#2457ff', joint: '#ffffff', bracket: '#2457ff' },
+  warning: { line: '#ffb020', joint: '#fff4de', bracket: '#ffb020' },
 };
 
 /**
- * Draws landmarks, skeleton, a soft bounding box and the face frame directly
- * on a canvas. Runs every video frame outside React.
+ * Draws the tracking layer directly on a canvas every video frame (outside
+ * React): hairline skeleton, joint dots, corner brackets, hold progress and
+ * the face frame. The canvas is mirrored by CSS, so text is counter-flipped.
  */
 export function drawOverlay(
   ctx: CanvasRenderingContext2D,
@@ -26,34 +28,44 @@ export function drawOverlay(
   holdProgress: number,
 ) {
   ctx.clearRect(0, 0, w, h);
-  const unit = Math.max(1, Math.min(w, h) / 360);
+  const u = Math.max(1, Math.min(w, h) / 480);
 
   if (faces) {
     for (const f of faces) {
+      const x = f.x * w;
+      const y = f.y * h;
+      const fw = f.width * w;
+      const fh = f.height * h;
       ctx.save();
-      ctx.setLineDash([6 * unit, 6 * unit]);
-      ctx.strokeStyle = 'rgba(255,255,255,0.45)';
-      ctx.lineWidth = 1.5 * unit;
-      roundRect(ctx, f.x * w, f.y * h, f.width * w, f.height * h, 14 * unit);
-      ctx.stroke();
+      ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+      ctx.lineWidth = 1 * u;
+      ctx.setLineDash([4 * u, 4 * u]);
+      ctx.strokeRect(x, y, fw, fh);
+      ctx.setLineDash([]);
+      // label, counter-flipped because the canvas is mirrored
+      ctx.translate(x + fw, y - 6 * u);
+      ctx.scale(-1, 1);
+      ctx.fillStyle = 'rgba(255,255,255,0.75)';
+      ctx.font = `${10 * u}px "Geist Mono Variable", ui-monospace, monospace`;
+      ctx.fillText('FACE', 0, 0);
       ctx.restore();
     }
   }
 
   const c = TONES[tone];
   for (const lms of hands) {
-    // Bounding box with corner brackets.
     const b = bbox(lms);
-    const pad = 0.03;
+    const pad = 0.025;
     const x0 = (b.minX - pad) * w;
     const y0 = (b.minY - pad) * h;
     const x1 = (b.maxX + pad) * w;
     const y1 = (b.maxY + pad) * h;
-    const cl = Math.min(22 * unit, (x1 - x0) / 3, (y1 - y0) / 3);
+    const cl = Math.min(14 * u, (x1 - x0) / 4, (y1 - y0) / 4);
+
     ctx.save();
-    ctx.strokeStyle = c.line;
-    ctx.lineWidth = 3 * unit;
-    ctx.lineCap = 'round';
+    ctx.lineCap = 'square';
+    ctx.strokeStyle = c.bracket;
+    ctx.lineWidth = 1.5 * u;
     ctx.beginPath();
     ctx.moveTo(x0, y0 + cl); ctx.lineTo(x0, y0); ctx.lineTo(x0 + cl, y0);
     ctx.moveTo(x1 - cl, y0); ctx.lineTo(x1, y0); ctx.lineTo(x1, y0 + cl);
@@ -61,21 +73,25 @@ export function drawOverlay(
     ctx.moveTo(x0 + cl, y1); ctx.lineTo(x0, y1); ctx.lineTo(x0, y1 - cl);
     ctx.stroke();
 
-    // Hold progress along the top edge of the box.
-    if (holdProgress > 0 && holdProgress < 1) {
-      ctx.strokeStyle = TONES.holding.line;
-      ctx.lineWidth = 4 * unit;
+    // hold progress: a hairline along the bottom edge of the brackets
+    if (holdProgress > 0) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+      ctx.lineWidth = 2 * u;
       ctx.beginPath();
-      ctx.moveTo(x0, y0 - 8 * unit);
-      ctx.lineTo(x0 + (x1 - x0) * holdProgress, y0 - 8 * unit);
+      ctx.moveTo(x0, y1 + 6 * u);
+      ctx.lineTo(x1, y1 + 6 * u);
+      ctx.stroke();
+      ctx.strokeStyle = c.line;
+      ctx.beginPath();
+      // canvas is mirrored: draw from the user's left (raw right edge)
+      ctx.moveTo(x1, y1 + 6 * u);
+      ctx.lineTo(x1 - (x1 - x0) * Math.min(1, holdProgress), y1 + 6 * u);
       ctx.stroke();
     }
 
-    // Skeleton.
-    ctx.shadowColor = c.glow;
-    ctx.shadowBlur = 10 * unit;
     ctx.strokeStyle = c.line;
-    ctx.lineWidth = 3 * unit;
+    ctx.lineWidth = 1.5 * u;
+    ctx.lineCap = 'round';
     ctx.beginPath();
     for (const [a, z] of HAND_CONNECTIONS) {
       ctx.moveTo(lms[a].x * w, lms[a].y * h);
@@ -83,28 +99,13 @@ export function drawOverlay(
     }
     ctx.stroke();
 
-    // Joints.
-    ctx.shadowBlur = 0;
     for (let i = 0; i < lms.length; i++) {
-      const isTip = i === 4 || i === 8 || i === 12 || i === 16 || i === 20;
+      const tip = i === 4 || i === 8 || i === 12 || i === 16 || i === 20;
       ctx.beginPath();
-      ctx.fillStyle = c.joint;
-      ctx.arc(lms[i].x * w, lms[i].y * h, (isTip ? 4.5 : 3.2) * unit, 0, Math.PI * 2);
+      ctx.fillStyle = tip ? c.line : c.joint;
+      ctx.arc(lms[i].x * w, lms[i].y * h, (tip ? 3 : 2.2) * u, 0, Math.PI * 2);
       ctx.fill();
-      ctx.lineWidth = 1.5 * unit;
-      ctx.strokeStyle = c.line;
-      ctx.stroke();
     }
     ctx.restore();
   }
-}
-
-function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
 }
