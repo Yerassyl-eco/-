@@ -31,7 +31,7 @@ The camera replaces keyboard and mouse. Real-time hand tracking runs locally in 
 - Open: logo and brand colours exist but have not been provided yet (see Brand Commitments).
 
 ## Brand Commitments
-- Name: **VISION MOTION** (typographic wordmark; no pictorial logo). Subtitle: "Digital vision screening".
+- Name: **Vision Motion** (typographic wordmark set in Prata; no pictorial logo). Subtitle: "Digital vision screening".
 - Palette (updated by the team: "more colourful, readable"): paper `#F5F4F0`, ink `#111111`, secondary text `#55554F`, borders `#D9D8D2`. Each test owns one saturated colour used for its cards, headers, selection and progress: acuity cobalt `#2457FF`, radial figure violet `#7C3AED`, duochrome coral `#D23B26`, Amsler teal `#0A7C6E`, colour vision sun `#F5A300` (ink text). Amber for Error Mode; soft green only for the "within screening range" status. No gradients.
 - Typography: elegant display serif Prata for headings and the wordmark (team asked for an unusual, elegant face); Geist for reading text; Geist Mono only for numbers.
 - Language: Russian throughout for readability; English only in the wordmark and the tests' short technical sublines.

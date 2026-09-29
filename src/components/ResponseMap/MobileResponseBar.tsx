@@ -59,7 +59,7 @@ export function MobileResponseBar({ options, selected, confirmed, ready, onSelec
             style={{ borderRadius: 'var(--radius-control)' }}
           >
             <GestureIcon gesture="FIST" size={16} /> Подтвердить
-            <span className="absolute inset-x-0 bottom-0 h-[2px] origin-left bg-[var(--accent)]" style={{ transform: `scaleX(${hold('FIST')})` }} aria-hidden />
+            <span className="absolute inset-x-0 bottom-0 h-1 origin-left bg-[var(--accent-on)] opacity-60" style={{ transform: `scaleX(${hold('FIST')})` }} aria-hidden />
           </button>
           <button
             type="button"

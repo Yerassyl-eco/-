@@ -20,7 +20,7 @@ export const THEMES: Record<TestId | 'calibration', Theme> = {
   astigmatism: { base: '#7c3aed', on: '#ffffff', wash: '#efe7fd', text: '#6a2fd6', name: 'Фиолетовый' },
   duochrome: { base: '#d23b26', on: '#ffffff', wash: '#fce8e4', text: '#b8321f', name: 'Коралл' },
   amsler: { base: '#0a7c6e', on: '#ffffff', wash: '#def2ee', text: '#0a7c6e', name: 'Бирюза' },
-  color: { base: '#f5a300', on: '#111111', wash: '#fff1d1', text: '#8a5300', name: 'Солнце' },
+  color: { base: '#f5a300', on: '#111111', wash: '#fff1d1', text: '#111111', name: 'Солнце' },
 };
 
 export function themeVars(t: Theme): CSSProperties {

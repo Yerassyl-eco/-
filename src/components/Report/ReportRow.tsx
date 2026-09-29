@@ -14,11 +14,11 @@ export function ReportRow({ label, children }: { label: string; children: ReactN
 export function StatusToken({ attention }: { attention: boolean }) {
   return attention ? (
     <span className="label inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-amber-wash px-3 py-1 text-amber">
-      <span className="inline-block h-2 w-2 rounded-full bg-amber-line" aria-hidden /> Обратить внимание
+      <span className="inline-block h-2 w-2 bg-amber-line" aria-hidden /> Обратить внимание
     </span>
   ) : (
     <span className="label inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-[#e2f1e8] px-3 py-1 text-[#17703f]">
-      <span className="inline-block h-2 w-2 rounded-full bg-[#17703f]" aria-hidden /> В пределах скрининга
+      <span className="inline-block h-2 w-2 rounded-full border-2 border-[#17703f]" aria-hidden /> В пределах скрининга
     </span>
   );
 }

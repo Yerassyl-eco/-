@@ -1,52 +1,88 @@
 ---
 name: Vision Motion
-description: A hands-free vision screening run like a psychophysics lab session.
+description: A hands-free vision screening run like a colourful psychophysics lab session.
 colors:
   paper: "#f5f4f0"
   field: "#ffffff"
   ink: "#111111"
-  graphite: "#6f6f6a"
+  graphite: "#55554f"
   rule: "#d9d8d2"
   rule-strong: "#b9b8b1"
+  scope: "#121212"
   cobalt: "#2457ff"
-  cobalt-wash: "#e7ecfb"
+  cobalt-wash: "#e6ecff"
+  cobalt-text: "#1f4be0"
+  violet: "#7c3aed"
+  violet-wash: "#efe7fd"
+  violet-text: "#6a2fd6"
+  coral: "#d23b26"
+  coral-wash: "#fce8e4"
+  coral-text: "#b8321f"
+  teal: "#0a7c6e"
+  teal-wash: "#def2ee"
+  sun: "#f5a300"
+  sun-wash: "#fff1d1"
   amber: "#8a5300"
   amber-line: "#e08a00"
-  scope: "#121212"
+  amber-wash: "#f6ecdc"
+  range-green: "#17703f"
+  range-wash: "#e2f1e8"
 typography:
   display:
-    fontFamily: "Geist Variable, Geist, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "44px"
-    fontWeight: 500
-    lineHeight: 1.08
-    letterSpacing: "-0.02em"
-  headline:
-    fontFamily: "Geist Variable, Geist, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "40px"
-    fontWeight: 500
-    lineHeight: 1.1
-    letterSpacing: "-0.02em"
-  statement:
-    fontFamily: "Geist Variable, Geist, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "30px"
+    fontFamily: "Prata, Times New Roman, serif"
+    fontSize: "54px"
     fontWeight: 400
-    lineHeight: 1.25
-  readout:
-    fontFamily: "Geist Variable, Geist, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "26px"
-    fontWeight: 500
+    lineHeight: 1.08
+    letterSpacing: "-0.01em"
+  headline:
+    fontFamily: "Prata, Times New Roman, serif"
+    fontSize: "48px"
+    fontWeight: 400
+    lineHeight: 1.1
+    letterSpacing: "-0.01em"
+  result-figure:
+    fontFamily: "Prata, Times New Roman, serif"
+    fontSize: "56px"
+    fontWeight: 400
     lineHeight: 1
     letterSpacing: "-0.01em"
-  title:
+  card-title:
+    fontFamily: "Prata, Times New Roman, serif"
+    fontSize: "40px"
+    fontWeight: 400
+    lineHeight: 1.25
+    letterSpacing: "-0.01em"
+  statement:
+    fontFamily: "Prata, Times New Roman, serif"
+    fontSize: "26px"
+    fontWeight: 400
+    lineHeight: 1.375
+    letterSpacing: "-0.01em"
+  wordmark:
+    fontFamily: "Prata, Times New Roman, serif"
+    fontSize: "20px"
+    fontWeight: 400
+    letterSpacing: "0.04em"
+  lead:
     fontFamily: "Geist Variable, Geist, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "17px"
-    fontWeight: 500
+    fontSize: "22px"
+    fontWeight: 400
+    lineHeight: 1.375
+  readout:
+    fontFamily: "Geist Variable, Geist, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "28px"
+    fontWeight: 600
+    lineHeight: 1
+  action:
+    fontFamily: "Geist Variable, Geist, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "18px"
+    fontWeight: 600
     lineHeight: 1.25
   body:
     fontFamily: "Geist Variable, Geist, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "16px"
+    fontSize: "17px"
     fontWeight: 400
-    lineHeight: 1.625
+    lineHeight: 1.6
     fontFeature: "'ss01', 'cv11'"
   body-sm:
     fontFamily: "Geist Variable, Geist, ui-sans-serif, system-ui, sans-serif"
@@ -57,18 +93,13 @@ typography:
     fontFamily: "Geist Variable, Geist, ui-sans-serif, system-ui, sans-serif"
     fontSize: "13px"
     fontWeight: 400
-    lineHeight: 1.625
+    lineHeight: 1.4
   label:
-    fontFamily: "Geist Variable, Geist, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "12px"
-    fontWeight: 560
-    lineHeight: "16px"
-    letterSpacing: "0.1em"
-  wordmark:
     fontFamily: "Geist Variable, Geist, ui-sans-serif, system-ui, sans-serif"
     fontSize: "13px"
     fontWeight: 600
-    letterSpacing: "0.18em"
+    lineHeight: "18px"
+    letterSpacing: "0.06em"
   numeral:
     fontFamily: "Geist Mono Variable, Geist Mono, ui-monospace, SF Mono, Menlo, monospace"
     fontSize: "13px"
@@ -76,9 +107,11 @@ typography:
     letterSpacing: "0"
     fontFeature: "'tnum'"
 rounded:
-  none: "0px"
   hair: "2px"
-  dot: "9999px"
+  icon: "12px"
+  control: "14px"
+  card: "24px"
+  pill: "9999px"
 spacing:
   cell-gap: "6px"
   row: "8px"
@@ -86,248 +119,299 @@ spacing:
   cue: "14px"
   md: "16px"
   gutter: "24px"
+  card-mobile: "28px"
+  card: "40px"
   page-mobile: "20px"
   page: "40px"
   section: "40px"
 components:
-  gesture-cue:
-    textColor: "{colors.ink}"
-    typography: "{typography.body-sm}"
-    padding: "14px 0"
-  gesture-cue-primary:
-    textColor: "{colors.ink}"
-    typography: "{typography.title}"
-    padding: "14px 0"
-  gesture-cue-glyph:
-    textColor: "{colors.ink}"
-    rounded: "{rounded.hair}"
-    size: "40px"
-  gesture-cue-glyph-primary-hover:
-    backgroundColor: "{colors.ink}"
-    textColor: "{colors.paper}"
-    rounded: "{rounded.hair}"
-    size: "40px"
-  gesture-cue-glyph-active:
+  instruction-card:
     backgroundColor: "{colors.cobalt}"
     textColor: "{colors.field}"
-    rounded: "{rounded.hair}"
-    size: "40px"
-  response-cell:
+    typography: "{typography.lead}"
+    rounded: "{rounded.card}"
+    padding: "40px"
+    height: "clamp(300px, 42vh, 380px)"
+  result-card:
+    backgroundColor: "{colors.cobalt}"
+    textColor: "{colors.field}"
+    rounded: "{rounded.card}"
+    padding: "36px"
+  gesture-cue-primary:
+    backgroundColor: "{colors.cobalt}"
+    textColor: "{colors.field}"
+    typography: "{typography.action}"
+    rounded: "{rounded.control}"
+    padding: "14px 16px"
+  gesture-cue:
+    backgroundColor: "{colors.field}"
     textColor: "{colors.ink}"
-    typography: "{typography.body-sm}"
-    rounded: "{rounded.hair}"
+    rounded: "{rounded.control}"
+    padding: "14px 16px"
+  gesture-cue-glyph:
+    backgroundColor: "{colors.cobalt-wash}"
+    textColor: "{colors.cobalt-text}"
+    rounded: "{rounded.icon}"
+    size: "44px"
+  response-cell:
+    backgroundColor: "{colors.field}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.control}"
     padding: "12px 14px"
     height: "56px"
   response-cell-selected:
     backgroundColor: "{colors.cobalt-wash}"
-    textColor: "{colors.cobalt}"
-    rounded: "{rounded.hair}"
+    textColor: "{colors.cobalt-text}"
+    rounded: "{rounded.control}"
     padding: "12px 14px"
     height: "56px"
   response-cell-confirmed:
     backgroundColor: "{colors.cobalt}"
     textColor: "{colors.field}"
-    rounded: "{rounded.hair}"
+    rounded: "{rounded.control}"
     padding: "12px 14px"
     height: "56px"
   confirm-button:
-    backgroundColor: "{colors.ink}"
-    textColor: "{colors.paper}"
-    rounded: "{rounded.hair}"
+    backgroundColor: "{colors.cobalt}"
+    textColor: "{colors.field}"
+    rounded: "{rounded.control}"
     height: "44px"
+  step-pill-current:
+    backgroundColor: "{colors.cobalt}"
+    textColor: "{colors.field}"
+    typography: "{typography.numeral}"
+    rounded: "{rounded.pill}"
+    size: "28px"
   stimulus-field:
     backgroundColor: "{colors.field}"
     textColor: "{colors.ink}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.card}"
   stimulus-tag:
-    textColor: "{colors.graphite}"
+    backgroundColor: "{colors.cobalt-wash}"
+    textColor: "{colors.cobalt-text}"
     typography: "{typography.numeral}"
-    rounded: "{rounded.hair}"
-    padding: "2px 6px"
+    rounded: "{rounded.pill}"
+    padding: "2px 10px"
   scope:
     backgroundColor: "{colors.scope}"
     textColor: "{colors.field}"
-    rounded: "{rounded.none}"
+    rounded: "{rounded.control}"
   error-band:
     backgroundColor: "{colors.paper}"
     textColor: "{colors.ink}"
     padding: "12px 16px"
-  text-link:
-    textColor: "{colors.graphite}"
-    typography: "{typography.body-sm}"
-    height: "44px"
+  status-attention:
+    backgroundColor: "{colors.amber-wash}"
+    textColor: "{colors.amber}"
+    typography: "{typography.label}"
+    rounded: "{rounded.pill}"
+    padding: "4px 12px"
+  status-within-range:
+    backgroundColor: "{colors.range-wash}"
+    textColor: "{colors.range-green}"
+    typography: "{typography.label}"
+    rounded: "{rounded.pill}"
+    padding: "4px 12px"
 ---
 
 # Design System: Vision Motion
 
 ## Overview
 
-**Creative North Star: "The Lab Session"**
+**Creative North Star: "The Colour-Coded Lab Session"**
 
-The screen is a psychophysics experiment runner, not a health app. Each surface is one bench station: a protocol, a stimulus field, a camera that works as a measuring instrument, and a time-coded response log. The page is warm off-white paper ruled with 1px hairlines. There are no cards, no hero and no dashboard tiles. Structure comes from the 12-column grid, ink rules that open each section, and the tracked uppercase labels you would find on a lab datasheet.
+The screen is still a psychophysics experiment runner: a protocol, a stimulus field, a camera that works as a measuring instrument, and a time-coded response log, all on warm paper ruled with hairlines. What changed is the voice. Each of the five tests now owns one saturated colour (cobalt, violet, coral, teal, sun), and that colour floods the moments that carry instruction or outcome: the instruction cards, the result header, the primary gesture action, the selected answer and the test's step in the progression. Everything else stays paper, ink and hairline, so the colour reads as "you are in test 03" rather than as decoration.
 
-Density is calm but technical. Big, plain Geist headings carry the human instruction in Russian. Short English technical labels (CAM 01, TRACKING, SESSION LOG) and Geist Mono numerals carry the instrument voice. Colour is nearly absent. Cobalt shows up only when the system is sensing something or the user is acting, and amber only when the user needs to adjust. So one glance at a screen recording tells you what the machine is doing right now.
+Headings are set in Prata, an elegant high-contrast display serif at a single regular weight, over Geist for reading text and Geist Mono for numbers. Reading sizes went up (17px body, 19 to 22px lead text) for older users and for legibility in a screen recording. Instructions arrive as a centred deck of colour cards, one at a time, with earlier cards settling into a stack behind. Surfaces that hold colour or a measurement are softly rounded (14 to 24px) and lifted by one soft shadow. Rows, logs and report sheets stay flat and ruled.
 
-The only ornament is the lab's own equipment: crop marks on frame corners, the graticule and centre reticle on the camera scope, and fixation crosses. Every gesture-driven control shares one signature. A 2px cobalt baseline fills from the left while the user holds the gesture.
+The instrument keeps its lab equipment: a scope-black camera well with a graticule and centre reticle, telemetry rows, a live gesture readout, and an amber SIGNAL band for Error Mode that names the fix.
 
 **Key Characteristics:**
-- Paper ground, ink text, graphite secondary text, 1px hairline rules. Flat throughout.
-- Cobalt is reserved for live signal, hold progress, the current step, selection and focus.
-- Amber means adjust (Error Mode, review status). It never means alarm.
-- The dark scope and the white stimulus field are the only two surfaces that differ from paper.
-- Tracked uppercase sans labels, mono tabular numerals, medium-weight headings.
-- Corners are 0 or 2px. Only 6px status dots are round.
+- Paper ground, ink text, graphite secondary text, 1px hairline rules for rows and sheets.
+- One saturated colour per test, applied through the active theme (accent, on, wash, text); calibration, preparation and the final report use cobalt.
+- Colour fills instruction cards, result headers, primary actions, selection and progress; it never tints a stimulus.
+- Amber means adjust (Error Mode, attention status). Soft green appears only on the "within screening range" status.
+- Prata display headings at weight 400; Geist reading text; Geist Mono for numbers only.
+- Rounded, softly lifted colour and measurement surfaces; flat ruled rows. No gradients, no glass.
 
 ## Colors
 
-The palette is almost monochrome, with one cobalt signal and one amber warning.
+A warm paper-and-ink base carrying five saturated test colours, one amber adjust signal and one soft range green.
 
-### Primary
-- **Signal Cobalt** (`cobalt`): marks live recognition and progress only. It appears on the TRACKING state, the stable-gesture readout, hold-progress baselines, the current step number and its underline in the session bar, the awaiting trial number in the log, the observation-progress rule on the stimulus field, selected and confirmed answers, the focus ring (2px outline, 2px offset), text selection and the caret.
-- **Cobalt Wash** (`cobalt-wash`): the fill of a selected but not yet confirmed answer cell. Cobalt text and border sit on it.
+### Primary (per-test accents)
+Each test theme supplies four values that the app root exposes as `--accent`, `--accent-on`, `--accent-wash` and `--accent-text` for the current phase. Components always consume the variables, never a fixed hue.
+- **Test Cobalt** (`cobalt`, wash `cobalt-wash`, text `cobalt-text`): 01 visual acuity, and the theme for camera setup, preparation and the final report. White on the fill.
+- **Radial Violet** (`violet`, `violet-wash`, `violet-text`): 02 radial figure (astigmatism). White on the fill.
+- **Duochrome Coral** (`coral`, `coral-wash`, `coral-text`): 03 duochrome. White on the fill.
+- **Amsler Teal** (`teal`, `teal-wash`; the fill doubles as its text colour): 04 Amsler grid. White on the fill.
+- **Plate Sun** (`sun`, `sun-wash`): 05 colour vision. The only theme with ink (`ink`) text on its fill.
+
+Where the accent lands: instruction card and result card fills, the primary Gesture Cue, the confirmed answer and mobile confirm button, the selected answer (wash fill, accent border, accent text), hold-progress bars, the stimulus field's 6px top band and progress rule, the live instrument state and stable gesture readout, report and section labels, and the test's own step in the session bar.
 
 ### Secondary
-- **Adjust Amber** (`amber`): text colour for Error Mode categories, the ADJUST state, the Review status and mismatched log answers. It is dark enough to pass AA as small text on paper.
-- **Amber Line** (`amber-line`): the non-text amber, used for the 2px top or bottom edge of the Error Mode band, warning dots and the square Review marker.
+- **Adjust Amber** (`amber`): text for Error Mode categories, the "Поправьте" state, the attention status and mismatched log answers. AA as small text on paper.
+- **Amber Line** (`amber-line`): non-text amber: the 2px Error Mode band edge, warning dots, the attention status dot.
+- **Amber Wash** (`amber-wash`): fill of the attention status pill.
+
+### Tertiary
+- **Range Green** (`range-green`) on **Range Wash** (`range-wash`): the "В пределах скрининга" status pill only.
 
 ### Neutral
-- **Lab Paper** (`paper`): page ground, session bar (95% opacity), mobile response bar, Error Mode band.
-- **Stimulus White** (`field`): the pure white ground inside the stimulus field only. Also used as text on cobalt and on the scope.
-- **Ink** (`ink`): primary text. Also the section-opening rule, primary cue glyph border and hover fill, the confirm button fill, and the "ok" / within-range mark.
-- **Graphite** (`graphite`): secondary text, labels, counters and timecodes at rest.
-- **Hairline** (`rule`): every 1px divider, row rule, frame border, and resting cell border.
-- **Strong Hairline** (`rule-strong`): idle status dots, secondary cue glyph border, the response-cross reticle, text-link underline, scrollbar thumb, and the info-level Error Mode edge.
-- **Scope Black** (`scope`): the camera well behind the video, with a white graticule at 50% alpha.
+- **Lab Paper** (`paper`): page ground, session bar (95%), mobile response bar, Error Mode band.
+- **Stimulus White** (`field`): the stimulus field ground, secondary cue and answer-cell fills; text on accent fills.
+- **Ink** (`ink`): primary text, the "ok" telemetry dot, the settling hold bar, the mobile response bar's top rule, text on the sun fill.
+- **Graphite** (`graphite`): secondary text, labels at rest, counters, timecodes.
+- **Hairline** (`rule`): every 1px divider, row rule, resting cell and cue border, progression connector track.
+- **Strong Hairline** (`rule-strong`): idle dots, upcoming step rings, unread deck dots, the response-cross centre, info-level Error Mode edge, scrollbar thumb.
+- **Scope Black** (`scope`): the camera well, with a 50% white graticule.
 
 ### Named Rules
-**The Live Signal Rule.** Cobalt means the system is sensing or the user is acting right now. Never use it for decoration, section headings or static emphasis. If nothing is live, the screen shows no cobalt apart from the current step number.
+**The One Test, One Colour Rule.** Each screen speaks in exactly one accent: the active test's theme. The only place several test colours appear together is where the five tests are shown as a set (welcome strip, session-bar progression, final-report bars).
 
-**The Amber Means Adjust Rule.** Amber marks something the user can correct or should review. Always pair it with words and a mark (triangle glyph, square dot). Never pair it with alarm wording.
+**The Theme Variable Rule.** Components read `--accent`, `--accent-on`, `--accent-wash` and `--accent-text`. Never hard-code a test hue inside a component; switching phase must recolour everything at once.
 
-**The Clinical Ground Rule.** Stimulus colours (duochrome red and green, colour-plate palettes, pure black optotypes) are test material, not palette. They live only inside the stimulus field. Never reuse them in UI chrome, and never let UI tokens tint a stimulus.
+**The Amber Means Adjust Rule.** Amber marks something the user can correct or should review. Always pair it with words (and the triangle glyph in Error Mode). Never pair it with alarm wording, and never let a test accent stand in for it.
+
+**The Clinical Ground Rule.** Stimulus colours (duochrome red and green, plate palettes, pure black optotypes) are test material, not palette. They live only inside the stimulus field; UI tokens frame the field but never tint the stimulus.
+
+The focus ring (2px, 2px offset), text selection and caret stay fixed cobalt on every theme.
 
 ## Typography
 
-**Display Font:** Geist Variable (with Geist, ui-sans-serif, system-ui)
-**Body Font:** Geist Variable, with stylistic sets `ss01` and `cv11` on body
-**Label/Mono Font:** Geist Mono Variable (with ui-monospace, SF Mono, Menlo), for numerals only
+**Display Font:** Prata (with Times New Roman, serif)
+**Body Font:** Geist Variable (with Geist, ui-sans-serif, system-ui), stylistic sets `ss01` and `cv11`
+**Label/Mono Font:** Geist Mono Variable (with ui-monospace, SF Mono, Menlo), numbers only
 
-**Character:** A neutral neo-grotesk used at medium weight for instruction, next to a monospace that only ever shows numbers. The pairing reads like a lab datasheet: human sentences above, measured values beside them.
+**Character:** A refined, high-contrast serif gives each heading a calm, almost editorial elegance; a neutral grotesk does the reading and the operating; a monospace carries only measured values.
 
 ### Hierarchy
-- **Display** (500, 34px mobile / 44px from 640px, 1.08): the first heading on welcome, calibration and preparation screens. Balanced wrap. Up to 16ch when it is a sentence.
-- **Headline** (500, 30px / 40px, 1.1): protocol titles (test name, report title). Always sits in the Protocol Header grid, with its index in a mono column on the same baseline.
-- **Statement** (400, 26px / 30px, 1.25, up to 30ch): the one-sentence result of a single test.
-- **Readout** (500, 20px / 26px from 1024px, line-height 1): the live gesture name in the instrument, in cobalt once the gesture is stable.
-- **Title** (500, 17px): primary gesture-cue action, report test names (17px regular).
-- **Body** (400, 16px, 1.5 base / 1.625 in report rows, 46–62ch): instruction paragraphs, report prose.
-- **Body small** (400, 15px): the most-used text size. Secondary cue actions, answer cells, subtitles, hints.
-- **Caption** (400, 13–14px): log rows (14px), vocabulary actions and footnotes (13px).
-- **Label** (560, 12px/16px, 0.1em, uppercase): instrument rows, table headers, section headings, status tokens, state words (TRACKING, HOLD, CONFIRMED).
-- **Numeral** (Geist Mono, tabular, 12–15px): step numbers, protocol index (01/05), trial numbers, timecodes, confidence, latency, session code, stimulus tags.
-- **Wordmark** (600, 13px, 0.18em): "VISION MOTION" in the session bar only.
+- **Display** (Prata 400, 38–40px mobile / 52–54px from 640px, 1.08–1.1, -0.01em, balanced): the page heading on welcome and above the instruction deck. Up to 16ch when it is a sentence.
+- **Headline** (Prata 400, 36px / 48px, 1.1): test titles in the Protocol Header; the final report title runs larger (40px / 60px, 1.05).
+- **Result figure** (Prata 400, 40px / 56px, line-height 1): the one-line outcome on a result card ("Уровень 2").
+- **Card title** (Prata 400, 30px / 40px, 1.25): the title on an instruction card.
+- **Statement** (Prata 400, 26px, 1.375, up to 40ch): the trial prompt and the "next test" line; 22px for test names in the final summary table.
+- **Wordmark** (Prata 400, 20px, 0.04em): "Vision Motion" in the session bar.
+- **Lead** (Geist 400, 19px / 22px, 1.375, up to 32–48ch): instruction-card text, result sentence, welcome intro.
+- **Readout** (Geist 600, 22px / 28px from 1024px, 1): the live gesture name in the instrument, in the accent once stable.
+- **Action** (Geist 600, 18px primary / 16px secondary, 1.25): Gesture Cue action text; answer labels are 16px 500.
+- **Body** (Geist 400, 17px, 1.6, up to 62ch): report rows and prose.
+- **Body small** (Geist 400, 15px): the most-used UI size: hints, subtitles, telemetry values, deck paging.
+- **Caption** (Geist 400, 13–14px): gesture names under actions, log rows, data labels, footnotes.
+- **Label** (Geist 600, 13px/18px, 0.06em, uppercase): instrument rows, section and report labels, table headers, state words.
+- **Numeral** (Geist Mono, tabular, 12–15px): step numbers, card counters (03 / 05), test index, trial numbers, timecodes, confidence, session code, stimulus tags.
 
 ### Named Rules
-**The Mono Is For Measurement Rule.** Geist Mono shows numbers and codes: counters, timecodes, confidence, latency, levels, session IDs. Words, labels included, are always set in Geist sans.
+**The Serif Speaks, The Sans Operates Rule.** Prata sets headings, card titles, result figures, prompts and the wordmark, always at 400 and never bolded. Geist sets everything the user reads to act: instructions, actions, labels, telemetry.
 
-**The Medium Ceiling Rule.** Headings stop at weight 500. Labels use 560. Only the wordmark and the current step number go to 600. Nothing is bold for emphasis. Emphasis comes from ink versus graphite.
+**The Mono Is For Measurement Rule.** Geist Mono shows numbers and codes only. Words, labels included, are always Geist.
+
+**The Weight Ceiling Rule.** Geist stops at 600, used for actions, labels, the readout and the current step. Emphasis otherwise comes from size, ink versus graphite, or the accent.
 
 ## Layout
 
-The layout is a 12-column grid inside a 1440px max container, with 24px column gaps. Page gutters are 20px on mobile and 40px from 640px. Top padding is 32px, or 48px from 1024px. At 1024px and up, the stage takes 9 columns and the instrument takes 3. The instrument sticks 96px from the top, below the session bar. Calibration screens split 5 columns for the protocol and 6 columns (starting at column 7) for the instrument. Below 1024px the instrument moves above the content, capped at 420px wide. There its scope and readout sit side by side in a 1.1fr / 1fr split. On mobile, answers move to a response bar pinned to the bottom edge, and the page gets 192px of bottom padding so content clears it.
+A 12-column grid inside a 1440px container, 24px column gaps, page gutters 20px mobile / 40px from 640px, top padding 32px / 48px from 1024px. From 1024px the stage takes 9 columns and the instrument 3, sticky 96px from the top; camera-setup screens split 5 columns of protocol and 6 of instrument (from column 7). Below 1024px the instrument moves above the content, capped at 420px, with scope and readout side by side (1.1fr / 1fr). On mobile, test answers move to a response bar pinned to the bottom and the page gets 192px of bottom padding.
 
-The session bar is sticky and runs across the full width on the same 12-column grid: wordmark in 3 columns, the 01–05 progression in 6, session code, timecode and sound toggle in 3. Below 1024px the progression wraps to its own row.
+The instruction deck is centred in the stage column, capped at 760px, text centred above it: heading, then a card stack 300–380px tall (`clamp(300px, 42vh, 380px)`), then a paging row (Назад, progress dots, Далее), then the gesture cues in a 1.4fr / 1fr pair and a one-line gesture hint.
 
-Rhythm is set by hairline rows, not boxes. Telemetry and log rows use 8px vertical padding, cue rows 14px and report rows 16px. Answer cells sit 6px apart, and sections are separated by 40px. An ink rule opens each major block (cue list, summary table, Important, Next). Hairlines separate the rows inside it. Report and result sheets use an 11rem label column beside a content column capped at 62ch.
+The session bar spans the grid: wordmark 3 columns, progression 6, session code / timecode / sound toggle 3; below 1024px the progression wraps to its own row.
 
-**The Ruled Sheet Rule.** Group content with a rule above it and a label beside or above it. Never wrap it in a filled box. The ink rule opens a block and hairline rules divide it.
+Rhythm below the coloured cards is set by hairline rows: telemetry rows 8px vertical padding, cues 14px, report rows 16px, answer cells 6px apart, sections 40px apart. Report and result sheets use an 11rem label column beside content capped at 62ch.
+
+**The Colour Card, Ruled Sheet Rule.** Instruction and outcome sit on a filled colour card; supporting detail sits below it as a ruled sheet: a label, a rule, hairline-divided rows. Never nest cards inside cards, and never box report rows.
 
 ## Elevation & Depth
 
-There are no shadows anywhere. Depth comes from three things: the tonal step between paper, the white stimulus field and the black scope; a thin frame line (1px hairline, 2px for the Error Mode edge); and a 95% paper overlay for layers that sit above content (session bar, mobile response bar, Error Mode band over the scope). The mobile response bar is set off by a 1px ink top rule, not a shadow.
+A hybrid: soft single shadows lift the surfaces that hold colour or a measurement, and tonal steps (paper, white field, black scope) plus hairlines do the rest. Layers over content (session bar, mobile response bar, Error Mode band) use paper at 95% or opaque paper with a rule on the leading edge, not a shadow.
 
-**The Flat Bench Rule.** Every surface is flat. When something needs to sit above something else, give it an opaque paper fill and a rule on its leading edge.
+### Shadow Vocabulary
+- **Card** (`box-shadow: 0 1px 2px rgba(17,17,17,0.06), 0 18px 40px -22px rgba(17,17,17,0.28)`): result and report cards, stacked instruction cards, the primary Gesture Cue, the stimulus field, the camera scope.
+- **Lift** (`box-shadow: 0 2px 4px rgba(17,17,17,0.06), 0 30px 60px -28px rgba(17,17,17,0.4)`): the current instruction card only, at the front of the deck.
+
+### Named Rules
+**The One Soft Shadow Rule.** A surface gets at most one soft, ink-tinted, downward shadow, and only if it is a colour card, the primary action or a measurement surface. Rows, cells, pills and bars stay flat.
 
 ## Shapes
 
-Corners are square or hairline-rounded (2px). Interactive frames use 2px: cue glyph boxes, answer cells, the confirm and cancel buttons, the camera-permission button and stimulus tags. Large frames stay square: the stimulus field, the camera scope, rules and progress bars. Only the 6px status dots are fully round. The square 6px amber marker (Review) and the 6px ink ring (Within screening range) are deliberate shape contrasts, so status never depends on colour.
+Softly rounded. Cards and the stimulus field use 24px; controls, answer cells, the camera scope and the welcome test tiles use 14px; icon boxes inside cues and cards use 12–16px; steps, tags, status tokens, progress dots and deck paging buttons are full pills. Rules, telemetry rows and log rows stay square. Status and telemetry dots are 6–8px circles.
 
-Crop marks are 12px L-shaped corner brackets drawn at 1px in currentColor. They frame the stimulus field and the camera scope, and nothing else. The scope carries a graticule: ticks every 10% along each edge, longer every 50%, plus a 12px centre reticle, all at 50% white. The answer cross has a small hairline plus at its centre, like a fixation cross.
+The scope keeps the lab's own geometry: ticks every 10% along each edge (longer every 50%) and a 12px centre reticle at 50% white. The answer cross keeps a small hairline plus at its centre, like a fixation cross.
 
 ## Components
 
-### Gesture Cue (signature)
-An action row driven by a gesture. It is also a real button for mouse and keyboard.
-- **Structure:** a 40px square glyph box (2px corners, 1px border) holding a 20px gesture pictogram, then the action text with the gesture name as a graphite label below it, then a right-aligned "HOLD" label that becomes a live percentage.
-- **Baseline:** a 1px hairline along the bottom. On top of it, a 2px cobalt bar scales from the left with hold progress (90ms linear).
-- **Primary:** 17px medium action text, ink-bordered glyph box that fills ink with paper icon on hover. Always opened by a 1px ink rule above.
-- **Secondary:** 15px action text, strong-hairline glyph box that turns ink-bordered on hover.
-- **Active (gesture in view):** the glyph box fills cobalt with a white icon.
-- **Disabled:** 40% opacity.
+### Instruction Deck (signature)
+Instructions shown one card at a time in the centre of the screen.
+- **Card:** accent fill with accent-on text, 24px corners, 28px padding (40px from 640px). Top row: a 56px icon box (16px corners, accent-on at 16% mix) with a 28px Lucide pictogram, and a mono "03 / 05" counter at 80% opacity. Bottom: Prata card title and lead text up to 32ch.
+- **Stack:** up to two earlier cards stay behind, each 18px higher and 5% smaller per step, at 45% then 25% opacity, with the Card shadow. The current card carries Lift.
+- **Arrival:** the new card rises 28px and scales from 0.96 over 520ms (expo-out); the stack re-settles over 420ms. Cards auto-advance every 4.2s; pointing right or left pages manually.
+- **Paging:** pill-shaped Назад / Далее text buttons (44px targets, white on hover) flanking progress dots: 10px pills, the current one 28px wide, read ones in the accent, unread in strong hairline.
+- **Actions:** a primary thumbs-up Gesture Cue and a secondary open-palm "Сначала" cue.
+
+### Gesture Cue
+An action driven by a gesture; also a real button.
+- **Structure:** 44px icon box (12px corners) with a 22px gesture pictogram; action text (Action type) with the Russian gesture name below in 14px; a mono hold percentage at the right while held.
+- **Primary:** accent fill, accent-on text, 14px corners, Card shadow; icon box is accent-on at 16%; gesture name at 85% opacity.
+- **Secondary:** white field fill, 1px hairline border turning ink on hover; icon box in accent-wash with accent-text pictogram.
+- **Hold:** a 4px bar along the bottom edge scales from the left with hold progress (90ms linear): accent on secondary, accent-on at 55% on primary.
+- **Hover / Disabled:** lifts 1px; disabled at 40% opacity.
 
 ### Response Map
-Every answer is shown next to the gesture that selects it.
-- **Layouts:** a vertical list for pairs and triples, and a 3×3 cross for four directions with a hairline plus at the centre.
-- **Cell:** 1px hairline border, 2px corners, at least 56px tall (64px in the compact cross), with a pictogram and label. Hovering turns the border ink.
-- **Selected:** cobalt border, cobalt-wash fill, cobalt text, plus the word "Выбрано".
-- **Confirmed:** solid cobalt with white text and a check.
-- **Hold:** the same 2px cobalt baseline as the Gesture Cue.
+- **Layouts:** a vertical list for pairs and triples; a 3×3 cross for four directions with a hairline plus at the centre.
+- **Cell:** white field, 1px hairline, 14px corners, at least 56px tall (64px compact), pictogram plus 16px medium label. Hover turns the border to the accent.
+- **Selected:** accent border, accent-wash fill, accent text, "Выбрано" label. **Confirmed:** accent fill, accent-on text, check.
+- **Hold:** the 4px accent bar from the Gesture Cue.
 
 ### Mobile Response Bar
-- Pinned to the bottom with a paper fill, a 1px ink top rule, and padding that respects the safe area.
-- A state label (RESPONSE / CONFIRM · answer / CONFIRMED) turns cobalt once an answer is chosen.
-- Answer buttons are 48px tall, in 2–4 equal columns, styled like Response Map cells.
-- After a selection, a Confirm button (ink fill, paper text, 44px tall, 2fr) sits beside a Cancel button (hairline border, 1fr). Both keep the hold baseline.
+Pinned bottom, paper fill, 1px ink top rule, safe-area padding. A state label turns accent once an answer is chosen. Answer buttons are 48px tall, 14px corners, 2–4 equal columns, styled like Response Map cells. After a selection, Подтвердить (accent fill, 2fr, 44px) sits beside Отмена (hairline border, 1fr).
 
-### Instrument (camera as measuring tool)
-- **Header:** the label "CAM 01" in ink, with fps and resolution in mono graphite. On the right, a state label with a dot: TRACKING in cobalt, ADJUST in amber, or DEMO / STARTING / OFFLINE in graphite.
-- **Scope:** a 4:3 scope-black well with crop marks and a graticule. The video and hand skeleton are mirrored.
-- **Telemetry rows:** HAND and FACE. Each row pairs a graphite label with a mono ink value and a solid 6px dot (cobalt live, amber warn, ink ok, strong hairline idle), with a hairline below.
-- **Gesture readout:** GESTURE DETECTED / ACCEPTED label with mono confidence, the Readout-size gesture name with its pictogram, and a 2px hold bar (ink while settling, cobalt once stable).
-- **Signal row:** SIGNAL · CLEAR at rest, or the Error Mode category.
-
-### Error Mode Band
-- **Style:** paper at 95% over the scope, 12px × 16px padding, with a 2px amber-line edge (a strong hairline for info-level messages such as no hand).
-- **Content:** an amber category label with a triangle glyph, a "LIVE" dot, a 15px medium title and a 14px graphite hint that names the fix.
-- **Placement:** the band sits on the scope's bottom edge. It moves to the top edge when the issue is at the bottom of the frame (hand out at the bottom, face too low), so it never covers the region being corrected. Below 1024px it becomes an in-flow block under the readout, with a 2px top edge.
+### Result and Report Cards
+- **Test result:** accent card (24px, 28–36px padding, Card shadow) with a "Результат скрининга" line and a pill (accent-on at 16%) naming the status, the Prata result figure with a caption, and a lead sentence up to 48ch. Report rows follow below.
+- **Final report:** accent card with the Prata report title and a row of five 56×10px pill bars in each test's colour.
+- **Report row:** hairline above, an accent label in an 11rem column, 17px body up to 62ch.
+- **Status token:** a label-type pill with an 8px dot. Attention: amber-wash fill, amber text, amber-line dot, "Обратить внимание". Within range: range-wash fill, range-green text and dot, "В пределах скрининга". The words always carry the meaning.
 
 ### Stimulus Field
-A white measurement field with a 1px hairline frame and crop marks, at least 240px tall. Corner tags (level, size) sit in mono 12px graphite on 85% white with 2px corners. Observation progress shows as a 2px cobalt rule along the top edge. When a stimulus paints its own ground (duochrome), the white field is dropped.
+White measurement field, 1px hairline border, 24px corners, Card shadow, at least 240px tall. A 6px accent band runs along the top edge; observation progress fills that band from the left over an accent-wash track. Corner tags are mono 13px pills: level in accent-wash with accent text, size in 90% white with graphite text. When the stimulus paints its own ground (duochrome), the white ground is dropped.
+
+### Instrument (camera as measuring tool)
+- **Header:** "Камера" label with fps in mono graphite; on the right a state label with a 6px dot: accent and blinking when tracking, amber for adjust, graphite for demo, starting or no camera.
+- **Scope:** 4:3 scope-black well, 14px corners, Card shadow, graticule and reticle; video and hand skeleton mirrored.
+- **Telemetry rows:** Рука and Лицо: graphite label, 15px value, solid 6px dot (accent live, amber-line warn, ink ok, strong hairline idle), hairline below.
+- **Gesture readout:** a state label with mono confidence, the Readout-size gesture name with its pictogram (accent once stable, a check on acceptance), and a 2px hold bar (ink while settling, accent once stable).
+- **Signal row:** "Сигнал" with an all-clear state, or the Error Mode category.
+
+### Error Mode Band
+Paper at 95% over the scope, 12×16px padding, 2px amber-line edge (strong hairline for info-level messages). An amber category label with a triangle glyph, a live dot, a 15px medium title and a 14px graphite hint naming the fix. The band sits on the scope's bottom edge and moves to the top when the problem is at the bottom of the frame; below 1024px it becomes an in-flow block under the readout with a 2px top edge.
 
 ### Session Bar
-Sticky at the top, 95% paper, 1px hairline bottom. The wordmark comes first, then the phase label, then numbered steps 01–05 joined by hairline connectors. Completed connectors fill ink from the left (300ms). The current step is cobalt 600 with a 2px cobalt underline that draws in. On the right sit the session code and timecode (mono, graphite) and a Sound on/off toggle as a label-style text button.
+Sticky, paper at 95% with a 2px backdrop blur, 1px hairline bottom. Prata wordmark with a 13px graphite subline (from 1280px), a phase label, then five 28px mono step pills joined by 3px rounded connectors. Done and current steps fill with their own test's colour (current at 600); upcoming steps show a strong-hairline ring. A connector fills in the preceding test's colour once that test is done (300ms). Session code, timecode and a sound toggle sit on the right in graphite.
 
 ### Session Log
-A time-coded table. An ink rule under the "SESSION LOG" label and an "NN / NN recorded" counter. Columns are Trial, Time, Answer, (Expected), Latency. Rows are 14px with hairlines. Trial, time and latency are mono graphite, and answers carry their gesture pictogram. The awaiting row shows the trial number in cobalt and a slowly blinking cobalt dot. In results, a mismatch is marked with an amber cross and a match with an ink check.
-
-### Report Row and Status Token
-- **Report row:** a hairline on top, a graphite label in an 11rem column, and 16px body up to 62ch.
-- **Status token:** a label with a 6px mark. "REVIEW" is amber with a square amber-line mark. "WITHIN SCREENING RANGE" is ink with a round ink ring.
-
-### Text Link
-A 15px graphite link underlined in strong hairline, with a 4px underline offset and a 44px target. It turns ink on hover. It is used only for secondary navigation such as "Вернуться к началу".
+A time-coded table under an accent "Журнал ответов" label: trial, time, answer, expected, latency, in 14px rows with hairlines; mono graphite numbers; the awaiting row shows a blinking 6px accent dot. Mismatches are marked in amber, matches in ink.
 
 ### Icons
-Lucide stroke pictograms. Gestures use a 1.5px stroke: thumbs up, fist, open palm, and one pointer glyph rotated for the four directions. Status glyphs (check, triangle, arrows) use a 2px stroke. Sizes run 13px to 24px.
+Lucide stroke pictograms: gestures at 1.5–1.75px stroke (thumbs up, fist, open palm, a pointer rotated for four directions), status glyphs (check, triangle, arrows) at 2px. Sizes 13–28px.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** give every gesture-driven control the 2px cobalt hold baseline, filling from the left at 90ms linear.
-- **Do** show the gesture that triggers every action, as a pictogram plus its English name label.
-- **Do** open each major block with a 1px ink rule and divide its rows with 1px `rule` hairlines.
-- **Do** set counters, timecodes, levels and confidence in Geist Mono with tabular numerals, and everything else in Geist.
-- **Do** pair every status colour with a word and a shape-distinct mark (square for Review, ring for within range, triangle for Error Mode).
-- **Do** keep interactive corners at 2px and large frames square.
-- **Do** use `enter` (220ms, expo-out, 6px rise) for new content and readouts, and `draw-x` for rules that appear. Collapse all motion under prefers-reduced-motion.
+- **Do** drive every coloured element from `--accent`, `--accent-on`, `--accent-wash` and `--accent-text`, so one theme switch recolours the whole phase.
+- **Do** show instructions as the centred Instruction Deck: one accent card at a time, at most two older cards stacked behind, 520ms card-in arrival.
+- **Do** give every gesture-driven control a hold bar that fills from the left at 90ms linear.
+- **Do** show the gesture that triggers every action, as a pictogram plus its name.
+- **Do** set headings, card titles, result figures and prompts in Prata 400, and everything the user operates in Geist.
+- **Do** set counters, timecodes, levels and confidence in Geist Mono with tabular numerals.
+- **Do** put outcome on an accent card and detail in ruled rows beneath it.
+- **Do** use 24px corners on cards and the stimulus field, 14px on controls, cells and the scope, pills for tags, steps and status.
+- **Do** pair every status colour with words; amber only for adjust or attention, range green only for within range.
 - **Do** keep stimulus colours and pure black optotypes inside the stimulus field, on its white ground.
+- **Do** collapse all animation and transitions under prefers-reduced-motion.
 
 ### Don't:
-- **Don't** use shadows, gradients, glass or blur-as-material. The session bar's 2px backdrop blur under 95% paper is the ceiling.
-- **Don't** wrap content in filled cards or tiles. Use ruled sheets.
-- **Don't** use cobalt for anything that isn't live, in progress, current, selected or focused.
-- **Don't** mark success with a colour. Success is ink with a check or ring.
-- **Don't** put a label above a heading. The protocol index sits in its own mono column on the title's baseline.
-- **Don't** add ornament beyond the bench's own equipment: crop marks, graticule, reticle, fixation cross.
-- **Don't** blink anything except the TRACKING dot in the instrument header and the awaiting-response dot in the session log. Telemetry dots stay solid.
-- **Don't** set words in Geist Mono. Mono is for measured values only.
+- **Don't** use gradients, glassmorphism or blur-as-material. The session bar's 2px backdrop blur under 95% paper is the ceiling.
+- **Don't** stack shadows or use hard offset shadows. One soft Card shadow, or Lift for the front instruction card.
+- **Don't** mix two test colours on one screen outside the five-test set displays.
+- **Don't** use amber or range green as a decorative accent, or a test accent as a warning.
+- **Don't** put a label or kicker above a heading.
+- **Don't** bold Prata, and don't set words in Geist Mono.
+- **Don't** nest cards inside cards or wrap report rows in boxes.
+- **Don't** blink anything except the tracking dot in the instrument header and the awaiting dot in the session log.
