@@ -59,7 +59,7 @@ function GestureReadout({ engine, flash }: { engine: EngineSnapshot; flash: Flas
   return (
     <div className="border-b border-rule pb-3 lg:pt-3" aria-live="polite">
       <div className="flex items-baseline justify-between gap-3">
-        <span className="label text-graphite">{accepted ? 'Принято' : real ? 'Жест распознан' : 'Жест'}</span>
+        <span className="label text-graphite">{accepted ? 'Выполнено' : real ? 'Жест распознан' : 'Жест'}</span>
         <span className="num text-xs text-graphite">{real ? `уверенность ${Math.round(engine.confidence * 100)}%` : '—'}</span>
       </div>
       <div key={accepted ? `a${flash!.id}` : engine.gesture} className="animate-enter mt-2 flex min-h-9 items-center gap-3">

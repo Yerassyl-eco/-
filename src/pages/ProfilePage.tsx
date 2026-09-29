@@ -1,5 +1,5 @@
 import { Check } from 'lucide-react';
-import { GestureIcon } from '../components/GestureIcon/GestureIcon';
+import { HandGlyph } from '../components/GestureIcon/GestureIcon';
 import { COUNT_GESTURES, PROFILE_QUESTIONS, type Profile } from '../data/profile';
 import { useVision } from '../vision/useVision';
 
@@ -36,8 +36,7 @@ export function ProfilePage({ index, selected, profile, onSelect }: Props) {
       </div>
 
       <section key={q.key} className="animate-slide-in mt-[clamp(16px,3vh,32px)] flex min-h-0 flex-1 flex-col" aria-labelledby="q-title">
-        <p className="text-[15px] text-graphite">Вопрос {index + 1} из {PROFILE_QUESTIONS.length}</p>
-        <h2 id="q-title" className="mt-1 max-w-[26ch] text-[clamp(26px,4vh,40px)] leading-[1.15] text-ink">
+        <h2 id="q-title" className="max-w-[26ch] text-[clamp(26px,4vh,40px)] leading-[1.15] text-ink">
           {q.question}
         </h2>
 
@@ -62,16 +61,11 @@ export function ProfilePage({ index, selected, profile, onSelect }: Props) {
                     boxShadow: isSel ? 'var(--shadow-lift)' : was ? 'inset 0 0 0 2px var(--accent)' : 'var(--shadow-card)',
                   }}
                 >
-                  <span className="flex items-center justify-between">
-                    <span className="num text-[clamp(32px,5vh,48px)] leading-none">{i + 1}</span>
-                    <span
-                      className="flex h-11 w-11 items-center justify-center rounded-xl"
-                      style={{ background: isSel ? 'color-mix(in srgb, var(--accent-on) 16%, transparent)' : 'var(--accent-wash)', color: isSel ? undefined : 'var(--accent-text)' }}
-                    >
-                      <GestureIcon gesture={g} size={24} strokeWidth={1.75} />
-                    </span>
+                  <span className="num text-[clamp(28px,4.4vh,44px)] leading-none">{i + 1}</span>
+                  <span className="flex min-h-0 flex-1 items-center justify-center py-2" style={{ color: isSel ? undefined : 'var(--accent-text)' }}>
+                    <HandGlyph raised={i + 1} size="100%" strokeWidth={1.3} className="h-full max-h-[88px] w-auto" />
                   </span>
-                  <span className="mt-3 block text-[clamp(17px,2.4vh,22px)] font-medium leading-snug">{label}</span>
+                  <span className="block text-[clamp(17px,2.4vh,22px)] font-medium leading-snug">{label}</span>
                 </button>
               </li>
             );

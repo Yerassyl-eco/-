@@ -12,7 +12,7 @@ import type { Gesture } from '../vision/types';
  *  ANSWER_SELECTED ─✋→ TEST_ACTIVE (cancel)
  *  TEST_RESULT ("ready for the next test?") ─👍→ TEST_INTRO (next test) | COMPLETE
  *  COMPLETE ─👍→ DETAILS (one test per slide, 👌 next, 👈 back) ─👌→ VISION_MAP ─👌→ FINAL_RESULT
- *  VISION_MAP ─👈→ DETAILS, FINAL_RESULT ─👈→ VISION_MAP, FINAL_RESULT ─✋→ PREPARATION (new screening)
+ *  VISION_MAP ─👈→ DETAILS, FINAL_RESULT ─👈→ VISION_MAP, FINAL_RESULT ─👍→ PREPARATION (new screening)
  */
 export type Phase =
   | 'LANDING'
@@ -350,9 +350,11 @@ export function routeGesture(tests: AnyTest[], s: MachineState, g: Gesture, now:
       return { kind: 'reject', hint: 'Покажите знак «ОК», чтобы перейти дальше, или укажите влево, чтобы вернуться.' };
 
     case 'FINAL_RESULT':
-      if (g === 'OPEN_PALM') return { kind: 'action', action: { type: 'NEW_SCREENING' } };
+      // Restart needs a deliberate 👍: a relaxed open hand must never wipe the report.
+      if (g === 'THUMBS_UP') return { kind: 'action', action: { type: 'NEW_SCREENING' }, feedback: 'Новый скрининг' };
       if (g === 'POINT_LEFT') return { kind: 'action', action: { type: 'BACK' }, feedback: 'Назад к карте зрения' };
-      return { kind: 'reject', hint: 'Ладонь — пройти скрининг заново; влево — вернуться к карте зрения.' };
+      if (g === 'OPEN_PALM' || g === 'OK') return { kind: 'ignore' };
+      return { kind: 'reject', hint: '«Палец вверх» — пройти скрининг заново; влево — вернуться к карте зрения.' };
   }
 }
 

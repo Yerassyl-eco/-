@@ -98,9 +98,9 @@ export function phaseGuide(tests: AnyTest[], s: MachineState): PhaseGuide {
       };
     case 'FINAL_RESULT':
       return {
-        hint: 'Скрининг завершён. Ладонь — пройти заново.',
+        hint: 'Скрининг завершён. Чтобы пройти его заново, покажите «палец вверх».',
         actions: [
-          { gesture: 'OPEN_PALM', label: 'Пройти заново', primary: true },
+          { gesture: 'THUMBS_UP', label: 'Пройти заново', primary: true },
           { gesture: 'POINT_LEFT', label: 'Назад' },
         ],
       };

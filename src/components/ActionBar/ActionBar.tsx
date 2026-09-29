@@ -28,7 +28,7 @@ function Cue({ gesture, label, primary, disabled, onTrigger }: { gesture: Gestur
       </span>
       <span className="leading-tight">
         <span className="block text-[16px] font-semibold">{label}</span>
-        <span className={`block text-[13px] ${primary ? 'opacity-85' : 'text-graphite'}`}>{meta.name}</span>
+        <span className={`block text-[14px] ${primary ? 'opacity-85' : 'text-graphite'}`}>{meta.name}</span>
       </span>
       <span
         className="pointer-events-none absolute bottom-0 left-0 h-1 w-full origin-left"
@@ -49,12 +49,12 @@ export function ActionBar({ guide, onGesture }: { guide: PhaseGuide; onGesture: 
   return (
     <nav aria-label="Доступные жесты" className="shrink-0 border-t border-rule bg-paper">
       <div className="mx-auto flex max-w-[1440px] flex-wrap items-center gap-x-5 gap-y-2 px-5 py-2.5 sm:px-10">
-        <p className="min-w-0 flex-1 basis-[16rem] text-[15px] leading-snug text-ink" aria-live="polite">
+        <p className="min-w-0 flex-1 basis-[16rem] text-[17px] font-medium leading-snug text-ink" aria-live="polite">
           {guide.hint}
         </p>
         {guide.choose && guide.choose.gestures.length > 0 && (
           <div className="flex items-center gap-2" aria-label={guide.choose.label}>
-            <span className="text-[13px] text-graphite">{guide.choose.label}:</span>
+            <span className="text-[14px] text-graphite">{guide.choose.label}:</span>
             {guide.choose.gestures.map((g) => {
               const on = engine.gesture === g;
               return (
