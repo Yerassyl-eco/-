@@ -3,11 +3,13 @@ import { DemoPanel } from './components/DemoPanel/DemoPanel';
 import { Instrument, type Flash } from './components/Instrument/Instrument';
 import { SessionBar } from './components/SessionBar/SessionBar';
 import { CalibrationPage } from './pages/CalibrationPage';
+import { DetailsPage } from './pages/DetailsPage';
 import { FinalResultPage } from './pages/FinalResultPage';
 import { PreparationPage } from './pages/PreparationPage';
 import { TestIntroPage } from './pages/TestIntroPage';
 import { TestPage } from './pages/TestPage';
 import { TestResultPage } from './pages/TestResultPage';
+import { VisionMapPage } from './pages/VisionMapPage';
 import { WelcomePage } from './pages/WelcomePage';
 import { PREPARATION_STEPS } from './data/preparation';
 import { THEMES, themeVars } from './data/themes';
@@ -27,6 +29,8 @@ const CALIBRATION_PHASES: Phase[] = ['LANDING', 'CAMERA_SETUP'];
 /** Instruction decks: cards appear one by one in the centre. */
 const DECK_PHASES: Phase[] = ['PREPARATION', 'TEST_INTRO'];
 const CARD_AUTO_MS = 4200;
+/** Details slides stay longer: there is more to read. */
+const SLIDE_AUTO_MS = 9000;
 const isDemo =
   import.meta.env.VITE_DEMO === '1' ||
   new URLSearchParams(window.location.search).has('demo') ||
@@ -76,7 +80,7 @@ export default function App() {
       // Let each new screen register before accepting "next" gestures, so a
       // result is never skipped by a gesture that was already on its way.
       const phase = stateRef.current.phase;
-      if ((phase === 'TEST_RESULT' || phase === 'TEST_INTRO') && performance.now() - phaseEnteredAt.current < SCREEN_SETTLE_MS) {
+      if ((phase === 'TEST_RESULT' || phase === 'TEST_INTRO' || phase === 'VISION_MAP' || phase === 'DETAILS') && performance.now() - phaseEnteredAt.current < SCREEN_SETTLE_MS) {
         showFlash('hint', 'Сначала посмотрите на экран, затем покажите жест ещё раз.');
         return;
       }
@@ -117,12 +121,20 @@ export default function App() {
   }, [state.phase, state.testIndex, state.trialReadyAt]);
 
   // Instruction decks advance on their own until the last card.
-  const deckCount = state.phase === 'PREPARATION' ? PREPARATION_STEPS.length : state.phase === 'TEST_INTRO' ? TESTS[state.testIndex].intro.length + 1 : 0;
+  const deckCount =
+    state.phase === 'PREPARATION'
+      ? PREPARATION_STEPS.length
+      : state.phase === 'TEST_INTRO'
+        ? TESTS[state.testIndex].intro.length + 1
+        : state.phase === 'DETAILS'
+          ? TESTS.length
+          : 0;
+  const autoMs = state.phase === 'DETAILS' ? SLIDE_AUTO_MS : CARD_AUTO_MS;
   useEffect(() => {
     if (!deckCount || state.cardIndex >= deckCount - 1) return;
-    const t = setTimeout(() => dispatch({ type: 'CARD', index: state.cardIndex + 1 }), CARD_AUTO_MS);
+    const t = setTimeout(() => dispatch({ type: 'CARD', index: state.cardIndex + 1 }), autoMs);
     return () => clearTimeout(t);
-  }, [deckCount, state.cardIndex, state.replayKey]);
+  }, [deckCount, autoMs, state.cardIndex, state.replayKey]);
   const goCard = (i: number) => dispatch({ type: 'CARD', index: Math.min(Math.max(0, i), Math.max(0, deckCount - 1)) });
 
   // Auto-advance after the answer is confirmed and logged.
@@ -144,12 +156,16 @@ export default function App() {
   useEffect(() => {
     if (state.phase === 'ANSWER_SELECTED' || state.phase === 'ANSWER_CONFIRMED') return;
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [state.phase, state.testIndex, state.trialIndex]);
+  }, [state.phase, state.testIndex, state.trialIndex, state.phase === 'DETAILS' ? state.cardIndex : 0]);
 
   const test = TESTS[state.testIndex];
   const calibration = CALIBRATION_PHASES.includes(state.phase);
   const phaseTheme =
-    CALIBRATION_PHASES.includes(state.phase) || state.phase === 'PREPARATION' || state.phase === 'FINAL_RESULT' ? THEMES.acuity : THEMES[test.id];
+    state.phase === 'DETAILS'
+      ? THEMES[TESTS[state.cardIndex].id]
+      : CALIBRATION_PHASES.includes(state.phase) || ['PREPARATION', 'VISION_MAP', 'FINAL_RESULT'].includes(state.phase)
+        ? THEMES.acuity
+        : THEMES[test.id];
 
   const bar = (() => {
     switch (state.phase) {
@@ -158,6 +174,10 @@ export default function App() {
       case 'CAMERA_SETUP':
       case 'PREPARATION':
         return { current: -1, done: 0, label: 'Калибровка' };
+      case 'VISION_MAP':
+        return { current: -1, done: 5, label: 'Карта' };
+      case 'DETAILS':
+        return { current: -1, done: 5, label: 'Подробнее' };
       case 'FINAL_RESULT':
         return { current: -1, done: 5, label: 'Отчёт' };
       case 'TEST_RESULT':
@@ -209,6 +229,22 @@ export default function App() {
           trials={state.trials[state.testIndex]}
           startedAt={state.testStartedAt}
           onNext={() => handleGesture('THUMBS_UP')}
+        />
+      );
+      break;
+    case 'VISION_MAP':
+      page = <VisionMapPage tests={TESTS} results={state.results} onNext={() => handleGesture('THUMBS_UP')} />;
+      break;
+    case 'DETAILS':
+      page = (
+        <DetailsPage
+          tests={TESTS}
+          results={state.results}
+          index={state.cardIndex}
+          slideMs={SLIDE_AUTO_MS}
+          replayKey={state.replayKey}
+          onIndex={goCard}
+          onReport={() => handleGesture('THUMBS_UP')}
         />
       );
       break;

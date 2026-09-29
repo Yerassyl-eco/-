@@ -32,6 +32,8 @@ export interface TestSummary {
   meaning: string;
   /** Answers differ from the expected screening result. */
   attention: boolean;
+  /** 0..1 agreement with the expected screening result (for the vision map). */
+  score: number;
   /** Short label for the final summary card. */
   short: string;
   stats: { label: string; value: string }[];

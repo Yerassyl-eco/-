@@ -38,6 +38,9 @@
 
   --animate-enter: enter 220ms var(--ease-out-expo) both;
   --animate-card-in: card-in 520ms var(--ease-out-expo) both;
+  --animate-slide-in: slide-in 640ms var(--ease-out-expo) both;
+  --animate-bar-grow: bar-grow 900ms var(--ease-out-expo) both;
+  --animate-story-fill: story-fill 7000ms linear both;
   --animate-fade: fade 200ms ease-out both;
   --animate-draw-x: draw-x 260ms var(--ease-out-expo) both;
   --animate-scan: scan 1.4s linear infinite;
@@ -50,6 +53,18 @@
   @keyframes card-in {
     from { opacity: 0; transform: translateY(28px) scale(0.96); }
     to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes slide-in {
+    from { opacity: 0; transform: translateX(56px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes bar-grow {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+  @keyframes story-fill {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
   }
   @keyframes fade {
     from { opacity: 0; }
@@ -180,4 +195,10 @@ a[href] {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Gap segment of the vision map: amber hatch so a gap never relies on colour alone. */
+.gap-hatch {
+  background-color: var(--color-amber-wash);
+  background-image: repeating-linear-gradient(135deg, var(--color-amber-line) 0 2px, transparent 2px 7px);
 }

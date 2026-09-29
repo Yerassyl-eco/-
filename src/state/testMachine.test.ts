@@ -43,8 +43,14 @@ describe('screening state machine', () => {
       expect(s.results[t]).not.toBeNull();
       step('THUMBS_UP');
     }
-    expect(s.phase).toBe('FINAL_RESULT');
+    expect(s.phase).toBe('VISION_MAP');
     expect(s.results.every(Boolean)).toBe(true);
+    step('THUMBS_UP');
+    expect(s.phase).toBe('DETAILS');
+    step('POINT_RIGHT');
+    expect(s.cardIndex).toBe(1);
+    step('THUMBS_UP');
+    expect(s.phase).toBe('FINAL_RESULT');
   });
 
   it('requires ✊ confirmation and explains a premature fist', () => {

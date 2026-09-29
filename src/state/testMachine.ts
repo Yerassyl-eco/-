@@ -9,7 +9,8 @@ import type { Gesture } from '../vision/types';
  *  LANDING ─👍→ CAMERA_SETUP ─👍→ PREPARATION ─👍→ TEST_INTRO ─👍→ TEST_ACTIVE
  *  TEST_ACTIVE ─👈👉☝️👇→ ANSWER_SELECTED ─✊→ ANSWER_CONFIRMED ─(auto)→ TEST_ACTIVE | TEST_RESULT
  *  ANSWER_SELECTED ─✋→ TEST_ACTIVE (cancel)
- *  TEST_RESULT ─👍→ TEST_INTRO (next test) | FINAL_RESULT
+ *  TEST_RESULT ─👍→ TEST_INTRO (next test) | VISION_MAP
+ *  VISION_MAP ─👍→ DETAILS (one test per slide, 👉👈 page, auto-advance) ─👍→ FINAL_RESULT
  *  FINAL_RESULT ─✋→ PREPARATION (new screening)
  */
 export type Phase =
@@ -21,6 +22,8 @@ export type Phase =
   | 'ANSWER_SELECTED'
   | 'ANSWER_CONFIRMED'
   | 'TEST_RESULT'
+  | 'VISION_MAP'
+  | 'DETAILS'
   | 'FINAL_RESULT';
 
 export interface MachineState {
@@ -55,6 +58,8 @@ export type Action =
   | { type: 'CONFIRM'; now: number }
   | { type: 'ADVANCE'; now: number }
   | { type: 'NEXT_TEST' }
+  | { type: 'OPEN_DETAILS' }
+  | { type: 'OPEN_REPORT' }
   | { type: 'REPLAY' }
   | { type: 'CARD'; index: number }
   | { type: 'NEW_SCREENING' }
@@ -166,14 +171,20 @@ export function makeReducer(tests: AnyTest[]) {
 
       case 'NEXT_TEST':
         if (s.phase !== 'TEST_RESULT') return s;
-        if (s.testIndex >= tests.length - 1) return { ...s, phase: 'FINAL_RESULT' };
+        if (s.testIndex >= tests.length - 1) return { ...s, phase: 'VISION_MAP' };
         return { ...s, phase: 'TEST_INTRO', testIndex: s.testIndex + 1, trialIndex: 0, selected: null, cardIndex: 0 };
+
+      case 'OPEN_DETAILS':
+        return s.phase === 'VISION_MAP' ? { ...s, phase: 'DETAILS', cardIndex: 0 } : s;
+
+      case 'OPEN_REPORT':
+        return s.phase === 'DETAILS' ? { ...s, phase: 'FINAL_RESULT' } : s;
 
       case 'REPLAY':
         return { ...s, replayKey: s.replayKey + 1, cardIndex: 0 };
 
       case 'CARD':
-        if (s.phase !== 'PREPARATION' && s.phase !== 'TEST_INTRO') return s;
+        if (s.phase !== 'PREPARATION' && s.phase !== 'TEST_INTRO' && s.phase !== 'DETAILS') return s;
         return { ...s, cardIndex: Math.max(0, a.index) };
 
       case 'NEW_SCREENING':
@@ -262,6 +273,15 @@ export function routeGesture(tests: AnyTest[], s: MachineState, g: Gesture, now:
     case 'TEST_RESULT':
       if (g === 'THUMBS_UP') return { kind: 'action', action: { type: 'NEXT_TEST' } };
       return { kind: 'reject', hint: 'Чтобы продолжить, покажите «палец вверх».' };
+
+    case 'VISION_MAP':
+      if (g === 'THUMBS_UP') return { kind: 'action', action: { type: 'OPEN_DETAILS' }, feedback: 'Открываю подробности' };
+      return { kind: 'reject', hint: 'Изучите карту зрения и покажите «палец вверх», чтобы узнать подробнее.' };
+
+    case 'DETAILS':
+      if (g === 'THUMBS_UP') return { kind: 'action', action: { type: 'OPEN_REPORT' } };
+      if (g === 'POINT_RIGHT' || g === 'POINT_LEFT') return cardStep(s, g, tests.length);
+      return { kind: 'reject', hint: 'Листайте тесты жестом вправо или влево; «палец вверх» — к итоговому отчёту.' };
 
     case 'FINAL_RESULT':
       if (g === 'OPEN_PALM') return { kind: 'action', action: { type: 'NEW_SCREENING' } };

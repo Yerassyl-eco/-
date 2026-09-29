@@ -79,10 +79,10 @@ export function TestResultPage({ test, next, summary, records, trials, startedAt
                   {next.title}
                 </>
               ) : (
-                'Итоговый отчёт скрининга'
+                'Карта зрения'
               )}
             </p>
-            <GestureCue gesture="THUMBS_UP" action={next ? 'Перейти к следующему тесту' : 'Открыть итоговый отчёт'} primary onTrigger={onNext} />
+            <GestureCue gesture="THUMBS_UP" action={next ? 'Перейти к следующему тесту' : 'Открыть карту зрения'} primary onTrigger={onNext} />
           </div>
         </div>
       </div>

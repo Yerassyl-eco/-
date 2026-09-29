@@ -172,7 +172,9 @@ npm run preview    # http://localhost:4173
 LANDING → CAMERA_SETUP → PREPARATION → TEST_INTRO → TEST_ACTIVE
 TEST_ACTIVE → ANSWER_SELECTED → ANSWER_CONFIRMED → (TEST_ACTIVE | TEST_RESULT)
 ANSWER_SELECTED —✋→ TEST_ACTIVE          (отмена; другой жест-направление меняет выбор)
-TEST_RESULT —👍→ NEXT_TEST: TEST_INTRO следующего теста | FINAL_RESULT
+TEST_RESULT —👍→ NEXT_TEST: TEST_INTRO следующего теста | VISION_MAP
+VISION_MAP  —👍→ DETAILS                 (карта пробелов → разбор по тестам)
+DETAILS     —👈/👉→ слайды тестов (авто-смена), —👍→ FINAL_RESULT
 FINAL_RESULT —✋→ PREPARATION             (новый скрининг)
 ```
 
