@@ -109,15 +109,3 @@ export function phaseGuide(tests: AnyTest[], s: MachineState): PhaseGuide {
   }
 }
 
-/** Sentence spoken aloud when a screen opens (null = stay quiet). */
-export function spokenGuide(tests: AnyTest[], s: MachineState): string | null {
-  const test = tests[s.testIndex];
-  if (s.phase === 'LANDING') return 'Здравствуйте! Покажите палец вверх, чтобы начать проверку зрения.';
-  if (s.phase === 'TEST_ACTIVE') {
-    if (s.trialIndex !== 0) return null;
-    const trial = s.trials[s.testIndex]?.[0];
-    return trial !== undefined ? `${test.prompt(trial)} Укажите пальцем на ответ, затем покажите кулак.` : null;
-  }
-  if (s.phase === 'ANSWER_CONFIRMED' || (s.phase === 'ANSWER_SELECTED' && s.trialIndex > 0)) return null;
-  return phaseGuide(tests, s).hint || null;
-}

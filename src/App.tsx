@@ -17,8 +17,7 @@ import { VisionMapPage } from './pages/VisionMapPage';
 import { WelcomePage } from './pages/WelcomePage';
 import { PREPARATION_STEPS } from './data/preparation';
 import { THEMES, themeVars } from './data/themes';
-import { phaseGuide, spokenGuide } from './state/phaseActions';
-import { speak } from './utils/voice';
+import { phaseGuide } from './state/phaseActions';
 import { createTrials, initialState, makeReducer, routeGesture, type Phase } from './state/testMachine';
 import { TESTS } from './tests';
 import { playSound } from './utils/sound';
@@ -109,12 +108,6 @@ export default function App() {
     else void visionRuntime.start();
     return visionRuntime.onGesture(handleGesture);
   }, [handleGesture]);
-
-  // Say out loud what to do whenever a new screen, question or result slide opens.
-  const spoken = spokenGuide(TESTS, state);
-  useEffect(() => {
-    if (spoken && !isDemo) speak(spoken);
-  }, [spoken]);
 
   // Engine context per phase: when to expect a hand, when to check the face.
   useEffect(() => {
