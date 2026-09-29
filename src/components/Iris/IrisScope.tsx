@@ -72,7 +72,6 @@ export function IrisScope({ locked, progress }: Props) {
 
           {/* measuring ring and pupil ring */}
           <circle className="draw" pathLength={1} cx={C} cy={C} r={RING} stroke="#ffffff" strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
-          <circle cx={C} cy={C} r={RING} stroke="rgba(17,17,17,0.05)" strokeWidth={4} vectorEffect="non-scaling-stroke" />
           <circle cx={C} cy={C} r={PUPIL_RING} stroke="#ffffff" strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
           <path d={`M${C - 9} ${C}H${C + 9}M${C} ${C - 9}V${C + 9}`} stroke="#ffffff" strokeWidth={1.25} vectorEffect="non-scaling-stroke" />
         </g>

@@ -22,8 +22,7 @@ export function FinalResultPage({ tests, results, durationMs, sessionCode, finis
   return (
     <article className="animate-enter" aria-labelledby="report-title">
       <section className="bg-accent p-7 sm:p-10" style={{ borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-card)' }}>
-        <p className="text-[15px] font-medium opacity-85">Vision screening report</p>
-        <h1 id="report-title" className="mt-3 text-[40px] leading-[1.05] sm:text-[60px]">Скрининг завершён</h1>
+        <h1 id="report-title" className="text-[40px] leading-[1.05] sm:text-[60px]">Скрининг завершён</h1>
         <div className="mt-6 flex flex-wrap gap-2" aria-hidden>
           {tests.map((t) => (
             <span key={t.id} className="h-2.5 w-14 rounded-full" style={{ background: THEMES[t.id].base, boxShadow: '0 0 0 2px color-mix(in srgb, var(--accent-on) 40%, transparent)' }} />

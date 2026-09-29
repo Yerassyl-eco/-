@@ -31,8 +31,7 @@ export function DetailsPage({ tests, results, index, slideMs, replayKey, onIndex
     <div className="animate-enter">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-[15px] text-graphite">Подробнее о вашем зрении</p>
-          <h1 className="mt-2 text-[34px] leading-[1.05] text-ink sm:text-[44px]">Разбор по тестам</h1>
+          <h1 className="text-[34px] leading-[1.05] text-ink sm:text-[44px]">Разбор по тестам</h1>
         </div>
         <p className="num text-[15px] text-graphite" aria-live="polite">
           {String(index + 1).padStart(2, '0')} / {String(tests.length).padStart(2, '0')}

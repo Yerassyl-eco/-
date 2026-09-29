@@ -32,8 +32,7 @@ export function VisionMapPage({ tests, results, onNext }: Props) {
     <div className="animate-enter">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-[15px] text-graphite">Итог пяти тестов</p>
-          <h1 className="mt-2 text-[40px] leading-[1.05] text-ink sm:text-[56px]">Карта зрения</h1>
+          <h1 className="text-[40px] leading-[1.05] text-ink sm:text-[56px]">Карта зрения</h1>
         </div>
         <p className="max-w-[34ch] text-[17px] leading-snug text-ink">
           {flagged.length ? (

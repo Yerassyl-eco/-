@@ -36,8 +36,8 @@ export function InstructionDeck({ kicker, title, cards, index, onIndex, startLab
   const last = index >= cards.length - 1;
   return (
     <div className="mx-auto flex w-full max-w-[760px] flex-col items-center text-center">
-      <div className="text-[15px] font-medium text-graphite">{kicker}</div>
-      <h1 className="mt-2 text-[40px] leading-[1.1] text-ink sm:text-[52px]">{title}</h1>
+      <h1 className="text-[40px] leading-[1.1] text-ink sm:text-[52px]">{title}</h1>
+      <div className="mt-2 text-[15px] font-medium text-graphite">{kicker}</div>
 
       {/* stack */}
       <div className="relative mt-8 w-full sm:mt-10" style={{ height: 'clamp(300px, 42vh, 380px)' }} aria-live="polite">
