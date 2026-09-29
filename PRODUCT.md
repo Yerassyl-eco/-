@@ -32,10 +32,11 @@ The camera replaces keyboard and mouse. Real-time hand tracking runs locally in 
 
 ## Brand Commitments
 - Name: **VISION MOTION** (typographic wordmark; no pictorial logo). Subtitle: "Digital vision screening".
-- Binding palette from the team: background `#F5F4F0` (warm off-white), text `#111111`, secondary `#6F6F6A`, borders `#D9D8D2`, one restrained accent: cobalt `#2457FF`, used sparingly for active state, recognition, progress, key controls. Amber for Error Mode; success and confirmation are marked in cobalt or ink (no green). No gradients.
-- Binding typography: a neo-grotesk (Geist chosen from the team's list Inter / Geist / IBM Plex; it covers Cyrillic).
-- Language: Russian copy with short English technical labels (VISION MOTION, 01 / 05, TRACKING).
-- Refused by the team: landing-page hero, SaaS cards everywhere, glassmorphism, purple/blue AI gradients, giant gradient buttons, heavy shadows, cartoon medical illustration, stock photos, gamification, colourful UI, "AI health app" look, traditional navbar.
+- Palette (updated by the team: "more colourful, readable"): paper `#F5F4F0`, ink `#111111`, secondary text `#55554F`, borders `#D9D8D2`. Each test owns one saturated colour used for its cards, headers, selection and progress: acuity cobalt `#2457FF`, radial figure violet `#7C3AED`, duochrome coral `#D23B26`, Amsler teal `#0A7C6E`, colour vision sun `#F5A300` (ink text). Amber for Error Mode; soft green only for the "within screening range" status. No gradients.
+- Typography: elegant display serif Prata for headings and the wordmark (team asked for an unusual, elegant face); Geist for reading text; Geist Mono only for numbers.
+- Language: Russian throughout for readability; English only in the wordmark and the tests' short technical sublines.
+- Instructions are shown as cards that appear one at a time in the centre of the screen.
+- Still refused: landing-page hero, glassmorphism, gradients, cartoon medical illustration, stock photos, gamification, traditional navbar.
 - Voice: friendly, calm, technological, not frightening; addresses the user directly.
 
 ## Evidence on Hand

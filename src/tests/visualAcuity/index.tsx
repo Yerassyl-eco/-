@@ -70,8 +70,8 @@ function Stimulus({ trial }: StimulusProps<AcuityTrial>) {
   return (
     <StimulusField
       label={`Уровень ${trial.level} из ${ACUITY_SIZES.length}`}
-      tagLeft={`LEVEL ${String(trial.level).padStart(2, '0')} / ${ACUITY_SIZES.length}`}
-      tagRight={`${trial.size} PX`}
+      tagLeft={`Уровень ${String(trial.level).padStart(2, '0')} / ${ACUITY_SIZES.length}`}
+      tagRight={`${trial.size} px`}
     >
       <div key={trial.level} className="animate-fade">
         <TumblingE size={trial.size} direction={trial.direction} />

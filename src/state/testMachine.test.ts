@@ -104,4 +104,18 @@ describe('screening state machine', () => {
       }
     });
   });
+
+  it('pages instruction cards with pointing gestures and restarts with the palm', () => {
+    let s2 = initialState(TESTS);
+    s2 = reducer(reducer(s2, { type: 'START' }), { type: 'CAMERA_OK' });
+    expect(s2.phase).toBe('PREPARATION');
+    s2 = gesture(s2, 'POINT_RIGHT', 1000).state;
+    s2 = gesture(s2, 'POINT_RIGHT', 2000).state;
+    expect(s2.cardIndex).toBe(2);
+    s2 = gesture(s2, 'POINT_LEFT', 3000).state;
+    expect(s2.cardIndex).toBe(1);
+    s2 = gesture(s2, 'OPEN_PALM', 4000).state;
+    expect(s2.cardIndex).toBe(0);
+    expect(gesture(s2, 'POINT_LEFT', 5000).route.kind).toBe('reject');
+  });
 });

@@ -52,7 +52,7 @@ export function TestPage({ test, state, onGesture, onSelect }: Props) {
         subtitle={test.titleEn}
         aside={
           <span className="num text-[13px] text-graphite">
-            TRIAL <span className="text-ink">{String(state.trialIndex + 1).padStart(2, '0')}</span> / {String(trials.length).padStart(2, '0')}
+            Задание <span className="text-ink">{String(state.trialIndex + 1).padStart(2, '0')}</span> / {String(trials.length).padStart(2, '0')}
           </span>
         }
       />
@@ -70,11 +70,11 @@ export function TestPage({ test, state, onGesture, onSelect }: Props) {
               observeProgress={progress}
             />
           </div>
-          <p className="max-w-[60ch] text-[20px] leading-snug text-ink">{test.prompt(trial)}</p>
+          <p className="display max-w-[40ch] text-[26px] leading-snug text-ink">{test.prompt(trial)}</p>
         </div>
 
         <aside aria-label="Ответ" className="hidden flex-col lg:flex">
-          <h2 className="label border-b border-rule pb-2 text-graphite">Response</h2>
+          <h2 className="label border-b border-rule pb-2 text-accent">Ваш ответ</h2>
           <div className="pt-3">
             <ResponseMap
               options={options}
@@ -88,30 +88,30 @@ export function TestPage({ test, state, onGesture, onSelect }: Props) {
 
           <div className="mt-5 min-h-[152px]" aria-live="polite">
             {confirmed ? (
-              <div key="c" className="animate-enter border-t border-cobalt pt-3">
-                <p className="label flex items-center gap-1.5 text-cobalt">
-                  <Check size={14} strokeWidth={2.5} aria-hidden /> Confirmed
+              <div key="c" className="animate-enter border-t border-accent pt-3">
+                <p className="label flex items-center gap-1.5 text-accent">
+                  <Check size={14} strokeWidth={2.5} aria-hidden /> Ответ принят
                 </p>
                 <p className="mt-2 text-[15px] text-ink">
                   Ответ записан в журнал: {selectedOpt?.label}, T{String(state.trialIndex + 1).padStart(2, '0')}.
                 </p>
               </div>
             ) : selectedOpt ? (
-              <div key={`s${selectedOpt.value}`} className="animate-enter border-t border-cobalt">
-                <p className="label pt-3 text-cobalt">Confirm · {selectedOpt.label}</p>
+              <div key={`s${selectedOpt.value}`} className="animate-enter border-t border-accent">
+                <p className="label pt-3 text-accent">Подтвердите: {selectedOpt.label}</p>
                 <GestureCue gesture="FIST" action="Подтвердить ответ" primary onTrigger={() => onGesture('FIST')} />
                 <GestureCue gesture="OPEN_PALM" action="Отменить выбор" onTrigger={() => onGesture('OPEN_PALM')} />
               </div>
             ) : !ready ? (
               <div className="border-t border-rule pt-3">
                 <p className="label text-graphite">
-                  Observe · <span className="num">00:{String(secondsLeft).padStart(2, '0')}</span>
+                  Смотрите · <span className="num">00:{String(secondsLeft).padStart(2, '0')}</span>
                 </p>
                 <p className="mt-2 text-[15px] text-graphite">Смотрите на изображение. Ответы откроются через мгновение.</p>
               </div>
             ) : (
               <div className="border-t border-rule pt-3">
-                <p className="label text-graphite">Awaiting response</p>
+                <p className="label text-graphite">Жду ответ</p>
                 <p className="mt-2 text-[15px] text-graphite">Покажите ответ указательным пальцем, затем подтвердите кулаком.</p>
               </div>
             )}

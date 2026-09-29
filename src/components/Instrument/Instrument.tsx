@@ -15,13 +15,13 @@ export interface Flash {
 
 const FACE_TEXT: Record<FaceStatus, string> = {
   unknown: '—',
-  ok: 'CENTERED',
-  missing: 'NOT IN FRAME',
-  'too-low': 'TOO LOW',
-  'too-high': 'TOO HIGH',
-  'too-close': 'TOO CLOSE',
-  'too-far': 'TOO FAR',
-  'off-center': 'OFF CENTER',
+  ok: 'по центру',
+  missing: 'не видно',
+  'too-low': 'низко',
+  'too-high': 'высоко',
+  'too-close': 'близко',
+  'too-far': 'далеко',
+  'off-center': 'не по центру',
 };
 
 const DIRECTION_ICON: Partial<Record<Gesture, typeof ArrowUp>> = {
@@ -34,7 +34,7 @@ const DIRECTION_ICON: Partial<Record<Gesture, typeof ArrowUp>> = {
 type Tone = 'live' | 'warn' | 'idle' | 'ok';
 
 function Dot({ tone, blink = false }: { tone: Tone; blink?: boolean }) {
-  const c = { live: 'bg-cobalt', warn: 'bg-amber-line', idle: 'bg-rule-strong', ok: 'bg-ink' }[tone];
+  const c = { live: 'bg-[var(--accent)]', warn: 'bg-amber-line', idle: 'bg-rule-strong', ok: 'bg-ink' }[tone];
   return <span className={`inline-block h-1.5 w-1.5 shrink-0 rounded-full ${c} ${blink ? 'animate-blink' : ''}`} aria-hidden />;
 }
 
@@ -42,7 +42,7 @@ function Row({ label, children, tone = 'idle' }: { label: string; children: Reac
   return (
     <div className="flex items-baseline justify-between gap-4 border-b border-rule py-2">
       <dt className="label text-graphite">{label}</dt>
-      <dd className={`num flex items-center gap-2 text-[13px] ${tone === 'warn' ? 'text-amber' : 'text-ink'}`}>
+      <dd className={`flex items-center gap-2 text-[15px] ${tone === 'warn' ? 'text-amber' : 'text-ink'}`}>
         <Dot tone={tone} />
         {children}
       </dd>
@@ -59,22 +59,22 @@ function GestureReadout({ engine, flash }: { engine: EngineSnapshot; flash: Flas
   return (
     <div className="border-b border-rule pb-3 lg:pt-3" aria-live="polite">
       <div className="flex items-baseline justify-between gap-3">
-        <span className="label text-graphite">{accepted ? 'Accepted' : real ? 'Gesture detected' : 'Gesture'}</span>
-        <span className="num text-xs text-graphite">{real ? `${Math.round(engine.confidence * 100)}% conf` : '—'}</span>
+        <span className="label text-graphite">{accepted ? 'Принято' : real ? 'Жест распознан' : 'Жест'}</span>
+        <span className="num text-xs text-graphite">{real ? `уверенность ${Math.round(engine.confidence * 100)}%` : '—'}</span>
       </div>
       <div key={accepted ? `a${flash!.id}` : engine.gesture} className="animate-enter mt-2 flex min-h-9 items-center gap-3">
         {accepted ? (
           <>
-            <Check size={22} strokeWidth={2} className="shrink-0 text-cobalt" aria-hidden />
-            <span className="text-[15px] font-medium text-cobalt">{flash!.text}</span>
+            <Check size={22} strokeWidth={2} className="shrink-0 text-accent" aria-hidden />
+            <span className="text-[17px] font-semibold text-accent">{flash!.text}</span>
           </>
         ) : meta ? (
           <>
-            <span className={`flex items-center gap-2 ${engine.stable ? 'text-cobalt' : 'text-ink'}`}>
+            <span className={`flex items-center gap-2 ${engine.stable ? 'text-accent' : 'text-ink'}`}>
               {Arrow ? <Arrow size={24} strokeWidth={1.75} aria-hidden /> : <GestureIcon gesture={engine.gesture as Gesture} size={24} />}
-              <span className="text-[20px] font-medium leading-none tracking-[-0.01em] lg:text-[26px]">{meta.label}</span>
+              <span className="text-[22px] font-semibold leading-none lg:text-[28px]">{meta.name}</span>
             </span>
-            <span className="ml-auto hidden text-[13px] text-graphite sm:inline">{meta.name}</span>
+            
           </>
         ) : (
           <span className="text-[15px] text-graphite">{engine.handVisible ? 'Рука в кадре — покажите жест' : 'Ожидаю руку в кадре'}</span>
@@ -82,7 +82,7 @@ function GestureReadout({ engine, flash }: { engine: EngineSnapshot; flash: Flas
       </div>
       <div className="relative mt-3 h-[2px] bg-rule">
         <span
-          className={`absolute inset-y-0 left-0 w-full origin-left ${engine.stable ? 'bg-cobalt' : 'bg-ink'}`}
+          className={`absolute inset-y-0 left-0 w-full origin-left ${engine.stable ? 'bg-[var(--accent)]' : 'bg-ink'}`}
           style={{ transform: `scaleX(${real && !accepted ? engine.holdProgress : 0})`, transition: 'transform 90ms linear' }}
         />
       </div>
@@ -100,7 +100,7 @@ interface Signal {
 
 function readSignal(engine: EngineSnapshot, flash: Flash | null, live: boolean): Signal | null {
   if (flash?.kind === 'hint') {
-    return { category: 'Gesture', title: 'Этот жест сейчас не используется', hint: flash.text, key: `f${flash.id}`, info: false };
+    return { category: 'Жест', title: 'Этот жест сейчас не используется', hint: flash.text, key: `f${flash.id}`, info: false };
   }
   if (live && engine.issue) {
     const m = ISSUE_MESSAGES[engine.issue];
@@ -119,7 +119,7 @@ function SignalBody({ s }: { s: Signal }) {
           {s.category}
         </span>
         <span className={`label flex items-center gap-1.5 ${s.info ? 'text-graphite' : 'text-amber'}`}>
-          <Dot tone={s.info ? 'idle' : 'warn'} /> Live
+          <Dot tone={s.info ? 'idle' : 'warn'} /> Сейчас
         </span>
       </div>
       <p className="mt-1.5 text-[15px] font-medium leading-snug text-ink">{s.title}</p>
@@ -229,22 +229,18 @@ export function Instrument({ flash }: { flash: Flash | null }) {
     <section aria-label="Инструмент: камера и распознавание жестов" className="w-full">
       <div className="flex items-baseline justify-between gap-3 pb-2">
         <span className="label text-ink">
-          Cam 01
-          {live && <span className="num ml-2 font-normal tracking-normal text-graphite">{engine.fps} fps · 640×480</span>}
+          Камера
+          {live && <span className="num ml-2 font-normal tracking-normal text-graphite">{engine.fps} к/с</span>}
         </span>
-        <span className={`label flex items-center gap-1.5 ${warn ? 'text-amber' : live ? 'text-cobalt' : 'text-graphite'}`}>
+        <span className={`label flex items-center gap-1.5 ${warn ? 'text-amber' : live ? 'text-accent' : 'text-graphite'}`}>
           <Dot tone={warn ? 'warn' : live ? 'live' : 'idle'} blink={live && !warn} />
-          {warn ? 'Adjust' : live ? 'Tracking' : demo ? 'Demo' : status === 'error' ? 'Offline' : 'Starting'}
+          {warn ? 'Поправьте' : live ? 'Отслеживание' : demo ? 'Демо' : status === 'error' ? 'Нет камеры' : 'Запуск'}
         </span>
       </div>
 
       <div className="grid grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-x-4 lg:block">
         <div className="self-start">
-          <div className="crop relative aspect-[4/3] overflow-hidden bg-scope text-white/70">
-            <span className="crop-mark tl" />
-            <span className="crop-mark tr" />
-            <span className="crop-mark bl" />
-            <span className="crop-mark br" />
+          <div className="relative aspect-[4/3] overflow-hidden bg-scope text-white/70" style={{ borderRadius: 'var(--radius-control)', boxShadow: 'var(--shadow-card)' }}>
             <video
               ref={videoRef}
               className={`mirror absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${live ? 'opacity-100' : 'opacity-0'}`}
@@ -270,10 +266,10 @@ export function Instrument({ flash }: { flash: Flash | null }) {
 
         <div className="min-w-0">
           <dl className="hidden lg:mt-3 lg:block">
-            <Row label="Hand" tone={handTone}>
-              {engine.handCount > 1 ? `${engine.handCount} HANDS` : engine.handVisible ? 'DETECTED' : 'NOT IN FRAME'}
+            <Row label="Рука" tone={handTone}>
+              {engine.handCount > 1 ? `${engine.handCount} руки` : engine.handVisible ? 'в кадре' : 'не видна'}
             </Row>
-            <Row label="Face" tone={faceTone}>
+            <Row label="Лицо" tone={faceTone}>
               {FACE_TEXT[engine.face]}
             </Row>
           </dl>
@@ -285,14 +281,14 @@ export function Instrument({ flash }: { flash: Flash | null }) {
               </div>
             ) : (
               <span className="label flex items-center gap-1.5 text-graphite">
-                <Dot tone="ok" /> Signal clear
+                <Dot tone="ok" /> Всё в порядке
               </span>
             )}
           </div>
           <div className="hidden items-center justify-between py-2.5 lg:flex">
-            <span className="label text-graphite">Signal</span>
+            <span className="label text-graphite">Сигнал</span>
             <span className={`label flex items-center gap-1.5 ${warn ? 'text-amber' : 'text-ink'}`}>
-              <Dot tone={warn ? 'warn' : signal ? 'idle' : 'ok'} /> {signal ? signal.category : 'Clear'}
+              <Dot tone={warn ? 'warn' : signal ? 'idle' : 'ok'} /> {signal ? signal.category : 'В порядке'}
             </span>
           </div>
         </div>

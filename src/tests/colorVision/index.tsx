@@ -78,8 +78,8 @@ function Stimulus({ trial, trialIndex, trialCount, observeProgress }: StimulusPr
   return (
     <StimulusField
       label={`Цветовая карточка ${trial.plate}`}
-      tagLeft={`PLATE ${String(trialIndex + 1).padStart(2, '0')} / ${String(trialCount).padStart(2, '0')}`}
-      tagRight={trial.control ? 'CONTROL' : 'TEST'}
+      tagLeft={`Карточка ${String(trialIndex + 1).padStart(2, '0')} / ${String(trialCount).padStart(2, '0')}`}
+      tagRight={trial.control ? 'контрольная' : 'тестовая'}
       progress={observeProgress}
     >
       <div key={trial.plate} className="animate-fade flex w-full items-center justify-center p-8">

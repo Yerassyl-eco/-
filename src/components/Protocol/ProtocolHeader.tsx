@@ -9,24 +9,23 @@ interface Props {
   status?: ReactNode;
 }
 
-/**
- * Protocol heading: the test number sits in its own grid column on the
- * title's baseline (a row number, not an eyebrow above the heading).
- */
+/** Test heading: coloured test number, elegant display title, English subline. */
 export function ProtocolHeader({ index, title, subtitle, aside, status }: Props) {
   return (
-    <div className="grid grid-cols-[3.5rem_minmax(0,1fr)] items-baseline gap-x-3 sm:grid-cols-[4.5rem_minmax(0,1fr)_auto]">
-      <span className="num text-[15px] text-graphite">{index ? `${index}/05` : '00'}</span>
+    <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
       <div className="min-w-0">
-        <h1 className="text-[30px] font-medium leading-[1.1] text-ink sm:text-[40px]">{title}</h1>
-        {(subtitle || status) && (
-          <p className="mt-2 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-[15px] text-graphite">
-            {subtitle && <span>{subtitle}</span>}
-            {status}
-          </p>
-        )}
+        <div className="flex flex-wrap items-center gap-3">
+          {index && (
+            <span className="num bg-accent rounded-full px-3 py-1 text-[14px] font-medium">
+              {index}/05
+            </span>
+          )}
+          {subtitle && <span className="text-[15px] text-graphite">{subtitle}</span>}
+          {status}
+        </div>
+        <h1 className="mt-3 text-[36px] leading-[1.1] text-ink sm:text-[48px]">{title}</h1>
       </div>
-      {aside && <div className="col-span-2 mt-3 sm:col-span-1 sm:mt-0 sm:text-right">{aside}</div>}
+      {aside && <div className="text-left sm:text-right">{aside}</div>}
     </div>
   );
 }

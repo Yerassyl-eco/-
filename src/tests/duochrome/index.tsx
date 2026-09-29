@@ -35,7 +35,7 @@ function Half({ bg, rows, side, highlighted }: { bg: string; rows: DuochromeTria
 
 function Stimulus({ trial, selected, trialIndex, trialCount, observeProgress }: StimulusProps<DuochromeTrial>) {
   return (
-    <StimulusField bare label="Дуохромный тест: красная и зелёная половины" tagLeft={`ROUND ${trialIndex + 1} / ${trialCount}`} tagRight="RED · GREEN" progress={observeProgress}>
+    <StimulusField bare label="Дуохромный тест: красная и зелёная половины" tagLeft={`Раунд ${trialIndex + 1} / ${trialCount}`} tagRight="красный · зелёный" progress={observeProgress}>
       <div className="flex h-full w-full">
         <Half bg={RED} rows={trial.rows} side="Красная" highlighted={selected === 'red' || selected === 'equal'} />
         <Half bg={GREEN} rows={trial.rows} side="Зелёная" highlighted={selected === 'green' || selected === 'equal'} />
@@ -49,7 +49,7 @@ export const duochromeTest: TestDefinition<DuochromeTrial> = {
   number: 3,
   title: 'Красный и зелёный фон',
   titleEn: 'Duochrome',
-  shortTitle: 'Duochrome',
+  shortTitle: 'Дуохром',
   checks:
     'Дуохромный тест сравнивает чёткость одинаковых символов на красном и зелёном фоне. Он помогает специалисту понять, как глаз фокусирует изображение.',
   intro: [

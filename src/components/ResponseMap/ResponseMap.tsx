@@ -18,10 +18,10 @@ function Cell({ o, state, hold, disabled, onSelect, compact }: { o: AnswerOption
   const meta = GESTURE_META[o.gesture];
   const tone =
     state === 'confirmed'
-      ? 'border-cobalt bg-cobalt text-white'
+      ? 'border-accent bg-accent'
       : state === 'selected'
-        ? 'border-cobalt text-cobalt bg-cobalt-wash'
-        : 'border-rule text-ink hover:border-ink';
+        ? 'border-accent text-accent bg-accent-wash'
+        : 'border-rule text-ink hover:border-[var(--accent)]';
   return (
     <button
       type="button"
@@ -29,21 +29,21 @@ function Cell({ o, state, hold, disabled, onSelect, compact }: { o: AnswerOption
       disabled={disabled}
       aria-pressed={state !== 'idle'}
       aria-label={`${meta.name}: ${o.label}`}
-      className={`relative flex w-full items-center border text-left transition-colors duration-150 disabled:cursor-default ${state === 'idle' ? 'disabled:opacity-40' : ''} ${tone} ${
+      className={`relative flex w-full items-center overflow-hidden border bg-field text-left transition-colors duration-150 disabled:cursor-default ${state === 'idle' ? 'disabled:opacity-40' : ''} ${tone} ${
         compact ? 'min-h-[64px] flex-col justify-center gap-1 px-2 py-2 text-center' : 'min-h-[56px] gap-3 px-3.5 py-3'
       }`}
-      style={{ borderRadius: 'var(--radius-hair)' }}
+      style={{ borderRadius: 'var(--radius-control)' }}
     >
-      <GestureIcon gesture={o.gesture} size={compact ? 18 : 20} className="shrink-0" />
+      <GestureIcon gesture={o.gesture} size={compact ? 20 : 22} className="shrink-0" />
       <span className="min-w-0 flex-1">
         {o.glyph && compact && <span className="block text-[22px] font-medium leading-none">{o.glyph}</span>}
-        <span className={`block leading-tight ${compact ? 'text-[12px]' : 'text-[15px]'}`}>
+        <span className={`block font-medium leading-tight ${compact ? 'text-[13px]' : 'text-[16px]'}`}>
           {o.swatch && <span className="mr-2 inline-block h-2.5 w-2.5 align-[1px]" style={{ background: o.swatch }} aria-hidden />}
           {o.label}
         </span>
       </span>
       {!compact && state !== 'idle' && (state === 'confirmed' ? <Check size={16} strokeWidth={2} aria-hidden /> : <span className="label">Выбрано</span>)}
-      <span className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] origin-left bg-cobalt" style={{ transform: `scaleX(${hold})`, transition: 'transform 90ms linear' }} aria-hidden />
+      <span className="pointer-events-none absolute inset-x-0 bottom-0 h-1 origin-left bg-[var(--accent)]" style={{ transform: `scaleX(${hold})`, transition: 'transform 90ms linear' }} aria-hidden />
     </button>
   );
 }

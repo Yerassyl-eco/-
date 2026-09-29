@@ -9,6 +9,8 @@ import { TestIntroPage } from './pages/TestIntroPage';
 import { TestPage } from './pages/TestPage';
 import { TestResultPage } from './pages/TestResultPage';
 import { WelcomePage } from './pages/WelcomePage';
+import { PREPARATION_STEPS } from './data/preparation';
+import { THEMES, themeVars } from './data/themes';
 import { createTrials, initialState, makeReducer, routeGesture, type Phase } from './state/testMachine';
 import { TESTS } from './tests';
 import { playSound } from './utils/sound';
@@ -21,7 +23,10 @@ import { visionRuntime } from './vision/VisionRuntime';
 const reducer = makeReducer(TESTS);
 const TEST_PHASES: Phase[] = ['TEST_ACTIVE', 'ANSWER_SELECTED', 'ANSWER_CONFIRMED'];
 /** Calibration screens give the instrument the wide column; tests give it to the stimulus. */
-const CALIBRATION_PHASES: Phase[] = ['LANDING', 'CAMERA_SETUP', 'PREPARATION'];
+const CALIBRATION_PHASES: Phase[] = ['LANDING', 'CAMERA_SETUP'];
+/** Instruction decks: cards appear one by one in the centre. */
+const DECK_PHASES: Phase[] = ['PREPARATION', 'TEST_INTRO'];
+const CARD_AUTO_MS = 4200;
 const isDemo =
   import.meta.env.VITE_DEMO === '1' ||
   new URLSearchParams(window.location.search).has('demo') ||
@@ -111,6 +116,15 @@ export default function App() {
     }
   }, [state.phase, state.testIndex, state.trialReadyAt]);
 
+  // Instruction decks advance on their own until the last card.
+  const deckCount = state.phase === 'PREPARATION' ? PREPARATION_STEPS.length : state.phase === 'TEST_INTRO' ? TESTS[state.testIndex].intro.length + 1 : 0;
+  useEffect(() => {
+    if (!deckCount || state.cardIndex >= deckCount - 1) return;
+    const t = setTimeout(() => dispatch({ type: 'CARD', index: state.cardIndex + 1 }), CARD_AUTO_MS);
+    return () => clearTimeout(t);
+  }, [deckCount, state.cardIndex, state.replayKey]);
+  const goCard = (i: number) => dispatch({ type: 'CARD', index: Math.min(Math.max(0, i), Math.max(0, deckCount - 1)) });
+
   // Auto-advance after the answer is confirmed and logged.
   useEffect(() => {
     if (state.phase !== 'ANSWER_CONFIRMED') return;
@@ -134,20 +148,22 @@ export default function App() {
 
   const test = TESTS[state.testIndex];
   const calibration = CALIBRATION_PHASES.includes(state.phase);
+  const phaseTheme =
+    CALIBRATION_PHASES.includes(state.phase) || state.phase === 'PREPARATION' || state.phase === 'FINAL_RESULT' ? THEMES.acuity : THEMES[test.id];
 
   const bar = (() => {
     switch (state.phase) {
       case 'LANDING':
-        return { current: -1, done: 0, label: 'Standby' };
+        return { current: -1, done: 0, label: 'Старт' };
       case 'CAMERA_SETUP':
       case 'PREPARATION':
-        return { current: -1, done: 0, label: 'Calibration' };
+        return { current: -1, done: 0, label: 'Калибровка' };
       case 'FINAL_RESULT':
-        return { current: -1, done: 5, label: 'Report' };
+        return { current: -1, done: 5, label: 'Отчёт' };
       case 'TEST_RESULT':
-        return { current: state.testIndex, done: state.testIndex + 1, label: 'Result' };
+        return { current: state.testIndex, done: state.testIndex + 1, label: 'Результат' };
       default:
-        return { current: state.testIndex, done: state.testIndex, label: 'Test' };
+        return { current: state.testIndex, done: state.testIndex, label: 'Тест' };
     }
   })();
 
@@ -165,14 +181,14 @@ export default function App() {
       page = <CalibrationPage vision={vision} onContinue={() => handleGesture('THUMBS_UP')} />;
       break;
     case 'PREPARATION':
-      page = <PreparationPage replayKey={state.replayKey} onBegin={() => handleGesture('THUMBS_UP')} onReplay={() => handleGesture('OPEN_PALM')} />;
+      page = <PreparationPage cardIndex={state.cardIndex} onIndex={goCard} onBegin={() => handleGesture('THUMBS_UP')} onReplay={() => handleGesture('OPEN_PALM')} />;
       break;
     case 'TEST_INTRO':
       page = (
         <TestIntroPage
           test={test}
-          firstTrial={state.trials[state.testIndex][0]}
-          replayKey={state.replayKey}
+          cardIndex={state.cardIndex}
+          onIndex={goCard}
           onStart={() => handleGesture('THUMBS_UP')}
           onReplay={() => handleGesture('OPEN_PALM')}
         />
@@ -211,10 +227,11 @@ export default function App() {
       break;
   }
 
+  const deck = DECK_PHASES.includes(state.phase);
   const pageKey = `${TEST_PHASES.includes(state.phase) ? 'TEST' : state.phase}-${state.testIndex}`;
 
   return (
-    <div className="min-h-dvh">
+    <div className="min-h-dvh" style={themeVars(phaseTheme)}>
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:bg-paper focus:px-4 focus:py-2"
@@ -228,7 +245,7 @@ export default function App() {
         data-test={test.id}
         className={`mx-auto grid max-w-[1440px] grid-cols-12 gap-x-6 gap-y-8 px-5 pt-8 sm:px-10 lg:pb-24 lg:pt-12 ${TEST_PHASES.includes(state.phase) ? 'pb-48' : 'pb-24'}`}
       >
-        <section key={pageKey} className={`col-span-12 min-w-0 ${calibration ? 'lg:col-span-5' : 'lg:col-span-9'}`}>
+        <section key={pageKey} className={`col-span-12 min-w-0 ${calibration ? 'lg:col-span-5' : 'lg:col-span-9'} ${deck ? 'lg:pt-2' : ''}`}>
           {page}
         </section>
         <div

@@ -25,13 +25,23 @@ export function TestResultPage({ test, next, summary, records, trials, startedAt
         title={test.title}
         subtitle={test.titleEn}
         status={
-          <span className="label inline-flex items-center gap-1.5 text-ink">
-            <Check size={14} strokeWidth={2.5} aria-hidden /> {idx} complete
+          <span className="label inline-flex items-center gap-1.5 text-accent">
+            <Check size={15} strokeWidth={2.5} aria-hidden /> Тест завершён
           </span>
         }
       />
 
-      <p className="mt-10 max-w-[30ch] text-[26px] leading-[1.25] text-ink sm:text-[30px]">{summary.result}</p>
+      <section className="bg-accent mt-8 p-7 sm:p-9" style={{ borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-card)' }}>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <span className="text-[15px] font-medium opacity-85">Результат скрининга</span>
+          <span className="rounded-full px-3 py-1 text-[14px] font-medium" style={{ background: 'color-mix(in srgb, var(--accent-on) 16%, transparent)' }}>
+            {summary.attention ? 'Стоит обратить внимание' : 'В пределах скрининга'}
+          </span>
+        </div>
+        <p className="display mt-5 text-[40px] leading-none sm:text-[56px]">{summary.headline}</p>
+        <p className="mt-2 text-[16px] opacity-85">{summary.headlineCaption}</p>
+        <p className="mt-6 max-w-[48ch] text-[19px] leading-snug sm:text-[21px]">{summary.result}</p>
+      </section>
 
       <div className="mt-10">
         <ReportRow label="Что проверялось">{test.checks}</ReportRow>
@@ -59,10 +69,10 @@ export function TestResultPage({ test, next, summary, records, trials, startedAt
             expectedFor={test.expectedLabel ? (i) => test.expectedLabel!(trials[i]) : undefined}
           />
         </div>
-        <div className="grid gap-x-6 border-t border-ink pt-4 sm:grid-cols-[11rem_minmax(0,1fr)]">
-          <h3 className="label pt-4 text-graphite">Далее</h3>
+        <div className="grid gap-x-6 border-t-2 border-accent pt-4 sm:grid-cols-[11rem_minmax(0,1fr)]">
+          <h3 className="label pt-4 text-accent">Далее</h3>
           <div>
-            <p className="pt-3 text-[18px] text-ink">
+            <p className="display pb-3 pt-3 text-[26px] text-ink">
               {next ? (
                 <>
                   <span className="num mr-3 text-graphite">{String(next.number).padStart(2, '0')}/05</span>

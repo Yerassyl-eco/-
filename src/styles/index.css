@@ -1,20 +1,22 @@
 @import 'tailwindcss';
 
 /*
- * VISION MOTION — lab-session design system.
- * Team palette (pinned): paper #F5F4F0, ink #111111, graphite #6F6F6A,
- * rule #D9D8D2, one cobalt accent #2457FF. Amber = SIGNAL (Error Mode),
- * cobalt also marks confirmation. No green, no gradients, no shadows, 0–2px radii.
+ * VISION MOTION — colourful lab instrument.
+ * Paper ground #F5F4F0, ink #111111. Every test owns one saturated colour
+ * (src/data/themes.ts) exposed as --accent / --accent-on / --accent-wash /
+ * --accent-text. Amber = Error Mode. Prata for display, Geist for reading,
+ * Geist Mono for numbers only.
  */
 @theme {
   --font-sans: 'Geist Variable', 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Prata', 'Times New Roman', serif;
   --font-mono: 'Geist Mono Variable', 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
   --color-paper: #f5f4f0;
   --color-paper-2: #ecebe5;
   --color-field: #ffffff;
   --color-ink: #111111;
-  --color-graphite: #6f6f6a;
+  --color-graphite: #55554f;
   --color-rule: #d9d8d2;
   --color-rule-strong: #b9b8b1;
   --color-cobalt: #2457ff;
@@ -26,10 +28,16 @@
   --color-scope: #121212;
 
   --radius-hair: 2px;
+  --radius-card: 24px;
+  --radius-control: 14px;
+
+  --shadow-card: 0 1px 2px rgba(17, 17, 17, 0.06), 0 18px 40px -22px rgba(17, 17, 17, 0.28);
+  --shadow-lift: 0 2px 4px rgba(17, 17, 17, 0.06), 0 30px 60px -28px rgba(17, 17, 17, 0.4);
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
   --animate-enter: enter 220ms var(--ease-out-expo) both;
+  --animate-card-in: card-in 520ms var(--ease-out-expo) both;
   --animate-fade: fade 200ms ease-out both;
   --animate-draw-x: draw-x 260ms var(--ease-out-expo) both;
   --animate-scan: scan 1.4s linear infinite;
@@ -38,6 +46,10 @@
   @keyframes enter {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes card-in {
+    from { opacity: 0; transform: translateY(28px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
   }
   @keyframes fade {
     from { opacity: 0; }
@@ -69,8 +81,8 @@ body {
   background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-sans);
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: 17px;
+  line-height: 1.6;
   font-feature-settings: 'ss01', 'cv11';
   -webkit-font-smoothing: antialiased;
   caret-color: var(--color-cobalt);
@@ -83,10 +95,19 @@ body {
 
 h1,
 h2,
-h3 {
+h3,
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
   text-wrap: balance;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
+
+/* Accent helpers driven by the current test theme. */
+.bg-accent { background-color: var(--accent); color: var(--accent-on); }
+.bg-accent-wash { background-color: var(--accent-wash); }
+.text-accent { color: var(--accent-text); }
+.border-accent { border-color: var(--accent); }
 
 p {
   text-wrap: pretty;
@@ -116,10 +137,11 @@ a[href] {
 
 /* Tracked uppercase label used for instrument rows and table headers. */
 .label {
-  font-size: 12px;
-  line-height: 16px;
-  font-weight: 560;
-  letter-spacing: 0.1em;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 

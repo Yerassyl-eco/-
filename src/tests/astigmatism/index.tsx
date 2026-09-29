@@ -54,8 +54,8 @@ function Stimulus({ trial, trialIndex, trialCount, observeProgress }: StimulusPr
   return (
     <StimulusField
       label="Радиальная фигура"
-      tagLeft={`VARIANT ${trialIndex + 1} / ${trialCount}`}
-      tagRight={trial.name.toUpperCase()}
+      tagLeft={`Вариант ${trialIndex + 1} / ${trialCount}`}
+      tagRight={trial.name}
       progress={observeProgress}
     >
       <div key={trial.variant} className="animate-fade flex h-full max-h-[420px] w-full items-center justify-center p-8">
@@ -70,7 +70,7 @@ export const astigmatismTest: TestDefinition<DialTrial> = {
   number: 2,
   title: 'Радиальная фигура',
   titleEn: 'Astigmatism dial',
-  shortTitle: 'Радиальная',
+  shortTitle: 'Фигура',
   checks:
     'Одинаково ли чётко вы видите линии разных направлений. Используется классическая радиальная фигура («лучистая фигура»).',
   intro: [

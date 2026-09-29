@@ -1,3 +1,4 @@
+import { PREPARATION_STEPS } from '../data/preparation';
 import type { AnyTest } from '../tests';
 import type { AnswerRecord, TestSummary } from '../tests/types';
 import type { Gesture } from '../vision/types';
@@ -40,6 +41,8 @@ export interface MachineState {
   screeningFinishedAt: number | null;
   /** Increments to replay instructions (✋ on intro screens). */
   replayKey: number;
+  /** Instruction card currently in focus (preparation / test intro). */
+  cardIndex: number;
 }
 
 export type Action =
@@ -53,6 +56,7 @@ export type Action =
   | { type: 'ADVANCE'; now: number }
   | { type: 'NEXT_TEST' }
   | { type: 'REPLAY' }
+  | { type: 'CARD'; index: number }
   | { type: 'NEW_SCREENING' }
   | { type: 'GO_HOME' };
 
@@ -71,6 +75,7 @@ export function initialState(tests: AnyTest[]): MachineState {
     screeningStartedAt: 0,
     screeningFinishedAt: null,
     replayKey: 0,
+    cardIndex: 0,
   };
 }
 
@@ -89,7 +94,7 @@ export function makeReducer(tests: AnyTest[]) {
         return s.phase === 'LANDING' ? { ...s, phase: 'CAMERA_SETUP' } : s;
 
       case 'CAMERA_OK':
-        return s.phase === 'CAMERA_SETUP' ? { ...s, phase: 'PREPARATION' } : s;
+        return s.phase === 'CAMERA_SETUP' ? { ...s, phase: 'PREPARATION', cardIndex: 0 } : s;
 
       case 'BEGIN_TESTS':
         if (s.phase !== 'PREPARATION') return s;
@@ -162,10 +167,14 @@ export function makeReducer(tests: AnyTest[]) {
       case 'NEXT_TEST':
         if (s.phase !== 'TEST_RESULT') return s;
         if (s.testIndex >= tests.length - 1) return { ...s, phase: 'FINAL_RESULT' };
-        return { ...s, phase: 'TEST_INTRO', testIndex: s.testIndex + 1, trialIndex: 0, selected: null };
+        return { ...s, phase: 'TEST_INTRO', testIndex: s.testIndex + 1, trialIndex: 0, selected: null, cardIndex: 0 };
 
       case 'REPLAY':
-        return { ...s, replayKey: s.replayKey + 1 };
+        return { ...s, replayKey: s.replayKey + 1, cardIndex: 0 };
+
+      case 'CARD':
+        if (s.phase !== 'PREPARATION' && s.phase !== 'TEST_INTRO') return s;
+        return { ...s, cardIndex: Math.max(0, a.index) };
 
       case 'NEW_SCREENING':
         return { ...initialState(tests), phase: 'PREPARATION' };
@@ -180,6 +189,14 @@ export type RouteResult =
   | { kind: 'action'; action: Action; feedback?: string }
   | { kind: 'reject'; hint: string }
   | { kind: 'ignore' };
+
+/** 👉 next card, 👈 previous card (instruction decks). */
+function cardStep(s: MachineState, g: Gesture, count: number): RouteResult {
+  const next = s.cardIndex + (g === 'POINT_RIGHT' ? 1 : -1);
+  if (next < 0) return { kind: 'reject', hint: 'Это первая карточка. Укажите вправо, чтобы листать дальше.' };
+  if (next >= count) return { kind: 'reject', hint: 'Это последняя карточка. Покажите «палец вверх», чтобы продолжить.' };
+  return { kind: 'action', action: { type: 'CARD', index: next }, feedback: `Карточка ${next + 1} из ${count}` };
+}
 
 const DIR_NAME: Partial<Record<Gesture, string>> = { POINT_LEFT: 'влево', POINT_RIGHT: 'вправо', POINT_UP: 'вверх', POINT_DOWN: 'вниз' };
 
@@ -207,11 +224,13 @@ export function routeGesture(tests: AnyTest[], s: MachineState, g: Gesture, now:
 
     case 'PREPARATION':
       if (g === 'THUMBS_UP') return { kind: 'action', action: { type: 'BEGIN_TESTS', now, trials: makeTrials() } };
+      if (g === 'POINT_RIGHT' || g === 'POINT_LEFT') return cardStep(s, g, PREPARATION_STEPS.length);
       if (g === 'OPEN_PALM') return { kind: 'action', action: { type: 'REPLAY' }, feedback: 'Повторяю инструкцию' };
       return { kind: 'reject', hint: 'Когда будете готовы, покажите «палец вверх».' };
 
     case 'TEST_INTRO':
       if (g === 'THUMBS_UP') return { kind: 'action', action: { type: 'START_TEST', now } };
+      if (g === 'POINT_RIGHT' || g === 'POINT_LEFT') return cardStep(s, g, test.intro.length + 1);
       if (g === 'OPEN_PALM') return { kind: 'action', action: { type: 'REPLAY' }, feedback: 'Повторяю инструкцию' };
       return { kind: 'reject', hint: 'Прочитайте инструкцию и покажите «палец вверх», чтобы начать тест.' };
 

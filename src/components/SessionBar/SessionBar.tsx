@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
+import { THEMES } from '../../data/themes';
 import { isSoundEnabled, setSoundEnabled } from '../../utils/sound';
+
+const ORDER = ['acuity', 'astigmatism', 'duochrome', 'amsler', 'color'] as const;
 
 interface Props {
   /** 0..4 = current test, -1 = none. */
@@ -31,7 +34,7 @@ export function SessionBar({ current, done, phaseLabel, sessionCode, startedAt }
     <header className="sticky top-0 z-30 border-b border-rule bg-paper/95 backdrop-blur-[2px]">
       <div className="mx-auto grid max-w-[1440px] grid-cols-12 items-center gap-x-6 px-5 py-3.5 sm:px-10">
         <div className="col-span-6 flex items-baseline gap-3 lg:col-span-3">
-          <span className="text-[13px] font-semibold tracking-[0.18em] text-ink">VISION MOTION</span>
+          <span className="display text-[20px] tracking-[0.04em] text-ink">Vision Motion</span>
           <span className="hidden text-[13px] text-graphite xl:inline">Digital vision screening</span>
         </div>
 
@@ -44,17 +47,21 @@ export function SessionBar({ current, done, phaseLabel, sessionCode, startedAt }
               return (
                 <li key={i} className="flex flex-1 items-center gap-2" aria-current={isCur ? 'step' : undefined}>
                   <span
-                    className={`num relative text-[12px] transition-colors duration-200 ${isCur ? 'font-semibold text-cobalt' : isDone ? 'text-ink' : 'text-graphite'}`}
+                    className={`num flex h-7 min-w-7 items-center justify-center rounded-full px-2 text-[13px] transition-colors duration-200 ${isCur ? 'font-semibold' : isDone ? 'font-medium' : 'text-graphite'}`}
+                    style={
+                      isCur || isDone
+                        ? { background: THEMES[ORDER[i]].base, color: THEMES[ORDER[i]].on }
+                        : { boxShadow: 'inset 0 0 0 1px var(--color-rule-strong)' }
+                    }
                   >
                     {String(i + 1).padStart(2, '0')}
-                    {isCur && <span className="animate-draw-x absolute -bottom-1.5 left-0 right-0 h-[2px] origin-left bg-cobalt" />}
                     <span className="sr-only">{isDone ? ' пройден' : isCur ? ' текущий' : ''}</span>
                   </span>
                   {i < 4 && (
-                    <span className="relative h-px flex-1 bg-rule">
+                    <span className="relative h-[3px] flex-1 overflow-hidden rounded-full bg-rule">
                       <span
-                        className="absolute inset-y-0 left-0 w-full origin-left bg-ink transition-transform duration-300"
-                        style={{ transform: `scaleX(${isDone ? 1 : 0})` }}
+                        className="absolute inset-y-0 left-0 w-full origin-left transition-transform duration-300"
+                        style={{ transform: `scaleX(${isDone ? 1 : 0})`, background: THEMES[ORDER[i]].base }}
                       />
                     </span>
                   )}
@@ -76,7 +83,7 @@ export function SessionBar({ current, done, phaseLabel, sessionCode, startedAt }
             className="label -my-3.5 min-w-11 py-3.5 text-graphite transition-colors hover:text-ink"
             aria-pressed={sound}
           >
-            Sound {sound ? 'on' : 'off'}
+            Звук {sound ? 'вкл' : 'выкл'}
           </button>
         </div>
       </div>

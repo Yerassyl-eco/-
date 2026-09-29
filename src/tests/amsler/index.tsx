@@ -35,8 +35,8 @@ function Stimulus({ trial, ready, observeProgress, trialIndex, trialCount }: Sti
   return (
     <StimulusField
       label="Сетка Амслера"
-      tagLeft={`${trialIndex + 1} / ${trialCount} · ${trial.eye === 'right' ? 'RIGHT EYE · OD' : 'LEFT EYE · OS'}`}
-      tagRight={ready ? 'RESPOND' : `OBSERVE 00:0${secondsLeft}`}
+      tagLeft={`${trialIndex + 1} / ${trialCount} · ${trial.eye === 'right' ? 'правый глаз' : 'левый глаз'}`}
+      tagRight={ready ? 'отвечайте' : `смотрите 00:0${secondsLeft}`}
       progress={observeProgress}
     >
       <div className="flex h-full w-full items-center justify-center p-8">

@@ -30,17 +30,17 @@ export function CalibrationPage({ vision, onContinue }: { vision: RuntimeState; 
   const dist: Tone = demo ? 'ok' : e.face === 'too-close' || e.face === 'too-far' || e.issue === 'HAND_TOO_FAR' || e.issue === 'HAND_TOO_CLOSE' ? 'adjust' : e.face === 'unknown' || e.face === 'missing' ? 'wait' : 'ok';
   return (
     <div className="animate-enter">
-      <h1 className="text-[34px] font-medium leading-[1.08] text-ink sm:text-[44px]">Калибровка</h1>
-      <p className="mt-4 max-w-[46ch] text-[17px] leading-relaxed text-graphite">
+      <h1 className="text-[40px] leading-[1.08] text-ink sm:text-[54px]">Калибровка</h1>
+      <p className="mt-4 max-w-[46ch] text-[19px] leading-relaxed text-graphite">
         Проверим, что камера видит вас и вашу руку. Поверх видео — слой отслеживания: точки суставов, линии пальцев, рамка лица.
       </p>
       <ul className="mt-8 border-t border-rule">
-        <Check label="Camera" value={live ? 'Active' : 'Waiting'} tone={live ? 'ok' : 'wait'} hint="Камера активна, видео остаётся на этом устройстве." />
-        <Check label="Hand" value={hand === 'ok' ? 'Detected' : hand === 'adjust' ? 'Adjust' : 'Waiting'} tone={hand} hint={hand === 'ok' ? 'Я вижу вашу руку.' : hand === 'adjust' ? 'Рука видна, но её нужно поправить — см. сигнал камеры.' : 'Покажите ладонь в камеру на уровне груди.'} />
-        <Check label="Face" value={face === 'ok' ? 'Centered' : face === 'adjust' ? 'Adjust' : 'Waiting'} tone={face} hint="Лицо целиком в кадре, взгляд на экран." />
-        <Check label="Distance" value={dist === 'ok' ? 'Ok' : dist === 'adjust' ? 'Adjust' : 'Waiting'} tone={dist} hint="Около 50–70 см от экрана — на вытянутую руку." />
+        <Check label="Камера" value={live ? 'Работает' : 'Ожидание'} tone={live ? 'ok' : 'wait'} hint="Камера активна, видео остаётся на этом устройстве." />
+        <Check label="Рука" value={hand === 'ok' ? 'В кадре' : hand === 'adjust' ? 'Поправьте' : 'Ожидание'} tone={hand} hint={hand === 'ok' ? 'Я вижу вашу руку.' : hand === 'adjust' ? 'Рука видна, но её нужно поправить — см. сигнал камеры.' : 'Покажите ладонь в камеру на уровне груди.'} />
+        <Check label="Лицо" value={face === 'ok' ? 'По центру' : face === 'adjust' ? 'Поправьте' : 'Ожидание'} tone={face} hint="Лицо целиком в кадре, взгляд на экран." />
+        <Check label="Расстояние" value={dist === 'ok' ? 'Хорошо' : dist === 'adjust' ? 'Поправьте' : 'Ожидание'} tone={dist} hint="Около 50–70 см от экрана — на вытянутую руку." />
       </ul>
-      <div className="mt-6 border-t border-ink">
+      <div className="mt-6">
         <GestureCue gesture="THUMBS_UP" action="Всё в порядке — продолжить" primary onTrigger={onContinue} />
       </div>
     </div>

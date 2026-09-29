@@ -26,18 +26,18 @@ export function SessionLog({ total, current, records, optionsFor, startedAt, exp
   const cols = showExpected ? 'grid-cols-[3rem_4rem_minmax(0,1fr)_minmax(0,1fr)_5rem]' : 'grid-cols-[3rem_4rem_minmax(0,1fr)_5rem]';
   return (
     <div>
-      <div className="flex items-baseline justify-between border-b border-ink pb-2">
-        <span className="label text-ink">Session log</span>
+      <div className="flex items-baseline justify-between border-b-2 border-accent pb-2">
+        <span className="label text-accent">Журнал ответов</span>
         <span className="num text-xs text-graphite">
-          {String(records.length).padStart(2, '0')} / {String(total).padStart(2, '0')} recorded
+          {String(records.length).padStart(2, '0')} / {String(total).padStart(2, '0')} записано
         </span>
       </div>
       <div className={`label grid ${cols} gap-x-3 border-b border-rule py-2 text-graphite`} aria-hidden>
-        <span>Trial</span>
-        <span>Time</span>
-        <span>Answer</span>
-        {showExpected && <span>Expected</span>}
-        <span className="text-right">Latency</span>
+        <span>№</span>
+        <span>Время</span>
+        <span>Ответ</span>
+        {showExpected && <span>Верный ответ</span>}
+        <span className="text-right">Реакция</span>
       </div>
       <ol aria-label="Журнал ответов">
         {rows.map((r) => {
@@ -71,12 +71,12 @@ export function SessionLog({ total, current, records, optionsFor, startedAt, exp
         })}
         {current >= 0 && current < total && !records.some((r) => r.trialIndex === current) && (
           <li className={`grid ${cols} items-center gap-x-3 border-b border-rule py-2 text-[14px]`} aria-current="step">
-            <span className="num text-cobalt">T{String(current + 1).padStart(2, '0')}</span>
+            <span className="num text-accent">T{String(current + 1).padStart(2, '0')}</span>
             <span className="num text-graphite">—</span>
             <span className="text-graphite">ожидание ответа</span>
             {showExpected && <span />}
             <span className="flex justify-end">
-              <span className="animate-blink h-1.5 w-1.5 rounded-full bg-cobalt" aria-hidden />
+              <span className="animate-blink h-1.5 w-1.5 rounded-full bg-[var(--accent)]" aria-hidden />
             </span>
           </li>
         )}

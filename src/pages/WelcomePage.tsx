@@ -1,5 +1,7 @@
 import { GestureCue } from '../components/Cue/GestureCue';
 import { GestureIcon } from '../components/GestureIcon/GestureIcon';
+import { THEMES } from '../data/themes';
+import { TESTS } from '../tests';
 import type { Gesture } from '../vision/types';
 import type { StoredScreening } from '../utils/storage';
 import { formatDate } from '../utils/format';
@@ -17,38 +19,39 @@ const VOCABULARY: { g: Gesture; name: string; action: string }[] = [
 export function WelcomePage({ last, onStart }: { last: StoredScreening | null; onStart: () => void }) {
   return (
     <div className="animate-enter">
-      <h1 className="max-w-[16ch] text-[34px] font-medium leading-[1.08] text-ink sm:text-[44px]">Короткий скрининг зрения, управляемый движением руки</h1>
-      <div className="mt-6 max-w-[46ch] space-y-3 text-[17px] leading-relaxed text-graphite">
+      <h1 className="max-w-[16ch] text-[38px] leading-[1.08] text-ink sm:text-[54px]">Короткий скрининг зрения, управляемый движением руки</h1>
+      <div className="mt-6 max-w-[46ch] space-y-2 text-[19px] leading-relaxed text-graphite">
         <p>Пять визуальных тестов. Без клавиатуры. Без мыши.</p>
         <p className="text-ink">Смотрите на экран. Следуйте инструкциям. Отвечайте руками.</p>
       </div>
 
-      <dl className="mt-8 grid grid-cols-3 border-t border-rule">
-        {[
-          ['Tests', '05'],
-          ['Duration', '≈ 5 мин'],
-          ['Input', 'Жесты руки'],
-        ].map(([k, v]) => (
-          <div key={k} className="border-r border-rule py-3 pr-3 last:border-r-0 [&:not(:first-child)]:pl-4">
-            <dt className="label text-graphite">{k}</dt>
-            <dd className="mt-1 text-[20px] tabular-nums text-ink">{v}</dd>
-          </div>
+      <ol className="mt-8 grid grid-cols-5 gap-2" aria-label="Пять тестов">
+        {TESTS.map((t) => (
+          <li
+            key={t.id}
+            className="flex min-h-[92px] flex-col justify-between p-3"
+            style={{ background: THEMES[t.id].base, color: THEMES[t.id].on, borderRadius: 'var(--radius-control)' }}
+          >
+            <span className="num text-[13px] opacity-85">{String(t.number).padStart(2, '0')}</span>
+            <span className="text-[13px] font-medium leading-tight sm:text-[14px]">{t.shortTitle}</span>
+          </li>
         ))}
-      </dl>
+      </ol>
+      <p className="mt-3 text-[15px] text-graphite">5 тестов · около 5 минут · ответы жестами руки</p>
 
-      <div className="mt-2 border-t border-ink">
+      <div className="mt-6">
         <GestureCue gesture="THUMBS_UP" action="Начать скрининг" primary onTrigger={onStart} />
       </div>
 
       <section className="mt-10" aria-labelledby="vocab">
-        <h2 id="vocab" className="label border-b border-rule pb-2 text-graphite">
-          Gesture vocabulary
+        <h2 id="vocab" className="label border-b-2 border-accent pb-2 text-accent">
+          Словарь жестов
         </h2>
         <ul className="grid sm:grid-cols-2 sm:gap-x-8">
           {VOCABULARY.map((v) => (
             <li key={v.g} className="flex items-center gap-3 border-b border-rule py-2.5">
-              <GestureIcon gesture={v.g} size={18} className="shrink-0 text-ink" />
-              <span className="text-[14px] text-ink">{v.name}</span>
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--accent-wash)] text-accent"><GestureIcon gesture={v.g} size={18} /></span>
+              <span className="text-[15px] font-medium text-ink">{v.name}</span>
               <span className="ml-auto text-right text-[13px] text-graphite">{v.action}</span>
             </li>
           ))}
