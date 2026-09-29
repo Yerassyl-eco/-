@@ -1,5 +1,6 @@
-import { ArrowLeft, ArrowRight, ClipboardList, Eye, Hand, Ruler, Sun, type LucideIcon } from 'lucide-react';
+import { ClipboardList, Eye, Hand, Ruler, Sun, type LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { GestureIcon } from '../GestureIcon/GestureIcon';
 
 export interface DeckCard {
   title: string;
@@ -22,13 +23,15 @@ interface Props {
   cards: DeckCard[];
   index: number;
   onIndex: (i: number) => void;
+  /** The gesture prompt for leaving the deck (big, under the cards). */
+  prompt: ReactNode;
 }
 
 /**
  * Instruction cards shown one at a time in the centre of the screen.
  * The current card rises into place; earlier cards settle into a stack behind it.
  */
-export function InstructionDeck({ kicker, title, cards, index, onIndex }: Props) {
+export function InstructionDeck({ kicker, title, cards, index, onIndex, prompt }: Props) {
   const last = index >= cards.length - 1;
   return (
     <div className="mx-auto flex h-full min-h-0 w-full max-w-[760px] flex-col items-center text-center">
@@ -36,7 +39,7 @@ export function InstructionDeck({ kicker, title, cards, index, onIndex }: Props)
       <div className="mt-1 text-[15px] font-medium text-graphite">{kicker}</div>
 
       {/* stack: takes the height that is left, never more than it needs */}
-      <div className="relative mt-[clamp(20px,3.5vh,40px)] min-h-[200px] w-full flex-1" style={{ maxHeight: 380 }} aria-live="polite">
+      <div className="relative mt-[clamp(14px,2.6vh,32px)] min-h-[170px] w-full flex-1" style={{ maxHeight: 340 }} aria-live="polite">
         {cards.map((c, i) => {
           const depth = index - i; // 0 = current, >0 = behind
           if (depth < 0 || depth > 2) return null;
@@ -79,10 +82,10 @@ export function InstructionDeck({ kicker, title, cards, index, onIndex }: Props)
           type="button"
           onClick={() => onIndex(index - 1)}
           disabled={index === 0}
-          className="flex min-h-11 items-center gap-2 rounded-full px-4 text-[15px] text-ink transition-colors hover:bg-white disabled:opacity-30"
+          className="flex min-h-12 items-center gap-2.5 rounded-full px-4 text-[18px] font-medium text-ink transition-colors hover:bg-white disabled:opacity-30"
           aria-label="Предыдущая карточка (жест влево)"
         >
-          <ArrowLeft size={18} aria-hidden /> Назад
+          <GestureIcon gesture="POINT_LEFT" size={30} strokeWidth={1.6} className="text-accent" /> Назад
         </button>
         <div className="flex items-center gap-2" aria-label={`Карточка ${index + 1} из ${cards.length}`}>
           {cards.map((_, i) => (
@@ -104,13 +107,14 @@ export function InstructionDeck({ kicker, title, cards, index, onIndex }: Props)
           type="button"
           onClick={() => onIndex(index + 1)}
           disabled={last}
-          className="flex min-h-11 items-center gap-2 rounded-full px-4 text-[15px] text-ink transition-colors hover:bg-white disabled:opacity-30"
+          className="flex min-h-12 items-center gap-2.5 rounded-full px-4 text-[18px] font-medium text-ink transition-colors hover:bg-white disabled:opacity-30"
           aria-label="Следующая карточка (жест вправо)"
         >
-          Далее <ArrowRight size={18} aria-hidden />
+          Далее <GestureIcon gesture="POINT_RIGHT" size={30} strokeWidth={1.6} className="text-accent" />
         </button>
       </div>
 
+      <div className="mt-[clamp(8px,2vh,20px)] flex w-full flex-wrap items-center justify-center gap-3 text-left">{prompt}</div>
     </div>
   );
 }

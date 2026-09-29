@@ -1,5 +1,6 @@
 import { Check, TriangleAlert } from 'lucide-react';
 import { useState } from 'react';
+import { GesturePrompt } from '../components/Cue/GesturePrompt';
 import { THEMES } from '../data/themes';
 import type { AnyTest } from '../tests';
 import type { TestSummary } from '../tests/types';
@@ -7,6 +8,8 @@ import type { TestSummary } from '../tests/types';
 interface Props {
   tests: AnyTest[];
   results: (TestSummary | null)[];
+  onNext: () => void;
+  onBack: () => void;
 }
 
 const TICKS = [0, 25, 50, 75, 100];
@@ -16,7 +19,7 @@ const TICKS = [0, 25, 50, 75, 100];
  * screening result, the hatched amber tail is the gap. Identity is carried by
  * the test name (the coloured number is only a secondary cue).
  */
-export function VisionMapPage({ tests, results }: Props) {
+export function VisionMapPage({ tests, results, onNext, onBack }: Props) {
   const [hover, setHover] = useState<number | null>(null);
   const rows = tests.map((t, i) => {
     const r = results[i];
@@ -176,6 +179,10 @@ export function VisionMapPage({ tests, results }: Props) {
         </p>
       </section>
 
+      <div className="mt-[clamp(8px,1.8vh,16px)] flex flex-wrap items-center gap-3">
+        <GesturePrompt gesture="OK" action="чтобы открыть итог" size="md" onTrigger={onNext} />
+        <GesturePrompt gesture="POINT_LEFT" action="чтобы вернуться к результатам" size="md" quiet onTrigger={onBack} />
+      </div>
     </div>
   );
 }

@@ -240,3 +240,11 @@ a[href] {
   animation: reticle-draw 1100ms var(--ease-out-expo) 250ms both;
 }
 .iris-scope .brackets g { transition: transform 600ms var(--ease-out-expo); }
+
+/* A gentle nudge on the gesture a screen is waiting for (off with reduced motion). */
+@keyframes nudge {
+  0%, 70%, 100% { transform: translateY(0) rotate(0); }
+  78% { transform: translateY(-3px) rotate(-6deg); }
+  86% { transform: translateY(0) rotate(4deg); }
+}
+.animate-nudge { animation: nudge 2.6s ease-in-out infinite; transform-origin: 50% 80%; }

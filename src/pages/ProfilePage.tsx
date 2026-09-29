@@ -1,4 +1,5 @@
 import { Check } from 'lucide-react';
+import { GesturePrompt } from '../components/Cue/GesturePrompt';
 import { HandGlyph } from '../components/GestureIcon/GestureIcon';
 import { COUNT_GESTURES, PROFILE_QUESTIONS, type Profile } from '../data/profile';
 import { useVision } from '../vision/useVision';
@@ -8,13 +9,14 @@ interface Props {
   selected: string | null;
   profile: Profile;
   onSelect: (i: number) => void;
+  onConfirm: () => void;
 }
 
 /**
  * Questionnaire without a keyboard: each answer has a number, the user raises
  * that many fingers (☝️ 1, ✌️ 2, 3, 4) and confirms with a fist.
  */
-export function ProfilePage({ index, selected, profile, onSelect }: Props) {
+export function ProfilePage({ index, selected, profile, onSelect, onConfirm }: Props) {
   const { engine } = useVision();
   const q = PROFILE_QUESTIONS[index];
   const answered = profile[q.key];
@@ -53,7 +55,7 @@ export function ProfilePage({ index, selected, profile, onSelect }: Props) {
                   role="radio"
                   aria-checked={isSel}
                   onClick={() => onSelect(i)}
-                  className={`flex h-full max-h-[260px] min-h-[120px] w-full flex-col justify-between p-5 text-left transition-[background-color,box-shadow,transform] duration-200 ${
+                  className={`flex h-full max-h-[240px] min-h-[110px] w-full flex-col justify-between p-5 text-left transition-[background-color,box-shadow,transform] duration-200 ${
                     isSel ? 'bg-accent' : hot ? 'bg-accent-wash text-ink' : 'bg-field text-ink hover:-translate-y-0.5'
                   }`}
                   style={{
@@ -71,9 +73,12 @@ export function ProfilePage({ index, selected, profile, onSelect }: Props) {
             );
           })}
         </ul>
-        <p className="mt-4 text-[15px] text-graphite">
-          Один палец — первый ответ, два — второй, три — третий, четыре — четвёртый. Затем покажите кулак. Имя и другие личные данные не нужны.
-        </p>
+        <div className="mt-[clamp(12px,2.4vh,24px)] flex flex-wrap items-center gap-x-6 gap-y-3">
+          <p className="max-w-[26ch] text-[clamp(18px,2.6vh,22px)] font-medium leading-snug text-ink">
+            {selected === null ? 'Покажите столько пальцев, какой номер у ответа' : `Выбрано: ${q.options[Number(selected)]}`}
+          </p>
+          <GesturePrompt gesture="FIST" action="чтобы подтвердить ответ" disabled={selected === null} onTrigger={onConfirm} />
+        </div>
       </section>
     </div>
   );

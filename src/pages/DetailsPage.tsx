@@ -1,3 +1,4 @@
+import { GesturePrompt } from '../components/Cue/GesturePrompt';
 import { StatusToken } from '../components/Report/ReportRow';
 import { adviceFor } from '../data/advice';
 import type { Profile } from '../data/profile';
@@ -11,13 +12,15 @@ interface Props {
   profile: Profile;
   index: number;
   onIndex: (i: number) => void;
+  onNext: () => void;
+  onBack: () => void;
 }
 
 /**
  * Results one test at a time. The user pages with 👌 (next) and 👈 (back);
  * each slide wears its test colour and slides in from the right.
  */
-export function DetailsPage({ tests, results, profile, index, onIndex }: Props) {
+export function DetailsPage({ tests, results, profile, index, onIndex, onNext, onBack }: Props) {
   const test = tests[index];
   const summary = results[index];
   const pct = Math.round((summary?.score ?? 0) * 100);
@@ -53,7 +56,7 @@ export function DetailsPage({ tests, results, profile, index, onIndex }: Props) 
         ))}
       </ol>
 
-      <article key={test.id} className="animate-slide-in mt-[clamp(10px,2vh,20px)] grid min-h-0 flex-1 gap-5 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]" aria-labelledby="slide-title">
+      <article key={test.id} className="animate-slide-in mt-[clamp(10px,2vh,20px)] grid min-h-0 flex-1 gap-4 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]" aria-labelledby="slide-title">
         <section className="bg-accent flex min-h-0 flex-col p-[clamp(20px,3vh,32px)]" style={{ borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-lift)' }}>
           <div className="flex items-center justify-between gap-3">
             <span className="num flex h-10 w-10 items-center justify-center rounded-full text-[15px]" style={{ background: 'color-mix(in srgb, var(--accent-on) 16%, transparent)' }}>
@@ -91,6 +94,10 @@ export function DetailsPage({ tests, results, profile, index, onIndex }: Props) 
           </Block>
         </section>
       </article>
+      <div className="mt-[clamp(8px,1.8vh,16px)] flex flex-wrap items-center gap-3">
+        <GesturePrompt gesture="OK" action={index === tests.length - 1 ? 'чтобы открыть карту зрения' : 'чтобы перейти к следующему тесту'} size="md" onTrigger={onNext} />
+        {index > 0 && <GesturePrompt gesture="POINT_LEFT" action="чтобы вернуться назад" size="md" quiet onTrigger={onBack} />}
+      </div>
     </div>
   );
 }

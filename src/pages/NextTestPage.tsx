@@ -1,4 +1,5 @@
 import { Check } from 'lucide-react';
+import { GesturePrompt } from '../components/Cue/GesturePrompt';
 import { THEMES } from '../data/themes';
 import type { AnyTest } from '../tests';
 import type { TestSummary } from '../tests/types';
@@ -7,10 +8,11 @@ interface Props {
   test: AnyTest;
   next: AnyTest | null;
   summary: TestSummary;
+  onNext: () => void;
 }
 
 /** Between tests: one calm question, not a report. Details come at the end. */
-export function NextTestPage({ test, next, summary }: Props) {
+export function NextTestPage({ test, next, summary, onNext }: Props) {
   const nt = next ? THEMES[next.id] : null;
   return (
     <div className="flex h-full min-h-0 items-center justify-center">
@@ -46,7 +48,10 @@ export function NextTestPage({ test, next, summary }: Props) {
             Это был последний тест
           </h1>
         )}
-        <p className="mt-5 text-[16px] text-graphite">Подробный разбор каждого теста — в конце скрининга.</p>
+        <div className="mt-[clamp(16px,3.4vh,32px)]">
+          <GesturePrompt gesture="THUMBS_UP" action={next ? 'чтобы начать следующий тест' : 'чтобы завершить скрининг'} onTrigger={onNext} />
+        </div>
+        <p className="mt-4 text-[15px] text-graphite">Подробный разбор каждого теста — в конце скрининга.</p>
       </section>
     </div>
   );

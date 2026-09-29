@@ -17,7 +17,8 @@ import { VisionMapPage } from './pages/VisionMapPage';
 import { WelcomePage } from './pages/WelcomePage';
 import { PREPARATION_STEPS } from './data/preparation';
 import { THEMES, themeVars } from './data/themes';
-import { phaseGuide } from './state/phaseActions';
+import { phaseGuide, spokenGuide } from './state/phaseActions';
+import { speak } from './utils/voice';
 import { createTrials, initialState, makeReducer, routeGesture, type Phase } from './state/testMachine';
 import { TESTS } from './tests';
 import { playSound } from './utils/sound';
@@ -108,6 +109,12 @@ export default function App() {
     else void visionRuntime.start();
     return visionRuntime.onGesture(handleGesture);
   }, [handleGesture]);
+
+  // Say out loud what to do whenever a new screen, question or result slide opens.
+  const spoken = spokenGuide(TESTS, state);
+  useEffect(() => {
+    if (spoken && !isDemo) speak(spoken);
+  }, [spoken]);
 
   // Engine context per phase: when to expect a hand, when to check the face.
   useEffect(() => {
@@ -202,7 +209,7 @@ export default function App() {
       page = <WelcomePage last={last} flash={flash} onStart={() => handleGesture('THUMBS_UP')} />;
       break;
     case 'CAMERA_SETUP':
-      page = <CalibrationPage vision={vision} />;
+      page = <CalibrationPage vision={vision} onContinue={() => handleGesture('THUMBS_UP')} />;
       break;
     case 'PROFILE':
       page = (
@@ -211,31 +218,32 @@ export default function App() {
           selected={state.selected}
           profile={state.profile}
           onSelect={(i) => handleGesture((['POINT_UP', 'TWO', 'THREE', 'FOUR'] as Gesture[])[i])}
+          onConfirm={() => handleGesture('FIST')}
         />
       );
       break;
     case 'PREPARATION':
-      page = <PreparationPage cardIndex={state.cardIndex} onIndex={goCard} />;
+      page = <PreparationPage cardIndex={state.cardIndex} onIndex={goCard} onBegin={() => handleGesture('THUMBS_UP')} />;
       break;
     case 'TEST_INTRO':
-      page = <TestIntroPage test={test} cardIndex={state.cardIndex} onIndex={goCard} />;
+      page = <TestIntroPage test={test} cardIndex={state.cardIndex} onIndex={goCard} onStart={() => handleGesture('THUMBS_UP')} />;
       break;
     case 'TEST_ACTIVE':
     case 'ANSWER_SELECTED':
     case 'ANSWER_CONFIRMED':
-      page = <TestPage test={test} state={state} onSelect={selectByValue} />;
+      page = <TestPage test={test} state={state} onSelect={selectByValue} onGesture={handleGesture} />;
       break;
     case 'TEST_RESULT':
-      page = <NextTestPage test={test} next={TESTS[state.testIndex + 1] ?? null} summary={state.results[state.testIndex]!} />;
+      page = <NextTestPage test={test} next={TESTS[state.testIndex + 1] ?? null} summary={state.results[state.testIndex]!} onNext={() => handleGesture('THUMBS_UP')} />;
       break;
     case 'COMPLETE':
-      page = <CompletePage tests={TESTS} />;
+      page = <CompletePage tests={TESTS} onNext={() => handleGesture('THUMBS_UP')} />;
       break;
     case 'DETAILS':
-      page = <DetailsPage tests={TESTS} results={state.results} profile={state.profile} index={state.cardIndex} onIndex={goCard} />;
+      page = <DetailsPage tests={TESTS} results={state.results} profile={state.profile} index={state.cardIndex} onIndex={goCard} onNext={() => handleGesture('OK')} onBack={() => handleGesture('POINT_LEFT')} />;
       break;
     case 'VISION_MAP':
-      page = <VisionMapPage tests={TESTS} results={state.results} />;
+      page = <VisionMapPage tests={TESTS} results={state.results} onNext={() => handleGesture('OK')} onBack={() => handleGesture('POINT_LEFT')} />;
       break;
     case 'FINAL_RESULT':
       page = (
@@ -246,11 +254,14 @@ export default function App() {
           durationMs={state.screeningFinishedAt && state.screeningStartedAt ? state.screeningFinishedAt - state.screeningStartedAt : null}
           sessionCode={SESSION_CODE}
           finishedAt={Date.now()}
+          onRestart={() => handleGesture('THUMBS_UP')}
+          onBack={() => handleGesture('POINT_LEFT')}
         />
       );
       break;
   }
 
+  const guide = phaseGuide(TESTS, state);
   const pageKey = `${TEST_PHASES.includes(state.phase) ? 'TEST' : state.phase}-${state.testIndex}`;
 
   if (state.phase === 'LANDING') {
@@ -291,7 +302,7 @@ export default function App() {
           </div>
         </div>
       </main>
-      <ActionBar guide={phaseGuide(TESTS, state)} onGesture={handleGesture} />
+      <ActionBar guide={guide} />
       {isDemo && <DemoPanel hidden={demoClean} />}
       {isDebug && <DebugPanel />}
     </div>

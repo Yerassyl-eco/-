@@ -1,3 +1,4 @@
+import { GesturePrompt } from '../components/Cue/GesturePrompt';
 import type { IssueCode } from '../vision/types';
 import type { RuntimeState } from '../vision/VisionRuntime';
 
@@ -19,7 +20,7 @@ function Check({ label, value, hint, tone }: { label: string; value: string; hin
   );
 }
 
-export function CalibrationPage({ vision }: { vision: RuntimeState }) {
+export function CalibrationPage({ vision, onContinue }: { vision: RuntimeState; onContinue: () => void }) {
   const demo = vision.status === 'demo';
   const live = vision.status === 'ready' || demo;
   const e = vision.engine;
@@ -39,6 +40,9 @@ export function CalibrationPage({ vision }: { vision: RuntimeState }) {
         <Check label="Лицо" value={face === 'ok' ? 'По центру' : face === 'adjust' ? 'Поправьте' : 'Ожидание'} tone={face} hint="Лицо целиком в кадре, взгляд на экран." />
         <Check label="Расстояние" value={dist === 'ok' ? 'Хорошо' : dist === 'adjust' ? 'Поправьте' : 'Ожидание'} tone={dist} hint="Около 50–70 см от экрана — на вытянутую руку." />
       </ul>
+      <div className="mt-[clamp(14px,3vh,28px)]">
+        <GesturePrompt gesture="THUMBS_UP" action="когда всё в порядке — чтобы продолжить" onTrigger={onContinue} />
+      </div>
     </div>
   );
 }

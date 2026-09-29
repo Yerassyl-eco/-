@@ -1,4 +1,5 @@
 import { ClipboardList, Eye, Glasses, Hand, HandFist, ScanEye, type LucideIcon } from 'lucide-react';
+import { GesturePrompt } from '../components/Cue/GesturePrompt';
 import { InstructionDeck } from '../components/Deck/InstructionDeck';
 import type { AnyTest } from '../tests';
 
@@ -6,6 +7,7 @@ interface Props {
   test: AnyTest;
   cardIndex: number;
   onIndex: (i: number) => void;
+  onStart: () => void;
 }
 
 /** Pick an icon for an instruction line from its wording. */
@@ -18,7 +20,7 @@ function iconFor(line: string, i: number): LucideIcon {
   return i === 0 ? ScanEye : ClipboardList;
 }
 
-export function TestIntroPage({ test, cardIndex, onIndex }: Props) {
+export function TestIntroPage({ test, cardIndex, onIndex, onStart }: Props) {
   const cards = [
     { title: 'Что проверяем', text: test.checks, icon: ScanEye },
     ...test.intro.map((line: string, i: number) => ({ title: `Шаг ${i + 1}`, text: line, icon: iconFor(line, i + 1) })),
@@ -34,6 +36,7 @@ export function TestIntroPage({ test, cardIndex, onIndex }: Props) {
       cards={cards}
       index={cardIndex}
       onIndex={onIndex}
+      prompt={<GesturePrompt gesture="THUMBS_UP" action="чтобы начать тест" onTrigger={onStart} />}
     />
   );
 }

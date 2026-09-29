@@ -1,4 +1,6 @@
 import { TriangleAlert } from 'lucide-react';
+import { GesturePrompt } from '../components/Cue/GesturePrompt';
+import { GestureIcon } from '../components/GestureIcon/GestureIcon';
 import { StatusToken } from '../components/Report/ReportRow';
 import { PROFILE_QUESTIONS, profileLabel, type Profile } from '../data/profile';
 import { THEMES } from '../data/themes';
@@ -13,12 +15,14 @@ interface Props {
   durationMs: number | null;
   sessionCode: string;
   finishedAt: number;
+  onRestart: () => void;
+  onBack: () => void;
 }
 
 const PROFILE_SHORT: Record<string, string> = { age: 'Возраст', glasses: 'Очки / линзы', visit: 'Последний осмотр' };
 
 /** The closing report: everything on one screen, no scrolling. */
-export function FinalResultPage({ tests, results, profile, durationMs, sessionCode, finishedAt }: Props) {
+export function FinalResultPage({ tests, results, profile, durationMs, sessionCode, finishedAt, onRestart, onBack }: Props) {
   const done = results.filter(Boolean).length;
   const attention = results.some((r) => r?.attention);
   return (
@@ -46,16 +50,16 @@ export function FinalResultPage({ tests, results, profile, durationMs, sessionCo
               const r = results[i];
               return (
                 <tr key={t.id} className="border-b border-rule">
-                  <td className="w-12 py-[clamp(6px,1.3vh,12px)]">
+                  <td className="w-12 py-[clamp(4px,1vh,12px)]">
                     <span className="num flex h-8 w-8 items-center justify-center rounded-full text-[13px] font-medium" style={{ background: THEMES[t.id].base, color: THEMES[t.id].on }}>
                       {String(i + 1).padStart(2, '0')}
                     </span>
                   </td>
-                  <td className="py-[clamp(6px,1.3vh,12px)] pr-4">
+                  <td className="py-[clamp(4px,1vh,12px)] pr-4">
                     <span className="block text-[clamp(16px,2.3vh,20px)] font-medium leading-tight text-ink">{t.title}</span>
                     <span className="block text-[14px] text-graphite">{r?.short ?? 'Не пройден'}</span>
                   </td>
-                  <td className="py-[clamp(6px,1.3vh,12px)] text-right">{r ? <StatusToken attention={r.attention} /> : null}</td>
+                  <td className="py-[clamp(4px,1vh,12px)] text-right">{r ? <StatusToken attention={r.attention} /> : null}</td>
                 </tr>
               );
             })}
@@ -68,6 +72,12 @@ export function FinalResultPage({ tests, results, profile, durationMs, sessionCo
             Некоторые ответы отличаются от ожидаемых. Если вы замечаете проблемы со зрением или результат повторяется, обратитесь к офтальмологу.
           </p>
         )}
+        <div className="mt-auto flex flex-col items-start gap-2 pt-3">
+          <GesturePrompt gesture="THUMBS_UP" action="чтобы пройти скрининг заново" size="md" onTrigger={onRestart} />
+          <button type="button" onClick={onBack} className="flex items-center gap-2 text-[16px] text-graphite hover:text-ink">
+            <GestureIcon gesture="POINT_LEFT" size={22} strokeWidth={1.7} className="text-accent" /> Укажите влево, чтобы вернуться к карте зрения
+          </button>
+        </div>
       </div>
 
       <div className="flex min-h-0 flex-col gap-4">
@@ -97,6 +107,7 @@ export function FinalResultPage({ tests, results, profile, durationMs, sessionCo
           </p>
           <p className="mt-3 text-[13px] text-graphite">Результаты сохранены только в этом браузере.</p>
         </section>
+
       </div>
     </article>
   );
