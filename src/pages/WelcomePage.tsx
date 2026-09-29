@@ -30,9 +30,11 @@ function HeadlessCamera() {
     return () => visionRuntime.detach(v);
   }, []);
   return (
-    <div className="pointer-events-none fixed bottom-0 right-0 h-px w-px overflow-hidden opacity-[0.01]" aria-hidden>
-      <video ref={video} muted playsInline autoPlay className="h-px w-px" />
-      <canvas ref={canvas} className="h-px w-px" />
+    // A real-sized video kept under the page background: browsers keep
+    // decoding it (a 1px or transparent video may be paused as "hidden").
+    <div className="pointer-events-none fixed left-0 top-0 -z-10 h-[120px] w-[160px] overflow-hidden" aria-hidden>
+      <video ref={video} muted playsInline className="h-full w-full object-cover" />
+      <canvas ref={canvas} className="hidden" />
     </div>
   );
 }
@@ -90,6 +92,23 @@ function CameraLine({ vision }: { vision: RuntimeState }) {
     );
   }
   const live = status === 'ready';
+  if (live && (vision.videoBlocked || vision.stalled)) {
+    return (
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 lg:justify-end">
+        <p className="flex items-center gap-1.5 text-[14px] font-semibold text-amber">
+          <TriangleAlert size={14} strokeWidth={2} aria-hidden />
+          {vision.videoBlocked ? 'Браузер ждёт клика, чтобы включить камеру' : 'Видео с камеры остановилось'}
+        </p>
+        <button
+          type="button"
+          onClick={() => visionRuntime.resume()}
+          className="min-h-11 rounded-full bg-ink px-5 text-[14px] font-semibold text-paper transition-opacity hover:opacity-85"
+        >
+          Включить камеру
+        </button>
+      </div>
+    );
+  }
   const text = live
     ? engine.handVisible
       ? 'Камера активна · рука в кадре'

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from 'react';
+import { DebugPanel } from './components/Debug/DebugPanel';
 import { DemoPanel } from './components/DemoPanel/DemoPanel';
 import { Instrument, type Flash } from './components/Instrument/Instrument';
 import { SessionBar } from './components/SessionBar/SessionBar';
@@ -38,6 +39,7 @@ const isDemo =
 const SCREEN_SETTLE_MS = 1200;
 /** `?demo=clean` keeps keyboard simulation but hides the dev panel (for captures). */
 const demoClean = new URLSearchParams(window.location.search).get('demo') === 'clean';
+const isDebug = new URLSearchParams(window.location.search).has('debug');
 const SESSION_CODE = `S-${String(Math.floor(1000 + Math.random() * 9000))}`;
 
 export default function App() {
@@ -271,6 +273,7 @@ export default function App() {
       <div className="min-h-dvh" style={themeVars(phaseTheme)} data-phase={state.phase}>
         {page}
         {isDemo && <DemoPanel hidden={demoClean} />}
+        {isDebug && <DebugPanel />}
       </div>
     );
   }
@@ -302,6 +305,7 @@ export default function App() {
         </div>
       </main>
       {isDemo && <DemoPanel hidden={demoClean} />}
+      {isDebug && <DebugPanel />}
     </div>
   );
 }

@@ -11,6 +11,11 @@ export interface RuntimeState {
   status: RuntimeStatus;
   cameraError: CameraErrorCode | null;
   modelError: string | null;
+  /** The browser refused to start the video without a click (Safari, power saving). */
+  videoBlocked: boolean;
+  /** The stream is open but no new frames arrive. */
+  stalled: boolean;
+  delegate: 'GPU' | 'CPU' | null;
   engine: EngineSnapshot;
 }
 
@@ -40,9 +45,13 @@ class VisionRuntime {
   private frame = 0;
   private lastFaces: FaceObservation[] | null = null;
   private lastPublish = 0;
+  /** performance.now() of the last new video frame, for the stall watchdog. */
+  private lastFrameAt = 0;
+  private lastKick = 0;
+  private unlockArmed = false;
 
   constructor() {
-    this.state = { status: 'idle', cameraError: null, modelError: null, engine: this.engine.getSnapshot() };
+    this.state = { status: 'idle', cameraError: null, modelError: null, videoBlocked: false, stalled: false, delegate: null, engine: this.engine.getSnapshot() };
   }
 
   subscribe = (fn: Listener) => {
@@ -88,6 +97,7 @@ class VisionRuntime {
       .then((m) => {
         this.hands = m.hands;
         this.face = m.face;
+        this.set({ delegate: m.delegate });
       })
       .catch((e) => {
         this.modelsPromise = null;
@@ -151,8 +161,70 @@ class VisionRuntime {
       v.srcObject = this.stream;
       v.muted = true;
       v.playsInline = true;
-      void v.play().catch(() => undefined);
+      this.lastFrameAt = performance.now();
+      this.playVideo();
     }
+  }
+
+  /** Start (or restart) video playback; if the browser wants a click, wait for one. */
+  private playVideo() {
+    const v = this.video;
+    if (!v) return;
+    v.play().then(
+      () => {
+        if (this.state.videoBlocked) this.set({ videoBlocked: false });
+      },
+      () => {
+        if (!this.state.videoBlocked) this.set({ videoBlocked: true });
+        this.armUnlock();
+      },
+    );
+  }
+
+  private armUnlock() {
+    if (this.unlockArmed) return;
+    this.unlockArmed = true;
+    const unlock = () => {
+      this.unlockArmed = false;
+      window.removeEventListener('pointerdown', unlock, true);
+      window.removeEventListener('keydown', unlock, true);
+      this.resume();
+    };
+    window.addEventListener('pointerdown', unlock, true);
+    window.addEventListener('keydown', unlock, true);
+  }
+
+  /** User-initiated recovery: restart playback, or reopen the camera if the stream is gone. */
+  resume() {
+    if (this.state.status === 'demo') return;
+    if (!this.stream?.active) {
+      void this.start();
+      return;
+    }
+    this.bindVideo();
+    this.playVideo();
+  }
+
+  /** Diagnostics for `?debug`. */
+  debugInfo() {
+    const v = this.video;
+    const track = this.stream?.getVideoTracks()[0];
+    return {
+      status: this.state.status,
+      delegate: this.state.delegate,
+      cameraError: this.state.cameraError,
+      modelError: this.state.modelError,
+      videoBlocked: this.state.videoBlocked,
+      stalled: this.state.stalled,
+      track: track ? `${track.readyState}${track.muted ? ' (muted)' : ''} ${track.label}` : 'none',
+      video: v ? `${v.videoWidth}x${v.videoHeight} ready=${v.readyState} paused=${v.paused} t=${v.currentTime.toFixed(1)}` : 'not attached',
+      frames: this.frame,
+      fps: this.state.engine.fps,
+      hand: this.state.engine.handVisible,
+      gesture: this.state.engine.gesture,
+      secure: window.isSecureContext,
+      ua: navigator.userAgent,
+    };
   }
 
   private startLoop() {
@@ -160,6 +232,7 @@ class VisionRuntime {
     const tick = () => {
       this.raf = requestAnimationFrame(tick);
       this.processFrame();
+      this.watchdog();
     };
     this.raf = requestAnimationFrame(tick);
   }
@@ -169,6 +242,21 @@ class VisionRuntime {
     this.raf = 0;
   }
 
+  /** Browsers may pause a video they consider hidden, or the camera may freeze: recover. */
+  private watchdog() {
+    const v = this.video;
+    if (!v || !this.stream?.active || this.state.status !== 'ready') return;
+    const now = performance.now();
+    const idle = now - this.lastFrameAt;
+    if (idle > 1500 && now - this.lastKick > 1500) {
+      this.lastKick = now;
+      if (v.srcObject !== this.stream) v.srcObject = this.stream;
+      this.playVideo();
+    }
+    const stalled = idle > 4000;
+    if (stalled !== this.state.stalled) this.set({ stalled });
+  }
+
   private processFrame() {
     const v = this.video;
     const hands = this.hands;
@@ -176,6 +264,7 @@ class VisionRuntime {
     // Only run inference on new video frames.
     if (v.currentTime === this.lastVideoTime) return;
     this.lastVideoTime = v.currentTime;
+    this.lastFrameAt = performance.now();
 
     let ts = performance.now();
     if (ts <= this.lastTs) ts = this.lastTs + 1; // MediaPipe needs strictly increasing timestamps

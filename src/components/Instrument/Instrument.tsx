@@ -252,6 +252,20 @@ export function Instrument({ flash }: { flash: Flash | null }) {
             <canvas ref={canvasRef} className="mirror pointer-events-none absolute inset-0 h-full w-full object-cover" aria-hidden />
             <Graticule />
             {!live && <CameraStatus vision={vision} />}
+            {live && (vision.videoBlocked || vision.stalled) && (
+              <div className="absolute inset-0 flex flex-col items-start justify-end gap-3 bg-scope/80 p-4 text-white lg:p-5">
+                <p className="text-[15px] font-medium leading-snug">
+                  {vision.videoBlocked ? 'Браузер ждёт клика, чтобы включить камеру' : 'Видео с камеры остановилось'}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => visionRuntime.resume()}
+                  className="min-h-11 rounded-full bg-white px-5 text-sm font-semibold text-ink transition-opacity hover:opacity-85"
+                >
+                  Включить камеру
+                </button>
+              </div>
+            )}
             {signal && (
               <div
                 className={`absolute inset-x-0 hidden bg-paper/95 px-4 py-3 lg:block ${bandTop ? 'top-0 border-b-2' : 'bottom-0 border-t-2'} ${signal.info ? 'border-rule-strong' : 'border-amber-line'}`}
