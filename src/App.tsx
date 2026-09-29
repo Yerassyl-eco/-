@@ -195,7 +195,7 @@ export default function App() {
   let page: ReactNode = null;
   switch (state.phase) {
     case 'LANDING':
-      page = <WelcomePage last={last} onStart={() => handleGesture('THUMBS_UP')} />;
+      page = <WelcomePage last={last} flash={flash} onStart={() => handleGesture('THUMBS_UP')} />;
       break;
     case 'CAMERA_SETUP':
       page = <CalibrationPage vision={vision} onContinue={() => handleGesture('THUMBS_UP')} />;
@@ -265,6 +265,15 @@ export default function App() {
 
   const deck = DECK_PHASES.includes(state.phase);
   const pageKey = `${TEST_PHASES.includes(state.phase) ? 'TEST' : state.phase}-${state.testIndex}`;
+
+  if (state.phase === 'LANDING') {
+    return (
+      <div className="min-h-dvh" style={themeVars(phaseTheme)} data-phase={state.phase}>
+        {page}
+        {isDemo && <DemoPanel hidden={demoClean} />}
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-dvh" style={themeVars(phaseTheme)}>
