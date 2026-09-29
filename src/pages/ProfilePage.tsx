@@ -1,6 +1,5 @@
 import { Check } from 'lucide-react';
 import { GesturePrompt } from '../components/Cue/GesturePrompt';
-import { HandGlyph } from '../components/GestureIcon/GestureIcon';
 import { COUNT_GESTURES, PROFILE_QUESTIONS, type Profile } from '../data/profile';
 import { useVision } from '../vision/useVision';
 
@@ -55,7 +54,7 @@ export function ProfilePage({ index, selected, profile, onSelect, onConfirm }: P
                   role="radio"
                   aria-checked={isSel}
                   onClick={() => onSelect(i)}
-                  className={`flex h-full max-h-[240px] min-h-[110px] w-full flex-col justify-between p-5 text-left transition-[background-color,box-shadow,transform] duration-200 ${
+                  className={`flex h-full max-h-[320px] min-h-[110px] w-full flex-col justify-between p-5 text-left transition-[background-color,box-shadow,transform] duration-200 ${
                     isSel ? 'bg-accent' : hot ? 'bg-accent-wash text-ink' : 'bg-field text-ink hover:-translate-y-0.5'
                   }`}
                   style={{
@@ -64,8 +63,8 @@ export function ProfilePage({ index, selected, profile, onSelect, onConfirm }: P
                   }}
                 >
                   <span className="num text-[clamp(28px,4.4vh,44px)] leading-none">{i + 1}</span>
-                  <span className="flex min-h-0 flex-1 items-center justify-center py-2" style={{ color: isSel ? undefined : 'var(--accent-text)' }}>
-                    <HandGlyph raised={i + 1} size="100%" strokeWidth={1.3} className="h-full max-h-[88px] w-auto" />
+                  <span className="flex min-h-0 flex-1 items-end justify-center pt-2" style={{ color: isSel ? undefined : 'var(--accent-text)' }}>
+                    <img src={`${import.meta.env.BASE_URL}hands/count-${i + 1}.png`} alt={`Рука показывает ${i + 1}`} className="h-full max-h-[210px] w-auto object-contain" draggable={false} />
                   </span>
                   <span className="block text-[clamp(17px,2.4vh,22px)] font-medium leading-snug">{label}</span>
                 </button>

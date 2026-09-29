@@ -115,3 +115,13 @@ describe('OK sign and finger counting (built from a real open palm)', () => {
     expect(classifyHand(three, aspect).gesture).toBe('THREE');
   });
 });
+
+describe('finger counting on real photos (one to five fingers)', () => {
+  it('reads 1, 2, 3, 4 raised fingers and tells four from an open palm', () => {
+    expect(classify('count_1').gesture).toBe('POINT_UP');
+    expect(classify('count_2').gesture).toBe('TWO');
+    expect(classify('count_3').gesture).toBe('THREE');
+    expect(classify('count_4').gesture).toBe('FOUR');
+    expect(classify('count_5').gesture).toBe('OPEN_PALM');
+  });
+});

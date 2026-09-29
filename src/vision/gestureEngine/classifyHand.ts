@@ -26,7 +26,13 @@ export interface FingerFeatures {
 export interface HandFeatures {
   scale: number;
   fingers: Record<FingerName, FingerFeatures>;
-  thumb: { extension: number; up: number; aboveKnuckles: boolean };
+  thumb: {
+    extension: number;
+    up: number;
+    aboveKnuckles: boolean;
+    /** Thumb tip distance to the middle/ring knuckles, in palm sizes. Small = folded across the palm. */
+    across: number;
+  };
 }
 
 export interface HandClassification {
@@ -86,7 +92,12 @@ export function computeFeatures(landmarks: Landmark[], aspect: number): HandFeat
   );
   const aboveKnuckles = tip.y < knuckleTop - 0.15 * scale;
 
-  return { scale, fingers, thumb: { extension, up, aboveKnuckles } };
+  // A thumb folded across the palm (the usual way to show "four") can still be
+  // straight, so its extension alone cannot tell it from an open palm; how close
+  // its tip comes to the middle of the palm can (≈0.4 folded vs ≈0.9+ open).
+  const across = Math.min(dist3(tip, p[LM.MIDDLE_MCP]), dist3(tip, p[LM.RING_MCP])) / scale;
+
+  return { scale, fingers, thumb: { extension, up, aboveKnuckles, across } };
 }
 
 const POINT_GESTURE = {
@@ -127,8 +138,10 @@ export function classifyHand(landmarks: Landmark[], aspect: number): HandClassif
     return result('OK', 0.3 + 0.7 * conf);
   }
 
-  // ✋ OPEN PALM — all fingers extended.
-  if (minAll > 0.55 && thumb.extension > 0.35) {
+  const thumbTucked = thumb.across < 0.62;
+
+  // ✋ OPEN PALM — all fingers extended, thumb out to the side.
+  if (minAll > 0.55 && thumb.extension > 0.35 && !thumbTucked) {
     return result('OPEN_PALM', 0.5 * minAll + 0.3 * thumb.extension + 0.2);
   }
 
@@ -165,8 +178,9 @@ export function classifyHand(landmarks: Landmark[], aspect: number): HandClassif
   if (up(I) && up(M) && up(Rg) && down(Pk)) {
     return result('THREE', 0.3 + 0.7 * Math.min(I, M, Rg, 1 - Pk));
   }
-  if (minAll > 0.55 && thumb.extension <= 0.35) {
-    return result('FOUR', 0.3 + 0.7 * Math.min(minAll, 1 - thumb.extension));
+  // 4 — four fingers up, thumb folded (either bent or laid across the palm).
+  if (minAll > 0.55 && (thumb.extension <= 0.35 || thumbTucked)) {
+    return result('FOUR', 0.3 + 0.7 * Math.min(minAll, Math.max(1 - thumb.extension, 1 - thumb.across)));
   }
 
   // Two or more long fingers extended, but not all → probably a sloppy point.
