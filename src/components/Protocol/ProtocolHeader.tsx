@@ -7,14 +7,16 @@ interface Props {
   subtitle?: string;
   aside?: ReactNode;
   status?: ReactNode;
+  /** Smaller title for screens that must fit the viewport (the test itself). */
+  compact?: boolean;
 }
 
 /** Test heading: coloured test number, elegant display title, English subline. */
-export function ProtocolHeader({ index, title, subtitle, aside, status }: Props) {
+export function ProtocolHeader({ index, title, subtitle, aside, status, compact = false }: Props) {
   return (
     <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
       <div className="min-w-0">
-        <h1 className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[36px] leading-[1.1] text-ink sm:text-[48px]">
+        <h1 className={`flex flex-wrap items-center gap-x-4 gap-y-2 leading-[1.1] text-ink ${compact ? 'text-[clamp(26px,3.8vh,38px)]' : 'text-[36px] sm:text-[48px]'}`}>
           {index && (
             <span className="num bg-accent rounded-full px-3 py-1 text-[15px] font-medium tracking-normal">
               {index}/05

@@ -65,14 +65,53 @@ describe('classifyHand (real MediaPipe landmarks)', () => {
     expect(c.hint).toBe('DIRECTION_AMBIGUOUS');
   });
 
-  it('asks to keep only the index finger for a V sign', () => {
+  it('reads a V sign as two raised fingers (option 2)', () => {
     const c = classify('victory');
-    expect(c.gesture).toBe('UNKNOWN');
-    expect(c.hint).toBe('EXTRA_FINGERS');
+    expect(c.gesture).toBe('TWO');
+    expect(c.confidence).toBeGreaterThan(0.5);
+  });
+
+  it('does not mistake real poses for the OK sign', () => {
+    for (const name of ['thumb_up', 'fist', 'victory', 'pointing_up']) {
+      expect(classify(name).gesture).not.toBe('OK');
+    }
+    expect(classify('right_hands', 0, 0).gesture).not.toBe('OK');
   });
 
   it('recognises an open palm', () => {
     expect(classify('right_hands', 0, 0).gesture).toBe('OPEN_PALM');
     expect(classify('left_hands', 0, 1).gesture).toBe('OPEN_PALM');
+  });
+});
+
+describe('OK sign and finger counting (built from a real open palm)', () => {
+  const palm = fx.right_hands.hands[0].landmarks;
+  const aspect = fx.right_hands.aspect;
+  const lerp = (a: Landmark, b: Landmark, t: number): Landmark => ({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t, z: a.z + (b.z - a.z) * t });
+
+  /** Curl a finger: move pip→tip onto the line from its knuckle toward the wrist. */
+  function curl(lms: Landmark[], [mcp, pip, dip, tip]: number[]) {
+    const out = lms.map((p) => ({ ...p }));
+    const w = lms[0];
+    out[pip] = lerp(lms[mcp], w, -0.05);
+    out[dip] = lerp(lms[mcp], w, 0.15);
+    out[tip] = lerp(lms[mcp], w, 0.3);
+    return out;
+  }
+
+  it('recognises 👌 when the index tip meets the thumb tip', () => {
+    const lms = palm.map((p) => ({ ...p }));
+    const thumbTip = lms[4];
+    lms[8] = { ...thumbTip };
+    lms[7] = lerp(lms[6], thumbTip, 0.6);
+    lms[6] = lerp(lms[5], lms[6], 0.8);
+    expect(classifyHand(lms, aspect).gesture).toBe('OK');
+  });
+
+  it('counts two and three raised fingers', () => {
+    const two = curl(curl(palm, [13, 14, 15, 16]), [17, 18, 19, 20]);
+    expect(classifyHand(two, aspect).gesture).toBe('TWO');
+    const three = curl(palm, [17, 18, 19, 20]);
+    expect(classifyHand(three, aspect).gesture).toBe('THREE');
   });
 });

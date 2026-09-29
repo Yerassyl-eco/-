@@ -120,6 +120,13 @@ export function classifyHand(landmarks: Landmark[], aspect: number): HandClassif
     intended: GestureOrNone = gesture,
   ): HandClassification => ({ gesture, confidence: clamp01(confidence), hint, intended, features });
 
+  // 👌 OK — thumb and index tips touch, the other three fingers are up.
+  const pinch = dist3(p[LM.THUMB_TIP], p[LM.INDEX_TIP]) / scale;
+  if (pinch < 0.32 && Math.min(...others) > 0.5) {
+    const conf = 0.5 * smoothstep(0.32, 0.12, pinch) + 0.5 * Math.min(...others);
+    return result('OK', 0.3 + 0.7 * conf);
+  }
+
   // ✋ OPEN PALM — all fingers extended.
   if (minAll > 0.55 && thumb.extension > 0.35) {
     return result('OPEN_PALM', 0.5 * minAll + 0.3 * thumb.extension + 0.2);
@@ -146,6 +153,20 @@ export function classifyHand(landmarks: Landmark[], aspect: number): HandClassif
     }
     const conf = 0.35 * I + 0.35 * (1 - maxOthers) + 0.3 * smoothstep(0.8, 0.95, alignment);
     return result(gesture, 0.25 + 0.75 * conf);
+  }
+
+  // Counting fingers: index first, then middle, ring, pinky (thumb ignored).
+  const [M, Rg, Pk] = others;
+  const up = (v: number) => v > 0.55;
+  const down = (v: number) => v < 0.4;
+  if (up(I) && up(M) && down(Rg) && down(Pk)) {
+    return result('TWO', 0.3 + 0.7 * Math.min(I, M, 1 - Rg, 1 - Pk));
+  }
+  if (up(I) && up(M) && up(Rg) && down(Pk)) {
+    return result('THREE', 0.3 + 0.7 * Math.min(I, M, Rg, 1 - Pk));
+  }
+  if (minAll > 0.55 && thumb.extension <= 0.35) {
+    return result('FOUR', 0.3 + 0.7 * Math.min(minAll, 1 - thumb.extension));
   }
 
   // Two or more long fingers extended, but not all → probably a sloppy point.

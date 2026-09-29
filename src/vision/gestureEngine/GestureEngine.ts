@@ -28,6 +28,10 @@ export const ENGINE_CONFIG = {
     POINT_UP: 450,
     POINT_DOWN: 450,
     OPEN_PALM: 700,
+    OK: 450,
+    TWO: 500,
+    THREE: 500,
+    FOUR: 550,
   } satisfies Record<Gesture, number>,
   /** No new commit for this long after a commit (ms). */
   cooldownMs: 650,

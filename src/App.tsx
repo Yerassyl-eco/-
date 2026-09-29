@@ -1,19 +1,23 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from 'react';
+import { ActionBar } from './components/ActionBar/ActionBar';
 import { DebugPanel } from './components/Debug/DebugPanel';
 import { DemoPanel } from './components/DemoPanel/DemoPanel';
 import { Instrument, type Flash } from './components/Instrument/Instrument';
 import { SessionBar } from './components/SessionBar/SessionBar';
 import { CalibrationPage } from './pages/CalibrationPage';
+import { CompletePage } from './pages/CompletePage';
 import { DetailsPage } from './pages/DetailsPage';
 import { FinalResultPage } from './pages/FinalResultPage';
 import { PreparationPage } from './pages/PreparationPage';
 import { TestIntroPage } from './pages/TestIntroPage';
 import { TestPage } from './pages/TestPage';
-import { TestResultPage } from './pages/TestResultPage';
+import { NextTestPage } from './pages/NextTestPage';
+import { ProfilePage } from './pages/ProfilePage';
 import { VisionMapPage } from './pages/VisionMapPage';
 import { WelcomePage } from './pages/WelcomePage';
 import { PREPARATION_STEPS } from './data/preparation';
 import { THEMES, themeVars } from './data/themes';
+import { phaseGuide } from './state/phaseActions';
 import { createTrials, initialState, makeReducer, routeGesture, type Phase } from './state/testMachine';
 import { TESTS } from './tests';
 import { playSound } from './utils/sound';
@@ -30,8 +34,6 @@ const CALIBRATION_PHASES: Phase[] = ['LANDING', 'CAMERA_SETUP'];
 /** Instruction decks: cards appear one by one in the centre. */
 const DECK_PHASES: Phase[] = ['PREPARATION', 'TEST_INTRO'];
 const CARD_AUTO_MS = 4200;
-/** Details slides stay longer: there is more to read. */
-const SLIDE_AUTO_MS = 9000;
 const isDemo =
   import.meta.env.VITE_DEMO === '1' ||
   new URLSearchParams(window.location.search).has('demo') ||
@@ -82,7 +84,7 @@ export default function App() {
       // Let each new screen register before accepting "next" gestures, so a
       // result is never skipped by a gesture that was already on its way.
       const phase = stateRef.current.phase;
-      if ((phase === 'TEST_RESULT' || phase === 'TEST_INTRO' || phase === 'VISION_MAP' || phase === 'DETAILS') && performance.now() - phaseEnteredAt.current < SCREEN_SETTLE_MS) {
+      if (['TEST_RESULT', 'TEST_INTRO', 'COMPLETE', 'VISION_MAP', 'DETAILS', 'FINAL_RESULT'].includes(phase) && performance.now() - phaseEnteredAt.current < SCREEN_SETTLE_MS) {
         showFlash('hint', 'Сначала посмотрите на экран, затем покажите жест ещё раз.');
         return;
       }
@@ -112,7 +114,7 @@ export default function App() {
     const test = TESTS[state.testIndex];
     const observing = state.phase === 'TEST_ACTIVE' && performance.now() < state.trialReadyAt;
     visionRuntime.setOptions({
-      expectHand: !['FINAL_RESULT', 'ANSWER_CONFIRMED'].includes(state.phase) && !observing,
+      expectHand: state.phase !== 'ANSWER_CONFIRMED' && !observing,
       faceCheck:
         ['CAMERA_SETUP', 'PREPARATION', 'TEST_INTRO'].includes(state.phase) || (TEST_PHASES.includes(state.phase) && test.id === 'acuity'),
     });
@@ -122,7 +124,7 @@ export default function App() {
     }
   }, [state.phase, state.testIndex, state.trialReadyAt]);
 
-  // Instruction decks advance on their own until the last card.
+  // Instruction decks advance on their own until the last card; results page only by gesture.
   const deckCount =
     state.phase === 'PREPARATION'
       ? PREPARATION_STEPS.length
@@ -131,12 +133,12 @@ export default function App() {
         : state.phase === 'DETAILS'
           ? TESTS.length
           : 0;
-  const autoMs = state.phase === 'DETAILS' ? SLIDE_AUTO_MS : CARD_AUTO_MS;
+  const autoDeck = DECK_PHASES.includes(state.phase);
   useEffect(() => {
-    if (!deckCount || state.cardIndex >= deckCount - 1) return;
-    const t = setTimeout(() => dispatch({ type: 'CARD', index: state.cardIndex + 1 }), autoMs);
+    if (!autoDeck || !deckCount || state.cardIndex >= deckCount - 1) return;
+    const t = setTimeout(() => dispatch({ type: 'CARD', index: state.cardIndex + 1 }), CARD_AUTO_MS);
     return () => clearTimeout(t);
-  }, [deckCount, autoMs, state.cardIndex, state.replayKey]);
+  }, [autoDeck, deckCount, state.cardIndex, state.replayKey]);
   const goCard = (i: number) => dispatch({ type: 'CARD', index: Math.min(Math.max(0, i), Math.max(0, deckCount - 1)) });
 
   // Auto-advance after the answer is confirmed and logged.
@@ -155,17 +157,13 @@ export default function App() {
     }
   }, [state.phase, state.testIndex, state.results]);
 
-  useEffect(() => {
-    if (state.phase === 'ANSWER_SELECTED' || state.phase === 'ANSWER_CONFIRMED') return;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [state.phase, state.testIndex, state.trialIndex, state.phase === 'DETAILS' ? state.cardIndex : 0]);
 
   const test = TESTS[state.testIndex];
   const calibration = CALIBRATION_PHASES.includes(state.phase);
   const phaseTheme =
     state.phase === 'DETAILS'
       ? THEMES[TESTS[state.cardIndex].id]
-      : CALIBRATION_PHASES.includes(state.phase) || ['PREPARATION', 'VISION_MAP', 'FINAL_RESULT'].includes(state.phase)
+      : CALIBRATION_PHASES.includes(state.phase) || ['PROFILE', 'PREPARATION', 'COMPLETE', 'VISION_MAP', 'FINAL_RESULT'].includes(state.phase)
         ? THEMES.acuity
         : THEMES[test.id];
 
@@ -176,10 +174,14 @@ export default function App() {
       case 'CAMERA_SETUP':
       case 'PREPARATION':
         return { current: -1, done: 0, label: 'Калибровка' };
+      case 'PROFILE':
+        return { current: -1, done: 0, label: 'Анкета' };
+      case 'COMPLETE':
+        return { current: -1, done: 5, label: 'Готово' };
       case 'VISION_MAP':
         return { current: -1, done: 5, label: 'Карта' };
       case 'DETAILS':
-        return { current: -1, done: 5, label: 'Подробнее' };
+        return { current: -1, done: 5, label: 'Результаты' };
       case 'FINAL_RESULT':
         return { current: -1, done: 5, label: 'Отчёт' };
       case 'TEST_RESULT':
@@ -200,72 +202,55 @@ export default function App() {
       page = <WelcomePage last={last} flash={flash} onStart={() => handleGesture('THUMBS_UP')} />;
       break;
     case 'CAMERA_SETUP':
-      page = <CalibrationPage vision={vision} onContinue={() => handleGesture('THUMBS_UP')} />;
+      page = <CalibrationPage vision={vision} />;
       break;
-    case 'PREPARATION':
-      page = <PreparationPage cardIndex={state.cardIndex} onIndex={goCard} onBegin={() => handleGesture('THUMBS_UP')} onReplay={() => handleGesture('OPEN_PALM')} />;
-      break;
-    case 'TEST_INTRO':
+    case 'PROFILE':
       page = (
-        <TestIntroPage
-          test={test}
-          cardIndex={state.cardIndex}
-          onIndex={goCard}
-          onStart={() => handleGesture('THUMBS_UP')}
-          onReplay={() => handleGesture('OPEN_PALM')}
+        <ProfilePage
+          index={state.cardIndex}
+          selected={state.selected}
+          profile={state.profile}
+          onSelect={(i) => handleGesture((['POINT_UP', 'TWO', 'THREE', 'FOUR'] as Gesture[])[i])}
         />
       );
+      break;
+    case 'PREPARATION':
+      page = <PreparationPage cardIndex={state.cardIndex} onIndex={goCard} />;
+      break;
+    case 'TEST_INTRO':
+      page = <TestIntroPage test={test} cardIndex={state.cardIndex} onIndex={goCard} />;
       break;
     case 'TEST_ACTIVE':
     case 'ANSWER_SELECTED':
     case 'ANSWER_CONFIRMED':
-      page = <TestPage test={test} state={state} onGesture={handleGesture} onSelect={selectByValue} />;
+      page = <TestPage test={test} state={state} onSelect={selectByValue} />;
       break;
     case 'TEST_RESULT':
-      page = (
-        <TestResultPage
-          test={test}
-          next={TESTS[state.testIndex + 1] ?? null}
-          summary={state.results[state.testIndex]!}
-          records={state.answers[state.testIndex]}
-          trials={state.trials[state.testIndex]}
-          startedAt={state.testStartedAt}
-          onNext={() => handleGesture('THUMBS_UP')}
-        />
-      );
+      page = <NextTestPage test={test} next={TESTS[state.testIndex + 1] ?? null} summary={state.results[state.testIndex]!} />;
       break;
-    case 'VISION_MAP':
-      page = <VisionMapPage tests={TESTS} results={state.results} onNext={() => handleGesture('THUMBS_UP')} />;
+    case 'COMPLETE':
+      page = <CompletePage tests={TESTS} />;
       break;
     case 'DETAILS':
-      page = (
-        <DetailsPage
-          tests={TESTS}
-          results={state.results}
-          index={state.cardIndex}
-          slideMs={SLIDE_AUTO_MS}
-          replayKey={state.replayKey}
-          onIndex={goCard}
-          onReport={() => handleGesture('THUMBS_UP')}
-        />
-      );
+      page = <DetailsPage tests={TESTS} results={state.results} profile={state.profile} index={state.cardIndex} onIndex={goCard} />;
+      break;
+    case 'VISION_MAP':
+      page = <VisionMapPage tests={TESTS} results={state.results} />;
       break;
     case 'FINAL_RESULT':
       page = (
         <FinalResultPage
           tests={TESTS}
           results={state.results}
+          profile={state.profile}
           durationMs={state.screeningFinishedAt && state.screeningStartedAt ? state.screeningFinishedAt - state.screeningStartedAt : null}
           sessionCode={SESSION_CODE}
           finishedAt={Date.now()}
-          onRestart={() => handleGesture('OPEN_PALM')}
-          onHome={() => dispatch({ type: 'GO_HOME' })}
         />
       );
       break;
   }
 
-  const deck = DECK_PHASES.includes(state.phase);
   const pageKey = `${TEST_PHASES.includes(state.phase) ? 'TEST' : state.phase}-${state.testIndex}`;
 
   if (state.phase === 'LANDING') {
@@ -278,8 +263,10 @@ export default function App() {
     );
   }
 
+  // One screen, no scrolling: session bar, stage + instrument, and the action bar
+  // with the gestures that work right now are always in view.
   return (
-    <div className="min-h-dvh" style={themeVars(phaseTheme)}>
+    <div className="flex h-dvh flex-col overflow-hidden" style={themeVars(phaseTheme)}>
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:bg-paper focus:px-4 focus:py-2"
@@ -291,22 +278,22 @@ export default function App() {
         id="main"
         data-phase={state.phase}
         data-test={test.id}
-        className={`mx-auto grid max-w-[1440px] grid-cols-12 gap-x-6 gap-y-8 px-5 pt-8 sm:px-10 lg:pb-24 lg:pt-12 ${TEST_PHASES.includes(state.phase) ? 'pb-48' : 'pb-24'}`}
+        className="mx-auto grid min-h-0 w-full max-w-[1440px] flex-1 grid-cols-12 content-start gap-x-6 gap-y-4 overflow-y-auto px-5 py-4 sm:px-10 lg:content-stretch lg:overflow-hidden lg:py-[clamp(16px,3vh,32px)]"
       >
-        <section key={pageKey} className={`col-span-12 min-w-0 ${calibration ? 'lg:col-span-5' : 'lg:col-span-9'} ${deck ? 'lg:pt-2' : ''}`}>
+        <section key={pageKey} className={`col-span-12 min-h-0 min-w-0 ${calibration ? 'lg:col-span-5' : 'lg:col-span-9'}`}>
           {page}
         </section>
-        <div
-          className={`order-first col-span-12 lg:order-none ${calibration ? 'lg:col-span-6 lg:col-start-7' : 'lg:col-span-3'}`}
-        >
-          <div className={`lg:sticky lg:top-24 ${calibration ? '' : 'mx-auto max-w-[420px] lg:max-w-none'}`}>
+        <div className={`order-first col-span-12 min-h-0 lg:order-none ${calibration ? 'lg:col-span-6 lg:col-start-7' : 'lg:col-span-3'}`}>
+          <div
+            className={`mx-auto w-full ${calibration ? 'max-w-[420px] lg:max-w-[min(100%,calc((100dvh-470px)*4/3))]' : 'max-w-[420px] lg:max-w-none'}`}
+          >
             <Instrument flash={flash} />
           </div>
         </div>
       </main>
+      <ActionBar guide={phaseGuide(TESTS, state)} onGesture={handleGesture} />
       {isDemo && <DemoPanel hidden={demoClean} />}
       {isDebug && <DebugPanel />}
     </div>
   );
 }
-

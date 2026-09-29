@@ -11,6 +11,13 @@ function gesture(s: MachineState, g: Gesture, now: number) {
   return { state: r.kind === 'action' ? reducer(s, r.action) : s, route: r };
 }
 
+/** Answers the three questionnaire cards with option 1 (☝️ then ✊). */
+function skipProfile(s: MachineState) {
+  let x = s;
+  for (let i = 0; i < 3; i++) x = reducer(reducer(x, { type: 'PROFILE_SELECT', value: 0 }), { type: 'PROFILE_CONFIRM' });
+  return x;
+}
+
 describe('screening state machine', () => {
   it('completes the whole screening using gestures only', () => {
     let s = initialState(TESTS);
@@ -22,9 +29,25 @@ describe('screening state machine', () => {
     step('THUMBS_UP');
     expect(s.phase).toBe('CAMERA_SETUP');
     step('THUMBS_UP');
+    expect(s.phase).toBe('PROFILE');
+    // questionnaire: fingers choose, fist confirms, 👈 goes back
+    step('TWO');
+    expect(s.selected).toBe('1');
+    step('FIST');
+    expect(s.cardIndex).toBe(1);
+    step('POINT_LEFT');
+    expect(s.cardIndex).toBe(0);
+    step('THREE');
+    step('FIST');
+    step('POINT_UP');
+    step('FIST');
+    step('FOUR');
+    step('FIST');
     expect(s.phase).toBe('PREPARATION');
+    expect(s.profile).toEqual({ age: 2, glasses: 0, visit: 3 });
     step('THUMBS_UP');
     expect(s.phase).toBe('TEST_INTRO');
+    expect(s.profile.age).toBe(2);
 
     for (let t = 0; t < TESTS.length; t++) {
       expect(s.testIndex).toBe(t);
@@ -43,19 +66,29 @@ describe('screening state machine', () => {
       expect(s.results[t]).not.toBeNull();
       step('THUMBS_UP');
     }
-    expect(s.phase).toBe('VISION_MAP');
+    expect(s.phase).toBe('COMPLETE');
     expect(s.results.every(Boolean)).toBe(true);
     step('THUMBS_UP');
     expect(s.phase).toBe('DETAILS');
-    step('POINT_RIGHT');
+    step('OK');
     expect(s.cardIndex).toBe(1);
-    step('THUMBS_UP');
+    step('POINT_LEFT');
+    expect(s.cardIndex).toBe(0);
+    for (let i = 0; i < TESTS.length; i++) step('OK');
+    expect(s.phase).toBe('VISION_MAP');
+    step('POINT_LEFT');
+    expect(s.phase).toBe('DETAILS');
+    expect(s.cardIndex).toBe(TESTS.length - 1);
+    step('OK');
+    step('OK');
     expect(s.phase).toBe('FINAL_RESULT');
+    step('POINT_LEFT');
+    expect(s.phase).toBe('VISION_MAP');
   });
 
   it('requires ✊ confirmation and explains a premature fist', () => {
     let s = initialState(TESTS);
-    s = { ...reducer(reducer(reducer(s, { type: 'START' }), { type: 'CAMERA_OK' }), { type: 'BEGIN_TESTS', now: 0, trials: createTrials(TESTS) }) };
+    s = { ...reducer(skipProfile(reducer(reducer(s, { type: 'START' }), { type: 'CAMERA_OK' })), { type: 'BEGIN_TESTS', now: 0, trials: createTrials(TESTS) }) };
     s = reducer(s, { type: 'START_TEST', now: 0 });
     const r = routeGesture(TESTS, s, 'FIST', 5000, () => []);
     expect(r.kind).toBe('reject');
@@ -64,7 +97,7 @@ describe('screening state machine', () => {
 
   it('lets the user change or cancel the selected answer', () => {
     let s = initialState(TESTS);
-    s = reducer(reducer(reducer(s, { type: 'START' }), { type: 'CAMERA_OK' }), { type: 'BEGIN_TESTS', now: 0, trials: createTrials(TESTS) });
+    s = reducer(skipProfile(reducer(reducer(s, { type: 'START' }), { type: 'CAMERA_OK' })), { type: 'BEGIN_TESTS', now: 0, trials: createTrials(TESTS) });
     s = reducer(s, { type: 'START_TEST', now: 0 });
     s = gesture(s, 'POINT_LEFT', 5000).state;
     expect(s.selected).toBe('left');
@@ -77,7 +110,7 @@ describe('screening state machine', () => {
 
   it('blocks answers during the observation period (Amsler)', () => {
     let s = initialState(TESTS);
-    s = reducer(reducer(reducer(s, { type: 'START' }), { type: 'CAMERA_OK' }), { type: 'BEGIN_TESTS', now: 0, trials: createTrials(TESTS) });
+    s = reducer(skipProfile(reducer(reducer(s, { type: 'START' }), { type: 'CAMERA_OK' })), { type: 'BEGIN_TESTS', now: 0, trials: createTrials(TESTS) });
     s = { ...s, testIndex: 3 };
     s = reducer(s, { type: 'START_TEST', now: 0 });
     expect(gesture(s, 'POINT_RIGHT', 1000).route.kind).toBe('reject');
@@ -86,7 +119,7 @@ describe('screening state machine', () => {
 
   it('stops the acuity test after two consecutive mistakes', () => {
     let s = initialState(TESTS);
-    s = reducer(reducer(reducer(s, { type: 'START' }), { type: 'CAMERA_OK' }), { type: 'BEGIN_TESTS', now: 0, trials: createTrials(TESTS) });
+    s = reducer(skipProfile(reducer(reducer(s, { type: 'START' }), { type: 'CAMERA_OK' })), { type: 'BEGIN_TESTS', now: 0, trials: createTrials(TESTS) });
     s = reducer(s, { type: 'START_TEST', now: 0 });
     for (let i = 0; i < 2; i++) {
       const trial = s.trials[0][s.trialIndex] as { direction: string };
@@ -113,7 +146,7 @@ describe('screening state machine', () => {
 
   it('pages instruction cards with pointing gestures and restarts with the palm', () => {
     let s2 = initialState(TESTS);
-    s2 = reducer(reducer(s2, { type: 'START' }), { type: 'CAMERA_OK' });
+    s2 = skipProfile(reducer(reducer(s2, { type: 'START' }), { type: 'CAMERA_OK' }));
     expect(s2.phase).toBe('PREPARATION');
     s2 = gesture(s2, 'POINT_RIGHT', 1000).state;
     s2 = gesture(s2, 'POINT_RIGHT', 2000).state;

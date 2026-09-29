@@ -34,8 +34,8 @@ export function SessionBar({ current, done, phaseLabel, sessionCode, startedAt }
     <header className="sticky top-0 z-30 border-b border-rule bg-paper/95 backdrop-blur-[2px]">
       <div className="mx-auto grid max-w-[1440px] grid-cols-12 items-center gap-x-6 px-5 py-3.5 sm:px-10">
         <div className="col-span-6 flex items-baseline gap-3 lg:col-span-3">
-          <span className="text-[15px] font-semibold uppercase tracking-[0.2em] text-ink">Vision Motion</span>
-          <span className="hidden text-[13px] text-graphite xl:inline">Digital vision screening</span>
+          <span className="whitespace-nowrap text-[15px] font-semibold uppercase tracking-[0.2em] text-ink">Vision Motion</span>
+          <span className="hidden whitespace-nowrap text-[13px] text-graphite 2xl:inline">Digital vision screening</span>
         </div>
 
         <nav aria-label="Прогресс скрининга" className="order-last col-span-12 mt-3 lg:order-none lg:col-span-6 lg:mt-0">

@@ -1,7 +1,6 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { GestureCue } from '../components/Cue/GestureCue';
 import { StatusToken } from '../components/Report/ReportRow';
-import { ADVICE } from '../data/advice';
+import { adviceFor } from '../data/advice';
+import type { Profile } from '../data/profile';
 import { THEMES } from '../data/themes';
 import type { AnyTest } from '../tests';
 import type { TestSummary } from '../tests/types';
@@ -9,118 +8,82 @@ import type { TestSummary } from '../tests/types';
 interface Props {
   tests: AnyTest[];
   results: (TestSummary | null)[];
+  profile: Profile;
   index: number;
-  /** Auto-advance time of one slide; drives the story progress fill. */
-  slideMs: number;
-  replayKey: number;
   onIndex: (i: number) => void;
-  onReport: () => void;
 }
 
 /**
- * "Learn more about your vision": one slide per test, shown in sequence like
- * a story. Each slide wears its test colour and slides in from the right.
+ * Results one test at a time. The user pages with 👌 (next) and 👈 (back);
+ * each slide wears its test colour and slides in from the right.
  */
-export function DetailsPage({ tests, results, index, slideMs, replayKey, onIndex, onReport }: Props) {
+export function DetailsPage({ tests, results, profile, index, onIndex }: Props) {
   const test = tests[index];
   const summary = results[index];
   const pct = Math.round((summary?.score ?? 0) * 100);
-  const last = index === tests.length - 1;
 
   return (
-    <div className="animate-enter">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-[34px] leading-[1.05] text-ink sm:text-[44px]">Разбор по тестам</h1>
-        </div>
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="flex items-end justify-between gap-4">
+        <h1 className="text-[clamp(28px,4.2vh,42px)] leading-[1.05] text-ink">Ваши результаты</h1>
         <p className="num text-[15px] text-graphite" aria-live="polite">
           {String(index + 1).padStart(2, '0')} / {String(tests.length).padStart(2, '0')}
         </p>
       </div>
 
-      {/* story progress: done segments full, current one fills over the slide time */}
-      <ol className="mt-6 grid gap-1.5" style={{ gridTemplateColumns: `repeat(${tests.length}, minmax(0, 1fr))` }} aria-label="Слайды">
+      <ol className="mt-3 grid gap-1.5" style={{ gridTemplateColumns: `repeat(${tests.length}, minmax(0, 1fr))` }} aria-label="Результаты по тестам">
         {tests.map((t, i) => (
           <li key={t.id}>
             <button
               type="button"
               onClick={() => onIndex(i)}
-              className="group block w-full py-2"
+              className="block w-full py-1.5"
               aria-label={`${t.title}${i === index ? ' (сейчас)' : ''}`}
               aria-current={i === index ? 'step' : undefined}
             >
               <span className="block h-1.5 overflow-hidden rounded-full bg-rule">
-                {i < index && <span className="block h-full w-full" style={{ background: THEMES[t.id].base }} />}
-                {i === index && (
-                  <span
-                    key={`${index}-${replayKey}`}
-                    className={`block h-full w-full origin-left ${last ? '' : 'animate-story-fill'}`}
-                    style={{ background: THEMES[t.id].base, animationDuration: `${slideMs}ms` }}
-                  />
-                )}
+                <span
+                  className="block h-full w-full origin-left transition-transform duration-500"
+                  style={{ background: THEMES[t.id].base, transform: `scaleX(${i <= index ? 1 : 0})` }}
+                />
               </span>
-              <span className={`mt-2 block truncate text-left text-[13px] ${i === index ? 'font-semibold text-ink' : 'text-graphite'}`}>
-                {t.shortTitle}
-              </span>
+              <span className={`mt-1.5 block truncate text-left text-[13px] ${i === index ? 'font-semibold text-ink' : 'text-graphite'}`}>{t.shortTitle}</span>
             </button>
           </li>
         ))}
       </ol>
 
-      <article key={test.id} className="animate-slide-in mt-6 grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]" aria-labelledby="slide-title">
-        <section className="bg-accent flex flex-col p-7 sm:p-8 lg:sticky lg:top-24 lg:self-start" style={{ borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-lift)' }}>
+      <article key={test.id} className="animate-slide-in mt-[clamp(10px,2vh,20px)] grid min-h-0 flex-1 gap-5 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]" aria-labelledby="slide-title">
+        <section className="bg-accent flex min-h-0 flex-col p-[clamp(20px,3vh,32px)]" style={{ borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-lift)' }}>
           <div className="flex items-center justify-between gap-3">
-            <span
-              className="num flex h-10 w-10 items-center justify-center rounded-full text-[15px]"
-              style={{ background: 'color-mix(in srgb, var(--accent-on) 16%, transparent)' }}
-            >
+            <span className="num flex h-10 w-10 items-center justify-center rounded-full text-[15px]" style={{ background: 'color-mix(in srgb, var(--accent-on) 16%, transparent)' }}>
               {String(test.number).padStart(2, '0')}
             </span>
             <span className="text-[14px] opacity-85">{test.titleEn}</span>
           </div>
-          <h2 id="slide-title" className="mt-6 text-[32px] leading-[1.08] sm:text-[38px]">
+          <h2 id="slide-title" className="mt-[clamp(10px,2.4vh,24px)] text-[clamp(26px,3.8vh,36px)] leading-[1.08]">
             {test.title}
           </h2>
-          <p className="mt-8 text-[15px] opacity-85">Совпадение с ожидаемым</p>
-          <p className="num mt-1 text-[64px] leading-none sm:text-[80px]">{pct}%</p>
-          <div
-            className="mt-5 flex h-3 gap-[2px] overflow-hidden rounded-full"
-            style={{ background: 'color-mix(in srgb, var(--accent-on) 18%, transparent)' }}
-            role="img"
-            aria-label={`Совпадение ${pct}%, пробел ${100 - pct}%`}
-          >
-            {pct > 0 && (
-              <span
-                className="animate-bar-grow h-full origin-left rounded-full"
-                style={{ width: `${pct}%`, background: 'var(--accent-on)', animationDelay: '260ms' }}
-              />
-            )}
+          <p className="mt-auto pt-4 text-[15px] opacity-85">Совпадение с ожидаемым</p>
+          <p className="num mt-1 text-[clamp(48px,8.5vh,80px)] leading-none">{pct}%</p>
+          <div className="mt-3 h-3 overflow-hidden rounded-full" style={{ background: 'color-mix(in srgb, var(--accent-on) 18%, transparent)' }} role="img" aria-label={`Совпадение ${pct}%, пробел ${100 - pct}%`}>
+            {pct > 0 && <span className="animate-bar-grow block h-full origin-left rounded-full" style={{ width: `${pct}%`, background: 'var(--accent-on)', animationDelay: '260ms' }} />}
           </div>
-          <p className="mt-3 text-[15px] opacity-85">{summary?.short}</p>
-          <div className="pt-8">
-            <span
-              className="inline-flex rounded-full px-3 py-1.5 text-[14px] font-medium"
-              style={{ background: 'color-mix(in srgb, var(--accent-on) 16%, transparent)' }}
-            >
-              {summary?.attention ? 'Стоит обратить внимание' : 'В пределах скрининга'}
-            </span>
-          </div>
+          <p className="mt-3 text-[15px] opacity-90">{summary?.short}</p>
+          <p className="mt-3 text-[13px] opacity-80">Предварительный скрининг, не медицинский диагноз.</p>
         </section>
 
-        <section className="bg-field p-7 sm:p-8" style={{ borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-card)' }}>
-          <Block title="Что проверял тест">{test.checks}</Block>
+        <section className="flex min-h-0 flex-col gap-[clamp(10px,2vh,18px)] bg-field p-[clamp(20px,3vh,32px)]" style={{ borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-card)' }}>
           <Block title="Ваш результат">
-            <p>{summary?.result}</p>
-          </Block>
-          <Block title="Что это означает">
             {summary && <StatusToken attention={summary.attention} />}
-            <p className="mt-2">{summary?.meaning}</p>
+            <p className="mt-1.5">{summary?.result}</p>
           </Block>
+          <Block title="Что это означает">{summary?.meaning}</Block>
           <Block title="Что можно сделать">
-            <ul className="flex flex-col gap-2.5">
-              {ADVICE[test.id].map((a) => (
+            <ul className="flex flex-col gap-1.5">
+              {adviceFor(test.id, profile).map((a) => (
                 <li key={a} className="flex gap-3">
-                  <span className="mt-[0.55em] h-2 w-2 shrink-0 rounded-full bg-accent" aria-hidden />
+                  <span className="mt-[0.6em] h-2 w-2 shrink-0 rounded-full bg-accent" aria-hidden />
                   <span>{a}</span>
                 </li>
               ))}
@@ -128,42 +91,15 @@ export function DetailsPage({ tests, results, index, slideMs, replayKey, onIndex
           </Block>
         </section>
       </article>
-
-      <div className="mt-6 flex items-center justify-between gap-3">
-        <button
-          type="button"
-          onClick={() => onIndex(index - 1)}
-          disabled={index === 0}
-          className="flex min-h-12 items-center gap-2 rounded-[14px] border border-rule bg-field px-4 text-[15px] font-medium text-ink transition-colors hover:border-ink disabled:opacity-40"
-        >
-          <ChevronLeft size={18} aria-hidden /> Назад
-        </button>
-        <p className="hidden text-center text-[14px] text-graphite sm:block">Укажите влево или вправо, чтобы листать</p>
-        <button
-          type="button"
-          onClick={() => onIndex(index + 1)}
-          disabled={last}
-          className="flex min-h-12 items-center gap-2 rounded-[14px] border border-rule bg-field px-4 text-[15px] font-medium text-ink transition-colors hover:border-ink disabled:opacity-40"
-        >
-          Далее <ChevronRight size={18} aria-hidden />
-        </button>
-      </div>
-
-      <div className="mx-auto mt-8 max-w-[560px]">
-        <GestureCue gesture="THUMBS_UP" action="Итоговый отчёт" primary={last} onTrigger={onReport} />
-        <p className="mt-4 text-center text-[14px] leading-snug text-graphite">
-          Это предварительный скрининг, а не медицинский диагноз. Если результат вас беспокоит, обратитесь к офтальмологу.
-        </p>
-      </div>
     </div>
   );
 }
 
 function Block({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="border-t border-rule py-5 first:border-t-0 first:pt-0 last:pb-0">
-      <h3 className="text-[20px] text-ink">{title}</h3>
-      <div className="mt-2 text-[17px] leading-relaxed text-ink">{children}</div>
+    <div className="border-t border-rule pt-[clamp(8px,1.6vh,14px)] first:border-t-0 first:pt-0">
+      <h3 className="text-[clamp(17px,2.3vh,20px)] text-ink">{title}</h3>
+      <div className="mt-1 text-[clamp(14px,1.95vh,16.5px)] leading-[1.5] text-ink">{children}</div>
     </div>
   );
 }

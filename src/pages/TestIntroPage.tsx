@@ -6,8 +6,6 @@ interface Props {
   test: AnyTest;
   cardIndex: number;
   onIndex: (i: number) => void;
-  onStart: () => void;
-  onReplay: () => void;
 }
 
 /** Pick an icon for an instruction line from its wording. */
@@ -20,7 +18,7 @@ function iconFor(line: string, i: number): LucideIcon {
   return i === 0 ? ScanEye : ClipboardList;
 }
 
-export function TestIntroPage({ test, cardIndex, onIndex, onStart, onReplay }: Props) {
+export function TestIntroPage({ test, cardIndex, onIndex }: Props) {
   const cards = [
     { title: 'Что проверяем', text: test.checks, icon: ScanEye },
     ...test.intro.map((line: string, i: number) => ({ title: `Шаг ${i + 1}`, text: line, icon: iconFor(line, i + 1) })),
@@ -36,9 +34,6 @@ export function TestIntroPage({ test, cardIndex, onIndex, onStart, onReplay }: P
       cards={cards}
       index={cardIndex}
       onIndex={onIndex}
-      startLabel="Начать тест"
-      onStart={onStart}
-      onReplay={onReplay}
     />
   );
 }

@@ -14,6 +14,11 @@ const KEYS: Record<string, Gesture> = {
   t: 'THUMBS_UP',
   ' ': 'THUMBS_UP',
   p: 'OPEN_PALM',
+  o: 'OK',
+  '1': 'POINT_UP',
+  '2': 'TWO',
+  '3': 'THREE',
+  '4': 'FOUR',
 };
 
 /**
@@ -50,7 +55,7 @@ export function DemoPanel({ hidden = false }: { hidden?: boolean }) {
           </button>
         ))}
       </div>
-      <p className="num mt-2 hidden text-xs text-paper/60 sm:block">Keys: arrows · Enter/F fist · T/Space thumbs up · P palm</p>
+      <p className="num mt-2 hidden text-xs text-paper/60 sm:block">Keys: arrows · Enter/F fist · T/Space thumbs up · P palm · O ok · 1–4 fingers</p>
     </aside>
   );
 }

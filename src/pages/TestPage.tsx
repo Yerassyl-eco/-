@@ -1,17 +1,13 @@
 import { Check } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { GestureCue } from '../components/Cue/GestureCue';
 import { ProtocolHeader } from '../components/Protocol/ProtocolHeader';
-import { MobileResponseBar } from '../components/ResponseMap/MobileResponseBar';
 import { ResponseMap } from '../components/ResponseMap/ResponseMap';
-import { SessionLog } from '../components/SessionLog/SessionLog';
 import type { MachineState } from '../state/testMachine';
 import type { AnyTest } from '../tests';
 
 interface Props {
   test: AnyTest;
   state: MachineState;
-  onGesture: (g: 'FIST' | 'OPEN_PALM') => void;
   onSelect: (value: string) => void;
 }
 
@@ -33,7 +29,7 @@ function useObserveProgress(shownAt: number, readyAt: number) {
   return Math.min(1, Math.max(0, (now - shownAt) / (readyAt - shownAt)));
 }
 
-export function TestPage({ test, state, onGesture, onSelect }: Props) {
+export function TestPage({ test, state, onSelect }: Props) {
   const trials = state.trials[state.testIndex];
   const trial = trials[state.trialIndex];
   const options = test.options(trial);
@@ -45,21 +41,21 @@ export function TestPage({ test, state, onGesture, onSelect }: Props) {
   const secondsLeft = Math.max(1, Math.ceil(((1 - progress) * (state.trialReadyAt - state.trialShownAt)) / 1000));
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex h-full min-h-0 flex-col gap-[clamp(12px,2.2vh,24px)]">
       <ProtocolHeader
         index={String(test.number).padStart(2, '0')}
         title={test.title}
-        subtitle={test.titleEn}
+        compact
         aside={
-          <span className="num text-[13px] text-graphite">
+          <span className="num text-[14px] text-graphite">
             Задание <span className="text-ink">{String(state.trialIndex + 1).padStart(2, '0')}</span> / {String(trials.length).padStart(2, '0')}
           </span>
         }
       />
 
-      <div className="grid gap-x-8 gap-y-6 lg:grid-cols-[minmax(0,1fr)_minmax(260px,300px)]">
-        <div className="flex flex-col gap-4">
-          <div className="flex h-[clamp(240px,40vh,380px)] flex-col lg:h-[clamp(300px,52vh,560px)]">
+      <div className="grid min-h-0 flex-1 gap-x-8 gap-y-4 lg:grid-cols-[minmax(0,1fr)_minmax(250px,290px)]">
+        <div className="flex min-h-[260px] flex-col gap-3">
+          <div className="flex min-h-0 flex-1 flex-col">
             <Stimulus
               trial={trial}
               trialIndex={state.trialIndex}
@@ -70,10 +66,10 @@ export function TestPage({ test, state, onGesture, onSelect }: Props) {
               observeProgress={progress}
             />
           </div>
-          <p className="display max-w-[40ch] text-[26px] leading-snug text-ink">{test.prompt(trial)}</p>
+          <p className="display max-w-[46ch] text-[clamp(18px,2.6vh,24px)] leading-snug text-ink">{test.prompt(trial)}</p>
         </div>
 
-        <aside aria-label="Ответ" className="hidden flex-col lg:flex">
+        <aside aria-label="Ответ" className="flex min-h-0 flex-col">
           <h2 className="label border-b border-rule pb-2 text-accent">Ваш ответ</h2>
           <div className="pt-3">
             <ResponseMap
@@ -86,54 +82,33 @@ export function TestPage({ test, state, onGesture, onSelect }: Props) {
             />
           </div>
 
-          <div className="mt-5 min-h-[152px]" aria-live="polite">
+          <div className="mt-4" aria-live="polite">
             {confirmed ? (
-              <div key="c" className="animate-enter border-t border-accent pt-3">
-                <p className="label flex items-center gap-1.5 text-accent">
-                  <Check size={14} strokeWidth={2.5} aria-hidden /> Ответ принят
-                </p>
-                <p className="mt-2 text-[15px] text-ink">
-                  Ответ записан в журнал: {selectedOpt?.label}, T{String(state.trialIndex + 1).padStart(2, '0')}.
-                </p>
-              </div>
+              <p key="c" className="animate-enter label flex items-center gap-1.5 border-t border-accent pt-3 text-accent">
+                <Check size={14} strokeWidth={2.5} aria-hidden /> Ответ принят: {selectedOpt?.label}
+              </p>
             ) : selectedOpt ? (
-              <div key={`s${selectedOpt.value}`} className="animate-enter border-t border-accent">
-                <p className="label pt-3 text-accent">Подтвердите: {selectedOpt.label}</p>
-                <GestureCue gesture="FIST" action="Подтвердить ответ" primary onTrigger={() => onGesture('FIST')} />
-                <GestureCue gesture="OPEN_PALM" action="Отменить выбор" onTrigger={() => onGesture('OPEN_PALM')} />
+              <div key={`s${selectedOpt.value}`} className="animate-enter border-t border-accent pt-3">
+                <p className="label text-accent">Выбрано</p>
+                <p className="mt-1 text-[17px] font-medium text-ink">{selectedOpt.label}</p>
+                <p className="mt-1 text-[14px] text-graphite">Кулак — подтвердить, ладонь — отменить.</p>
               </div>
             ) : !ready ? (
               <div className="border-t border-rule pt-3">
                 <p className="label text-graphite">
                   Смотрите · <span className="num">00:{String(secondsLeft).padStart(2, '0')}</span>
                 </p>
-                <p className="mt-2 text-[15px] text-graphite">Смотрите на изображение. Ответы откроются через мгновение.</p>
+                <p className="mt-1 text-[14px] text-graphite">Ответы откроются через мгновение.</p>
               </div>
             ) : (
               <div className="border-t border-rule pt-3">
                 <p className="label text-graphite">Жду ответ</p>
-                <p className="mt-2 text-[15px] text-graphite">Покажите ответ указательным пальцем, затем подтвердите кулаком.</p>
+                <p className="mt-1 text-[14px] text-graphite">Укажите пальцем, затем кулак.</p>
               </div>
             )}
           </div>
         </aside>
       </div>
-
-      <SessionLog
-        total={trials.length}
-        current={state.trialIndex}
-        records={state.answers[state.testIndex]}
-        optionsFor={(i) => test.options(trials[i])}
-        startedAt={state.testStartedAt}
-      />
-      <MobileResponseBar
-        options={options}
-        selected={state.selected}
-        confirmed={confirmed}
-        ready={ready}
-        onSelect={onSelect}
-        onGesture={onGesture}
-      />
     </div>
   );
 }

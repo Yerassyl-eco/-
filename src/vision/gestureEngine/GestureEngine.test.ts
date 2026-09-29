@@ -99,10 +99,10 @@ describe('GestureEngine', () => {
     expect(engine.getSnapshot().issue).toBe('HAND_TOO_CLOSE');
   });
 
-  it('explains a V sign instead of saying "not recognised"', () => {
-    const { engine } = setup();
-    feed(engine, 1000, 1500, [hand('victory')], aspect('victory'));
-    expect(engine.getSnapshot().issue).toBe('EXTRA_FINGERS');
+  it('commits a held V sign as the TWO gesture', () => {
+    const { engine, commits } = setup();
+    feed(engine, 1000, 1800, [hand('victory')], aspect('victory'));
+    expect(commits).toContain('TWO');
   });
 
   it('reports NO_HAND after a while without a hand', () => {

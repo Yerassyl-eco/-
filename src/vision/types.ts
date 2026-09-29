@@ -6,7 +6,13 @@ export type Gesture =
   | 'POINT_RIGHT'
   | 'POINT_UP'
   | 'POINT_DOWN'
-  | 'OPEN_PALM';
+  | 'OPEN_PALM'
+  /** 👌 thumb and index tips touching, other fingers up: "next". */
+  | 'OK'
+  /** ✌️ / 3 / 4 fingers raised: choose option 2, 3 or 4 (1 is ☝️ POINT_UP). */
+  | 'TWO'
+  | 'THREE'
+  | 'FOUR';
 
 /** Gesture plus the two "no gesture" states. */
 export type GestureOrNone = Gesture | 'UNKNOWN' | 'NONE';
@@ -19,6 +25,10 @@ export const ALL_GESTURES: Gesture[] = [
   'POINT_UP',
   'POINT_DOWN',
   'OPEN_PALM',
+  'OK',
+  'TWO',
+  'THREE',
+  'FOUR',
 ];
 
 /** Concrete, actionable problems the Error Mode can report. */

@@ -142,9 +142,9 @@ export function WelcomePage({ last, flash, onStart }: Props) {
   else if (status === 'ready') hint = { tone: 'idle', text: engine.handVisible ? 'Рука в кадре. Покажите палец вверх.' : 'Поднимите руку на уровень груди.' };
 
   return (
-    <div className="flex min-h-dvh flex-col bg-paper-2">
+    <div className="flex min-h-dvh flex-col bg-paper-2 lg:h-dvh lg:overflow-hidden">
       <HeadlessCamera />
-      <header className="flex items-center justify-between px-5 pt-6 sm:px-10 lg:px-[4.2vw] lg:pt-11">
+      <header className="flex items-center justify-between px-5 pt-6 sm:px-10 lg:px-[4.2vw] lg:pt-[clamp(20px,4.4vh,44px)]">
         <span className="text-[15px] font-semibold uppercase tracking-[0.2em] text-ink lg:text-[16.5px]">Vision Motion</span>
         <span className="flex items-center gap-5 text-[17px] tabular-nums text-ink" aria-label="Пять тестов">
           01 <span className="h-px w-7 bg-ink/60" aria-hidden /> 05
@@ -156,7 +156,7 @@ export function WelcomePage({ last, flash, onStart }: Props) {
         data-phase="LANDING"
         className="grid flex-1 grid-cols-1 items-center gap-y-5 px-5 sm:px-10 lg:grid-cols-12 lg:gap-x-6 lg:px-[4.2vw]"
       >
-        <section className="order-2 lg:order-1 lg:col-span-5 lg:pt-[12vh]" aria-labelledby="hero-title">
+        <section className="order-2 lg:order-1 lg:col-span-5 lg:pt-[6vh]" aria-labelledby="hero-title">
           <h1 id="hero-title" className="text-[clamp(40px,min(4.7vw,7.2vh),76px)] leading-[1.1] tracking-[-0.015em] text-ink">
             Проверим ваше зрение
           </h1>
@@ -164,7 +164,7 @@ export function WelcomePage({ last, flash, onStart }: Props) {
             Интерактивный скрининг зрения с&nbsp;управлением жестами.
           </p>
 
-          <ul className="mt-6 flex flex-col gap-[10px] text-[16px] text-ink/80 lg:mt-9 lg:gap-[21px] lg:text-[17px]">
+          <ul className="mt-6 flex flex-col gap-[10px] text-[16px] text-ink/80 lg:mt-[clamp(20px,3.6vh,36px)] lg:gap-[clamp(12px,2.1vh,21px)] lg:text-[17px]">
             <li className="flex items-center gap-6 lg:gap-[29px]">
               <NoKeyboard /> Без клавиатуры
             </li>
@@ -176,7 +176,7 @@ export function WelcomePage({ last, flash, onStart }: Props) {
             </li>
           </ul>
 
-          <div className="relative mt-8 lg:mt-[76px]">
+          <div className="relative mt-8 lg:mt-[clamp(28px,6.5vh,76px)]">
             <div className="flex items-center gap-[22px]">
               <button
                 type="button"
@@ -214,7 +214,7 @@ export function WelcomePage({ last, flash, onStart }: Props) {
             </div>
 
             <p
-              className={`mt-4 flex min-h-10 max-w-[40ch] items-start gap-2 text-[15px] leading-snug lg:absolute lg:left-0 lg:top-full lg:mt-5 ${
+              className={`mt-4 flex min-h-10 max-w-[40ch] items-start gap-2 text-[15px] leading-snug ${
                 hint?.tone === 'warn' ? 'text-amber' : hint?.tone === 'live' ? 'text-cobalt' : 'text-graphite'
               }`}
               role="status"
@@ -230,7 +230,7 @@ export function WelcomePage({ last, flash, onStart }: Props) {
           </div>
         </section>
 
-        <div className="relative order-1 mx-auto w-full max-w-[min(64vw,260px)] pt-4 sm:max-w-[min(56vw,380px)] lg:order-2 lg:col-span-7 lg:-left-[1.7vw] lg:w-[min(84vh,56vw,980px)] lg:max-w-none lg:justify-self-center lg:pt-0">
+        <div className="relative order-1 mx-auto w-full max-w-[min(64vw,260px)] pt-4 sm:max-w-[min(56vw,380px)] lg:order-2 lg:col-span-7 lg:-left-[1.7vw] lg:w-[min(78vh,56vw,980px)] lg:max-w-none lg:justify-self-center lg:pt-0">
           <IrisScope locked={engine.handVisible} progress={holding} />
           <ul
             className="mt-1 flex justify-center gap-6 text-[12px] uppercase tracking-[0.08em] lg:absolute lg:left-[calc(90%+35px)] lg:top-[27%] lg:mt-0 lg:flex-col lg:gap-0 lg:text-[11.5px] lg:leading-[19px]"
@@ -243,11 +243,11 @@ export function WelcomePage({ last, flash, onStart }: Props) {
         </div>
       </main>
 
-      <footer className="px-5 pb-6 pt-6 sm:px-10 lg:px-[4.2vw] lg:pb-[60px] lg:pt-0">
+      <footer className="px-5 pb-6 pt-6 sm:px-10 lg:px-[4.2vw] lg:pb-[clamp(16px,4vh,60px)] lg:pt-0">
         <div className="flex lg:justify-end">
           <CameraLine vision={vision} />
         </div>
-        <p className="mt-4 text-[12px] leading-relaxed text-graphite lg:mt-[34px]">
+        <p className="mt-4 text-[12px] leading-relaxed text-graphite lg:mt-[clamp(10px,2.6vh,34px)]">
           Digital vision screening · предварительный скрининг, не диагноз · видео не покидает браузер
           {last && <> · последний скрининг {formatDate(last.finishedAt ?? last.startedAt)}, {last.completedTests} из 5</>}
         </p>

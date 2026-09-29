@@ -1,4 +1,5 @@
 import type { TestId } from '../tests/types';
+import type { Profile } from './profile';
 
 /** Neutral, non-diagnostic next steps shown on the details slides. */
 export const ADVICE: Record<TestId, string[]> = {
@@ -24,3 +25,15 @@ export const ADVICE: Record<TestId, string[]> = {
     'Экранные карточки дают только ориентир. Точную проверку цветового зрения проводит специалист.',
   ],
 };
+
+/** Advice for one test, with the questionnaire answers taken into account (max two lines, so the slide fits one screen). */
+export function adviceFor(id: TestId, profile: Profile): string[] {
+  const extra: string[] = [];
+  const over40 = (profile.age ?? 0) >= 2;
+  const longAgo = (profile.visit ?? 0) >= 2;
+  if (id === 'acuity' && longAgo) extra.push('Вы давно не проверяли зрение у врача: плановый осмотр раз в 1–2 года помогает заметить изменения рано.');
+  if (id === 'acuity' && over40) extra.push('После 40 лет часто меняется зрение вблизи. Это возрастная норма, её учитывают при подборе очков для чтения.');
+  if (id === 'amsler' && over40) extra.push('После 40 лет сетку Амслера полезно проверять регулярно, каждым глазом отдельно.');
+  if ((id === 'astigmatism' || id === 'duochrome') && (profile.glasses ?? 0) > 0) extra.push('Проходите тест в тех очках или линзах, которые носите обычно.');
+  return [...extra, ...ADVICE[id]].slice(0, 2);
+}

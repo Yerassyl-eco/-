@@ -16,6 +16,10 @@ export const GESTURE_META: Record<Gesture, GestureMeta> = {
   POINT_UP: { emoji: '☝️', label: 'UP', name: 'Вверх' },
   POINT_DOWN: { emoji: '👇', label: 'DOWN', name: 'Вниз' },
   OPEN_PALM: { emoji: '✋', label: 'OPEN PALM', name: 'Открытая ладонь' },
+  OK: { emoji: '👌', label: 'OK', name: 'Знак «ОК»' },
+  TWO: { emoji: '✌️', label: 'TWO', name: 'Два пальца' },
+  THREE: { emoji: '3', label: 'THREE', name: 'Три пальца' },
+  FOUR: { emoji: '4', label: 'FOUR', name: 'Четыре пальца' },
 };
 
 export function gestureMeta(g: GestureOrNone): GestureMeta | null {

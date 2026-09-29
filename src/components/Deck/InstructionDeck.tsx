@@ -1,6 +1,5 @@
 import { ArrowLeft, ArrowRight, ClipboardList, Eye, Hand, Ruler, Sun, type LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { GestureCue } from '../Cue/GestureCue';
 
 export interface DeckCard {
   title: string;
@@ -23,24 +22,21 @@ interface Props {
   cards: DeckCard[];
   index: number;
   onIndex: (i: number) => void;
-  startLabel: string;
-  onStart: () => void;
-  onReplay: () => void;
 }
 
 /**
  * Instruction cards shown one at a time in the centre of the screen.
  * The current card rises into place; earlier cards settle into a stack behind it.
  */
-export function InstructionDeck({ kicker, title, cards, index, onIndex, startLabel, onStart, onReplay }: Props) {
+export function InstructionDeck({ kicker, title, cards, index, onIndex }: Props) {
   const last = index >= cards.length - 1;
   return (
-    <div className="mx-auto flex w-full max-w-[760px] flex-col items-center text-center">
-      <h1 className="text-[40px] leading-[1.1] text-ink sm:text-[52px]">{title}</h1>
-      <div className="mt-2 text-[15px] font-medium text-graphite">{kicker}</div>
+    <div className="mx-auto flex h-full min-h-0 w-full max-w-[760px] flex-col items-center text-center">
+      <h1 className="text-[clamp(30px,4.6vh,48px)] leading-[1.1] text-ink">{title}</h1>
+      <div className="mt-1 text-[15px] font-medium text-graphite">{kicker}</div>
 
-      {/* stack */}
-      <div className="relative mt-8 w-full sm:mt-10" style={{ height: 'clamp(300px, 42vh, 380px)' }} aria-live="polite">
+      {/* stack: takes the height that is left, never more than it needs */}
+      <div className="relative mt-[clamp(20px,3.5vh,40px)] min-h-[200px] w-full flex-1" style={{ maxHeight: 380 }} aria-live="polite">
         {cards.map((c, i) => {
           const depth = index - i; // 0 = current, >0 = behind
           if (depth < 0 || depth > 2) return null;
@@ -50,7 +46,7 @@ export function InstructionDeck({ kicker, title, cards, index, onIndex, startLab
             <article
               key={i}
               aria-hidden={!isCur}
-              className={`absolute inset-x-0 top-0 mx-auto flex h-full w-full flex-col justify-between p-7 text-left sm:p-10 ${isCur ? 'animate-card-in bg-accent' : 'bg-accent'}`}
+              className={`absolute inset-x-0 top-0 mx-auto flex h-full w-full flex-col justify-between p-[clamp(20px,3.5vh,40px)] text-left ${isCur ? 'animate-card-in bg-accent' : 'bg-accent'}`}
               style={{
                 borderRadius: 'var(--radius-card)',
                 boxShadow: isCur ? 'var(--shadow-lift)' : 'var(--shadow-card)',
@@ -69,8 +65,8 @@ export function InstructionDeck({ kicker, title, cards, index, onIndex, startLab
                 </span>
               </div>
               <div>
-                <h2 className="text-[30px] leading-tight sm:text-[40px]">{c.title}</h2>
-                <p className="mt-3 max-w-[32ch] text-[19px] leading-snug opacity-95 sm:text-[22px]">{c.text}</p>
+                <h2 className="text-[clamp(24px,3.8vh,38px)] leading-tight">{c.title}</h2>
+                <p className="mt-2 max-w-[34ch] text-[clamp(17px,2.5vh,22px)] leading-snug opacity-95">{c.text}</p>
               </div>
             </article>
           );
@@ -78,7 +74,7 @@ export function InstructionDeck({ kicker, title, cards, index, onIndex, startLab
       </div>
 
       {/* progress + paging */}
-      <div className="mt-6 flex w-full items-center justify-between gap-4">
+      <div className="mt-[clamp(8px,2vh,20px)] flex w-full items-center justify-between gap-4">
         <button
           type="button"
           onClick={() => onIndex(index - 1)}
@@ -115,11 +111,6 @@ export function InstructionDeck({ kicker, title, cards, index, onIndex, startLab
         </button>
       </div>
 
-      <div className="mt-6 grid w-full gap-3 text-left sm:grid-cols-[1.4fr_1fr]">
-        <GestureCue gesture="THUMBS_UP" action={startLabel} primary onTrigger={onStart} />
-        <GestureCue gesture="OPEN_PALM" action="Сначала" onTrigger={onReplay} />
-      </div>
-      <p className="mt-4 text-[15px] text-graphite">Листайте жестом: указательный палец вправо — дальше, влево — назад.</p>
     </div>
   );
 }

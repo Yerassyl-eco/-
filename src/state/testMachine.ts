@@ -1,4 +1,5 @@
 import { PREPARATION_STEPS } from '../data/preparation';
+import { COUNT_GESTURES, PROFILE_QUESTIONS, type Profile } from '../data/profile';
 import type { AnyTest } from '../tests';
 import type { AnswerRecord, TestSummary } from '../tests/types';
 import type { Gesture } from '../vision/types';
@@ -6,24 +7,26 @@ import type { Gesture } from '../vision/types';
 /**
  * Explicit screening state machine.
  *
- *  LANDING ─👍→ CAMERA_SETUP ─👍→ PREPARATION ─👍→ TEST_INTRO ─👍→ TEST_ACTIVE
+ *  LANDING ─👍→ CAMERA_SETUP ─👍→ PROFILE ─(3 answers: 1–4 fingers, ✊)→ PREPARATION ─👍→ TEST_INTRO ─👍→ TEST_ACTIVE
  *  TEST_ACTIVE ─👈👉☝️👇→ ANSWER_SELECTED ─✊→ ANSWER_CONFIRMED ─(auto)→ TEST_ACTIVE | TEST_RESULT
  *  ANSWER_SELECTED ─✋→ TEST_ACTIVE (cancel)
- *  TEST_RESULT ─👍→ TEST_INTRO (next test) | VISION_MAP
- *  VISION_MAP ─👍→ DETAILS (one test per slide, 👉👈 page, auto-advance) ─👍→ FINAL_RESULT
- *  FINAL_RESULT ─✋→ PREPARATION (new screening)
+ *  TEST_RESULT ("ready for the next test?") ─👍→ TEST_INTRO (next test) | COMPLETE
+ *  COMPLETE ─👍→ DETAILS (one test per slide, 👌 next, 👈 back) ─👌→ VISION_MAP ─👌→ FINAL_RESULT
+ *  VISION_MAP ─👈→ DETAILS, FINAL_RESULT ─👈→ VISION_MAP, FINAL_RESULT ─✋→ PREPARATION (new screening)
  */
 export type Phase =
   | 'LANDING'
   | 'CAMERA_SETUP'
+  | 'PROFILE'
   | 'PREPARATION'
   | 'TEST_INTRO'
   | 'TEST_ACTIVE'
   | 'ANSWER_SELECTED'
   | 'ANSWER_CONFIRMED'
   | 'TEST_RESULT'
-  | 'VISION_MAP'
+  | 'COMPLETE'
   | 'DETAILS'
+  | 'VISION_MAP'
   | 'FINAL_RESULT';
 
 export interface MachineState {
@@ -44,8 +47,10 @@ export interface MachineState {
   screeningFinishedAt: number | null;
   /** Increments to replay instructions (✋ on intro screens). */
   replayKey: number;
-  /** Instruction card currently in focus (preparation / test intro). */
+  /** Instruction card / question / result slide currently in focus. */
   cardIndex: number;
+  /** Questionnaire answers (option index per question). */
+  profile: Profile;
 }
 
 export type Action =
@@ -57,9 +62,14 @@ export type Action =
   | { type: 'CANCEL' }
   | { type: 'CONFIRM'; now: number }
   | { type: 'ADVANCE'; now: number }
+  | { type: 'PROFILE_SELECT'; value: number }
+  | { type: 'PROFILE_CONFIRM' }
+  | { type: 'PROFILE_BACK' }
   | { type: 'NEXT_TEST' }
   | { type: 'OPEN_DETAILS' }
+  | { type: 'OPEN_MAP' }
   | { type: 'OPEN_REPORT' }
+  | { type: 'BACK' }
   | { type: 'REPLAY' }
   | { type: 'CARD'; index: number }
   | { type: 'NEW_SCREENING' }
@@ -81,6 +91,7 @@ export function initialState(tests: AnyTest[]): MachineState {
     screeningFinishedAt: null,
     replayKey: 0,
     cardIndex: 0,
+    profile: {},
   };
 }
 
@@ -99,7 +110,23 @@ export function makeReducer(tests: AnyTest[]) {
         return s.phase === 'LANDING' ? { ...s, phase: 'CAMERA_SETUP' } : s;
 
       case 'CAMERA_OK':
-        return s.phase === 'CAMERA_SETUP' ? { ...s, phase: 'PREPARATION', cardIndex: 0 } : s;
+        return s.phase === 'CAMERA_SETUP' ? { ...s, phase: 'PROFILE', cardIndex: 0, selected: null } : s;
+
+      case 'PROFILE_SELECT':
+        return s.phase === 'PROFILE' ? { ...s, selected: a.value < 0 ? null : String(a.value) } : s;
+
+      case 'PROFILE_CONFIRM': {
+        if (s.phase !== 'PROFILE' || s.selected === null) return s;
+        const q = PROFILE_QUESTIONS[s.cardIndex];
+        const profile = { ...s.profile, [q.key]: Number(s.selected) };
+        const next = s.cardIndex + 1;
+        if (next >= PROFILE_QUESTIONS.length) return { ...s, profile, selected: null, phase: 'PREPARATION', cardIndex: 0 };
+        return { ...s, profile, selected: null, cardIndex: next };
+      }
+
+      case 'PROFILE_BACK':
+        if (s.phase !== 'PROFILE' || s.cardIndex === 0) return s;
+        return { ...s, cardIndex: s.cardIndex - 1, selected: null };
 
       case 'BEGIN_TESTS':
         if (s.phase !== 'PREPARATION') return s;
@@ -108,6 +135,7 @@ export function makeReducer(tests: AnyTest[]) {
           phase: 'TEST_INTRO',
           trials: a.trials,
           screeningStartedAt: a.now,
+          profile: s.profile,
         };
 
       case 'START_TEST': {
@@ -171,14 +199,22 @@ export function makeReducer(tests: AnyTest[]) {
 
       case 'NEXT_TEST':
         if (s.phase !== 'TEST_RESULT') return s;
-        if (s.testIndex >= tests.length - 1) return { ...s, phase: 'VISION_MAP' };
+        if (s.testIndex >= tests.length - 1) return { ...s, phase: 'COMPLETE' };
         return { ...s, phase: 'TEST_INTRO', testIndex: s.testIndex + 1, trialIndex: 0, selected: null, cardIndex: 0 };
 
       case 'OPEN_DETAILS':
-        return s.phase === 'VISION_MAP' ? { ...s, phase: 'DETAILS', cardIndex: 0 } : s;
+        return s.phase === 'COMPLETE' ? { ...s, phase: 'DETAILS', cardIndex: 0 } : s;
+
+      case 'OPEN_MAP':
+        return s.phase === 'DETAILS' ? { ...s, phase: 'VISION_MAP' } : s;
 
       case 'OPEN_REPORT':
-        return s.phase === 'DETAILS' ? { ...s, phase: 'FINAL_RESULT' } : s;
+        return s.phase === 'VISION_MAP' ? { ...s, phase: 'FINAL_RESULT' } : s;
+
+      case 'BACK':
+        if (s.phase === 'VISION_MAP') return { ...s, phase: 'DETAILS', cardIndex: tests.length - 1 };
+        if (s.phase === 'FINAL_RESULT') return { ...s, phase: 'VISION_MAP' };
+        return s;
 
       case 'REPLAY':
         return { ...s, replayKey: s.replayKey + 1, cardIndex: 0 };
@@ -188,7 +224,7 @@ export function makeReducer(tests: AnyTest[]) {
         return { ...s, cardIndex: Math.max(0, a.index) };
 
       case 'NEW_SCREENING':
-        return { ...initialState(tests), phase: 'PREPARATION' };
+        return { ...initialState(tests), phase: 'PREPARATION', profile: s.profile };
 
       case 'GO_HOME':
         return initialState(tests);
@@ -233,6 +269,25 @@ export function routeGesture(tests: AnyTest[], s: MachineState, g: Gesture, now:
       if (g === 'THUMBS_UP') return { kind: 'action', action: { type: 'CAMERA_OK' } };
       return { kind: 'reject', hint: 'Рука видна. Чтобы продолжить, покажите «палец вверх».' };
 
+    case 'PROFILE': {
+      const q = PROFILE_QUESTIONS[s.cardIndex];
+      const n = COUNT_GESTURES.indexOf(g);
+      if (n >= 0) return { kind: 'action', action: { type: 'PROFILE_SELECT', value: n }, feedback: `Выбрано: ${q.options[n]}` };
+      if (g === 'FIST') {
+        if (s.selected !== null) return { kind: 'action', action: { type: 'PROFILE_CONFIRM' }, feedback: 'Ответ сохранён' };
+        return { kind: 'reject', hint: 'Сначала покажите номер ответа пальцами: один, два, три или четыре.' };
+      }
+      if (g === 'OPEN_PALM') {
+        if (s.selected !== null) return { kind: 'action', action: { type: 'PROFILE_SELECT', value: -1 }, feedback: 'Выбор отменён' };
+        return { kind: 'ignore' };
+      }
+      if (g === 'POINT_LEFT') {
+        if (s.cardIndex > 0) return { kind: 'action', action: { type: 'PROFILE_BACK' }, feedback: 'Предыдущий вопрос' };
+        return { kind: 'reject', hint: 'Это первый вопрос. Покажите номер ответа пальцами.' };
+      }
+      return { kind: 'reject', hint: 'Покажите столько пальцев, какой номер у вашего ответа, затем кулак.' };
+    }
+
     case 'PREPARATION':
       if (g === 'THUMBS_UP') return { kind: 'action', action: { type: 'BEGIN_TESTS', now, trials: makeTrials() } };
       if (g === 'POINT_RIGHT' || g === 'POINT_LEFT') return cardStep(s, g, PREPARATION_STEPS.length);
@@ -272,20 +327,32 @@ export function routeGesture(tests: AnyTest[], s: MachineState, g: Gesture, now:
 
     case 'TEST_RESULT':
       if (g === 'THUMBS_UP') return { kind: 'action', action: { type: 'NEXT_TEST' } };
-      return { kind: 'reject', hint: 'Чтобы продолжить, покажите «палец вверх».' };
+      return { kind: 'reject', hint: 'Когда будете готовы, покажите «палец вверх».' };
+
+    case 'COMPLETE':
+      if (g === 'THUMBS_UP') return { kind: 'action', action: { type: 'OPEN_DETAILS' }, feedback: 'Открываю результаты' };
+      return { kind: 'reject', hint: 'Чтобы увидеть результаты, покажите «палец вверх».' };
 
     case 'VISION_MAP':
-      if (g === 'THUMBS_UP') return { kind: 'action', action: { type: 'OPEN_DETAILS' }, feedback: 'Открываю подробности' };
-      return { kind: 'reject', hint: 'Изучите карту зрения и покажите «палец вверх», чтобы узнать подробнее.' };
+      if (g === 'OK' || g === 'THUMBS_UP') return { kind: 'action', action: { type: 'OPEN_REPORT' }, feedback: 'Итог скрининга' };
+      if (g === 'POINT_LEFT') return { kind: 'action', action: { type: 'BACK' }, feedback: 'Назад к результатам' };
+      return { kind: 'reject', hint: 'Покажите знак «ОК», чтобы перейти к итогу, или укажите влево, чтобы вернуться.' };
 
     case 'DETAILS':
-      if (g === 'THUMBS_UP') return { kind: 'action', action: { type: 'OPEN_REPORT' } };
-      if (g === 'POINT_RIGHT' || g === 'POINT_LEFT') return cardStep(s, g, tests.length);
-      return { kind: 'reject', hint: 'Листайте тесты жестом вправо или влево; «палец вверх» — к итоговому отчёту.' };
+      if (g === 'OK' || g === 'POINT_RIGHT') {
+        if (s.cardIndex >= tests.length - 1) return { kind: 'action', action: { type: 'OPEN_MAP' }, feedback: 'Карта зрения' };
+        return { kind: 'action', action: { type: 'CARD', index: s.cardIndex + 1 }, feedback: `Тест ${s.cardIndex + 2} из ${tests.length}` };
+      }
+      if (g === 'POINT_LEFT') {
+        if (s.cardIndex === 0) return { kind: 'reject', hint: 'Это первый результат. Покажите «ОК», чтобы перейти к следующему.' };
+        return { kind: 'action', action: { type: 'CARD', index: s.cardIndex - 1 }, feedback: `Тест ${s.cardIndex} из ${tests.length}` };
+      }
+      return { kind: 'reject', hint: 'Покажите знак «ОК», чтобы перейти дальше, или укажите влево, чтобы вернуться.' };
 
     case 'FINAL_RESULT':
       if (g === 'OPEN_PALM') return { kind: 'action', action: { type: 'NEW_SCREENING' } };
-      return { kind: 'ignore' };
+      if (g === 'POINT_LEFT') return { kind: 'action', action: { type: 'BACK' }, feedback: 'Назад к карте зрения' };
+      return { kind: 'reject', hint: 'Ладонь — пройти скрининг заново; влево — вернуться к карте зрения.' };
   }
 }
 
@@ -297,6 +364,10 @@ const EMOJI: Record<Gesture, string> = {
   POINT_UP: '☝️',
   POINT_DOWN: '👇',
   OPEN_PALM: '✋',
+  OK: '👌',
+  TWO: '✌️',
+  THREE: '3',
+  FOUR: '4',
 };
 
 export const gestureEmoji = (g: Gesture) => EMOJI[g];
