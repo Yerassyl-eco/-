@@ -31,12 +31,13 @@ The camera replaces keyboard and mouse. Real-time hand tracking runs locally in 
 - Open: logo and brand colours exist but have not been provided yet (see Brand Commitments).
 
 ## Brand Commitments
-- Name: **Vision Motion** (typographic wordmark set in Prata; no pictorial logo). Subtitle: "Digital vision screening".
-- Palette (updated by the team: "more colourful, readable"): paper `#F5F4F0`, ink `#111111`, secondary text `#55554F`, borders `#D9D8D2`. Each test owns one saturated colour used for its cards, headers, selection and progress: acuity cobalt `#2457FF`, radial figure violet `#7C3AED`, duochrome coral `#D23B26`, Amsler teal `#0A7C6E`, colour vision sun `#F5A300` (ink text). Amber for Error Mode; soft green only for the "within screening range" status. No gradients.
-- Typography: elegant display serif Prata for headings and the wordmark (team asked for an unusual, elegant face); Geist for reading text; Geist Mono only for numbers.
-- Language: Russian throughout for readability; English only in the wordmark and the tests' short technical sublines.
+- Name: **Vision Motion** (typographic wordmark "VISION MOTION", uppercase Manrope 600, tracked 0.2em; no pictorial logo). Subtitle: "Digital vision screening".
+- Palette (updated by the team: "more colourful, readable"): paper `#F5F4F0`, ink `#111111`, secondary text `#55554F`, borders `#D9D8D2`. Each test owns one saturated colour used for its cards, headers, selection and progress: acuity cobalt `#2457FF`, radial figure violet `#7C3AED`, duochrome coral `#D23B26`, Amsler teal `#0A7C6E`, colour vision sun `#F5A300` (ink text). Amber for Error Mode; soft green only for the "within screening range" status; live green `#1D9A50` only for the landing's camera-live dot. No gradients.
+- Typography: Manrope as the single family for display, headings, the wordmark and reading text; Geist Mono only for numbers. Test stimuli keep their own clinical type (Arial in duochrome and plates).
+- Language: Russian throughout for readability; English only in the wordmark, the tests' short technical sublines and the landing's instrument margin notes (FOCUS / ALIGN / SCAN).
 - Instructions are shown as cards that appear one at a time in the centre of the screen.
-- Still refused: landing-page hero, glassmorphism, gradients, cartoon medical illustration, stock photos, gamification, traditional navbar.
+- Landing: a single-screen instrument, approved from an art-direction reference: a macro iris under an optical reticle on off-white paper, one flat cobalt start disc driven by the thumbs-up gesture, the camera running without showing video.
+- Still refused: marketing-style hero sections, glassmorphism, gradients, cartoon medical illustration, stock photos, gamification, traditional navbar.
 - Voice: friendly, calm, technological, not frightening; addresses the user directly.
 
 ## Evidence on Hand
